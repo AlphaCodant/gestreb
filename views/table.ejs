@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+		<title>WebStylePress</title>
+    <script src="libs/jquery.js"></script>
+    <link rel="stylesheet" href="libs/jquery-ui-1.12.1/jquery-ui.css">
+    <script src="libs/jquery-ui-1.12.1/external/jquery/jquery.js"></script>
+    <script src="libs/jquery-ui-1.12.1/jquery-ui.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="css/custom2.css" />
+	</head>
+	<body>
+		<div class="container receipt-wrap" id="receipt-wrap">
+			<div class="row justify-content-md-center">
+				<div class="receipt-main col-xs-12 col-sm-12 col-md-12">
+					<div class="row">
+						<div class="col-xs-6 col-sm-6 col-md-6">
+							<div class="receipt-left">
+								<img
+									class="img-responsive"
+									alt="iamgurdeeposahan"
+									src="img/logo2.jpg"
+									style="width: 70px; border-radius: 3px"
+								/>
+							</div>
+						</div>
+				
+					</div>
+
+					<br />
+					<br>
+
+                    <div class="row justify-content-md-center" >
+					
+							<div id="fiche_parcellaire">
+								<h1 id="titre_fiche">FICHE PARCELLAIRE</h1>
+							</div>
+					
+				
+					</div>
+
+					<br />
+					<br>
+
+					<div class="row">
+						<div class="col-xs-6 col-sm-6 col-md-6 text-left">
+							<div class="receipt-right">
+								<p id="cg"><b>Centre de gestion :</b> </p>
+								<!--<p id="division"><b>Division :</b>  </p>--->
+								<p id="secteur"><b>UGF :</b> </p>
+                                <p id="foret"><b>Forêt :</b></p>
+								<p id="bloc"><b>Bloc :</b></p>
+								<p id="parcelle"><b>Parcelle :</b> </p>
+                                <p id="sup"><b>Superficie :</b> </p>
+								<p id="essence"><b>Essence :</b> </p>
+								<p id ="finance"><b>Financement :</b> </p>
+							</div>
+						</div>
+						<div
+							class="col-xs-6 col-sm-6 col-md-6 "
+							style="align-self: flex-end"
+						>
+							<div class="receipt-left">
+								<p id="ty_re"><b>Type de reboisement :</b></p>
+								<p id="ty_pl"><b>Type de plantation :</b></p>
+								<p id="ty_p"><b>Type de plants :</b> </p>
+                <p id="met"><b>Méthode :</b></p>
+								<p id="ecr"><b>Ecartement :</b> </p>
+								<p id="dens"><b>Densité :</b> </p>
+                <p id="prov"><b>Provenence :</b></p>
+								<p id="cul_ass"><b>Culture associée :</b></p>
+								<p id="dte"><b>Date de plantation :</b></p>
+							</div>
+						</div>
+					</div>
+
+					<br />
+
+					<div>
+						
+                        <table border="1" id="table1" class="table col-xs-12 col-sm-12 col-md-12">
+                            <thead>
+                                <tr>
+                                    <th rowspan="3">DATE</th>
+                                    <th rowspan="3">TRAVAUX</th>
+                                    <th colspan="3">SOUS-TRAITANCE</th>
+                                    <th colspan="5">REGIE</th>
+                                    <th colspan="2">TOTAL</th>
+                                    <th rowspan="3">OBS</th>
+                                </tr>
+                                <tr>
+                                    <th rowspan="2">Coût (ha)</th>
+                                    <th rowspan="2">Surface traitée (a) (ha)</th>
+                                    <th rowspan="2">Montant (1)</th>
+                                    <th rowspan="2">Surface traitée (b)</th>
+                                    <th colspan="2">Homme/jour</th>
+                                    <th colspan="2">H/Engins</th>
+                                    <th rowspan="2">Surface traitée (a+b)</th>
+                                    <th rowspan="2">Coût (1+2+3)</th>
+                                </tr>
+                                <tr>
+                                    <th>Qté</th>
+                                    <th>Coût (2)</th>
+                                    <th>Qté</th>
+                                    <th>Coût (3)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table10">
+                              <tr id="ligne_table0"></tr>
+                              <tr id="ligne_table1"></tr>
+                              <tr id="ligne_table2"></tr>
+                              <tr id="ligne_table3"></tr>
+                              <tr id="ligne_table4"></tr>
+                              <tr id="ligne_table5"></tr>
+                              <tr id="ligne_table6"></tr>
+                              <tr id="ligne_table7"></tr>
+                              <tr id="ligne_table8"></tr>
+                              <tr id="ligne_table9"></tr>
+                              <tr id="ligne_table10"></tr>
+                              <tr id="ligne_table11"></tr>
+                              <tr id="ligne_table12"></tr>
+                              <tr id="ligne_table13"></tr>
+                              <tr id="ligne_table14"></tr>
+                              <tr id="ligne_table15"></tr>
+                              <tr id="ligne_table16"></tr>
+                              <tr id="ligne_table17"></tr>
+                              <tr id="ligne_table18"></tr>
+                              <tr id="ligne_table19"></tr>
+                              <tr id="ligne_table20"></tr>
+                            </tbody>
+                        </table>
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-xs-8 col-sm-8 col-md-8 text-left">
+							<div class="receipt-right">
+								<h5 style="font-size: 15px;"
+									>Méthode de mise en oeuvre : Sous-traitance. Régie. Taungya. Opérateur du bois. Régénération après coupe.</h5
+								>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+    
+
+let jsonCugf =[];
+$(document).ready(function() {  
+    $.ajax({
+        url: `/`,
+        dataType: "json",
+        success: function(json) {
+            jsonCugf.push(json);
+            console.log(json[2]);
+            
+
+            setTimeout(function (){
+
+              let entetes = ["donnees_tableau/date_activite","donnees_tableau/travail","donnees_tableau/sous_traitance/cout1",
+"donnees_tableau/sous_traitance/surface1","donnees_tableau/sous_traitance/montant","donnees_tableau/regie/surface2",
+"donnees_tableau/regie/homme_jour/qte1","donnees_tableau/regie/homme_jour/cout1_001","donnees_tableau/regie/homme_engins/qte1_001",
+"donnees_tableau/regie/homme_engins/cout1_002","donnees_tableau/total/surface3","donnees_tableau/total/cout3","donnees_tableau/obs"]
+			
+			let c_g = document.getElementById("cg");
+			let for_et = document.getElementById("foret");
+			let parce = document.getElementById("parcelle");
+			let ess_ence = document.getElementById("essence");
+			
+			
+			
+			let mot = "ide=";
+    let tab = document.cookie.split(";");
+    let id_id;
+    for (let i=0;i<tab.length;i++){
+        let c = tab[i];
+        while (c.charAt("0")==' '){
+            c = c.substring(1,c.length);
+        }
+        if (c.indexOf(mot)==0){
+            id_id = c.substring(mot.length,c.length);
+        }                        
+    }
+    let donnees_cibles = [];
+    //let donnees_uniques = [];
+    for (let z=0; z<json.length;z++){
+      let elements=json[z];
+      if (elements['donnees_identification/parcelle']==id_id){
+        donnees_cibles.push(elements);
+    }
+  }
+
+    for (let l=0;l<donnees_cibles.length;l++){
+          let element = donnees_cibles[l];
+
+          if (element['donnees_identification/centre_de_gestion']==undefined){
+              c_g.innerHTML='<b>Centre de gestion</b> : ';
+          }else{
+            c_g.innerHTML='<b>Centre de gestion</b> : '+element["donnees_identification/centre_de_gestion"];
+          }
+          if (element["donnees_identification/parcelle"]==undefined){
+            parce.innerHTML='<b>Parcelle</b> : ';
+          }else{
+            parce.innerHTML='<b>Parcelle</b> : '+element["donnees_identification/parcelle"];
+          }
+
+          if (element["donnees_identification/parcelle"]==undefined){
+            division.innerHTML='<b>Division</b> : ';
+          }else{
+            division.innerHTML='<b>Division</b> : '+element["donnees_identification/parcelle"];
+          }
+          if (element["donnees_identification/ugf"]==undefined){
+            secteur.innerHTML='<b>Secteur</b> : ';
+          }else{
+              secteur.innerHTML='<b>Secteur</b> : '+element["donnees_identification/ugf"];
+          }
+          if (element['donnees_identification/essence']==undefined){
+            ess_ence.innerHTML='<b>Essence</b> : ';
+          }else{
+            ess_ence.innerHTML='<b>Essence</b> : '+element["donnees_identification/essence"];
+          }
+          if (element["donnees_identification/financement"]==undefined){
+            finance.innerHTML='<b>Finance</b> : ';
+          }else{
+            finance.innerHTML='<b>Finance</b> : '+element["donnees_identification/financement"];
+          }
+          if (element["donnees_identification/foret"]==undefined){
+            for_et.innerHTML='<b>Forêt</b> : ';
+          }else{
+            for_et.innerHTML='<b>Forêt</b> : '+element["donnees_identification/foret"];
+          }
+          if (element["donnees_identification/superficie"]==undefined){
+            sup.innerHTML='<b>Superficie</b> : ';
+          }else{
+            sup.innerHTML='<b>Superficie</b> : '+element["donnees_identification/superficie"];
+          }
+          if (element["donnees_identification/bloc"]==undefined){
+            bloc.innerHTML='<b>Bloc</b> : ';
+          }else{
+            bloc.innerHTML='<b>Bloc</b> : '+element["donnees_identification/bloc"];
+          }
+          if (element["donnees_identification/type_reboisement"]==undefined){
+            ty_re.innerHTML='<b>Type de reboisement</b> : ';
+          }else{
+            ty_re.innerHTML='<b>Type de reboisement</b> : '+element["donnees_identification/type_reboisement"];
+          }
+          if (element["donnees_identification/type_plantation"]==undefined){
+            ty_pl.innerHTML='<b>Type de plantation</b> : ';
+          }else{
+            ty_pl.innerHTML='<b>Type de plantation</b> : '+element["donnees_identification/type_plantation"];
+          }
+          if (element["donnees_identification/plant"]==undefined){
+            ty_p.innerHTML='<b>Type de plants</b> : ';
+          }else{
+            ty_p.innerHTML='<b>Type de plants</b> : '+element["donnees_identification/plant"];
+          }
+          if (element["donnees_identification/methode_mise"]==undefined){
+            met.innerHTML='<b>Méthode</b> : ';
+          }else{
+            met.innerHTML='<b>Méthode</b> : '+element["donnees_identification/methode_mise"];
+          }
+          if (element["donnees_identification/ecartement"]==undefined){
+            ecr.innerHTML='<b>Ecartement</b> : ';
+          }else{
+            ecr.innerHTML='<b>Ecartement</b> : '+element["donnees_identification/ecartement"];
+          }
+          if (element["donnees_identification/densite"]==undefined){
+            dens.innerHTML='<b>Densité</b> : ';
+          }else{
+            dens.innerHTML='<b>Densité</b> : '+element["donnees_identification/densite"];
+          }
+          if (element["donnees_identification/culture_associe"]==undefined){
+            cul_ass.innerHTML='<b>Culture associée</b> : ';
+          }else{
+            cul_ass.innerHTML='<b>Culture associée</b> : '+element["donnees_identification/culture_associe"];
+          }
+          if (element["donnees_identification/provenance"]==undefined){
+            prov.innerHTML='<b>Provenence</b> : ';
+          }else{
+            prov.innerHTML='<b>Provenence</b> : '+element["donnees_identification/provenance"];
+          }
+          if (element["donnees_identification/date_plantation"]==undefined){
+            dte.innerHTML='<b>Date de plantation</b> : ';
+          }else{
+            dte.innerHTML='<b>Date de plantation</b> : '+element["donnees_identification/date_plantation"];
+          }
+
+          let tableau = document.getElementById(`ligne_table${l}`);
+          for (let k = 0; k<13;k++){
+            if (element[entetes[k]]==undefined){
+              tableau.innerHTML += `<td></td>`
+            }else{
+              tableau.innerHTML += `<td>${element[entetes[k]]}</td>`
+            }
+            
+          }
+
+				}
+      
+            })
+
+      }
+    })
+    });
+    console.log(jsonCugf);
+	</script>
+	
+</html>

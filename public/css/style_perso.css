@@ -1,0 +1,127 @@
+body{
+    font-family: 'Nunito';
+}
+#fenetre_requete{
+    display: none;
+}
+
+#form2{
+    position: relative;
+    display:none;
+}
+#form3{
+    position: relative;
+    display:none;
+}
+#form4{
+    position: relative;
+    display:none;
+}
+#form5{
+    position: relative;
+    display:none;
+}
+#form6{
+    position: relative;
+    display:none;
+}
+#bouton_lancer_rqt{
+    position: relative;
+    display: none;
+    background-color: none;
+}
+#bouton_fermer_rqt{
+    position: relative;
+    display: none;
+    background-color: none;
+}
+#table_data {
+    position: absolute;
+    bottom: 0%;
+    overflow: scroll;
+    left: 16.66%;
+    right: 0%;
+    height: 0%;
+    border: 1px solid #4CAF50;
+    font-family: 'Nunito';
+}
+
+#table {
+    white-space: nowrap;
+    grid-template-areas: "head-fixed""body-scrollable";
+}
+#stat_interface{
+    position: absolute;
+    left:16.66%
+}
+
+#table th {
+    position: -webkit-sticky;
+    /* for Safari */
+    position: sticky;
+    top: 0px;
+    background-color: #676d67;
+}
+#map {
+    position: absolute;
+    left: 16.66%;
+    width: 83.35%;
+    height: 100%;
+}
+
+#map_visiere{
+    position: absolute;
+    left: 2%;
+    width: 90%;
+    height: 30%;
+    border-width: 10px;
+    border-color: white;
+    border-radius: 20px;
+}
+#titres{
+    position: absolute;
+    left: 5%;
+    width: 90%;
+    top: 38%;
+}
+
+#particles-js {
+    position: absolute;
+    top:0%;
+    background-color: #e2eae2;
+    background-size: cover;
+    height: 100%;
+    display: flex;
+}
+#imprimer {
+    position: absolute;
+    z-index: 500;
+    top: 3%;
+    left: 2%;
+    color: rgb(0, 0, 0);
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 10px;
+}
+#fermer {
+    position: absolute;
+    z-index: 500;
+    top: 3%;
+    right:7%;
+    color: rgb(0, 0, 0);
+    background-color: rgb(174, 10, 10);
+    border:none;
+    border-radius: 10px;
+}
+
+#fermer_stats {
+    position: absolute;
+    z-index: 500;
+    top: 1%;
+    right:7%;
+    color: rgb(0, 0, 0);
+    background-color: rgb(174, 10, 10);
+    border:none;
+    border-radius: 10px;
+}
+

@@ -1,0 +1,33 @@
+{
+  "name": "tailwind",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "forever server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "connect-ensure-login": "^0.1.1",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.18.1",
+    "forever": "^4.0.3",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^11.2.0",
+    "nodemailer": "^6.9.14",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.13.0",
+    "random-token": "^0.0.8"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.14"
+  }
+}
