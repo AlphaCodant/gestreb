@@ -1,5 +1,5 @@
 //Port
-const port = 3000;
+const port = 3001;
 
 //Importation de modules NPM
 
@@ -19,12 +19,17 @@ const nodemailer = require("nodemailer");
 const fsExtra = require('fs-extra');
 const securedConnect = require("connect-ensure-login");
 const LocalStrategy = require("passport-local").Strategy;
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 
 //const initializePassport = require("./passportConfig");
 
 
 //Initialisation des modules
 //initializePassport(passport);
+dotenv.config();
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(express.static('public'));
 app.set('view engine','ejs')
@@ -33,6 +38,7 @@ app.use(cors({
 }));
 app.use(
     session({
+      name : 'sid',
       secret: process.env.MY_SECRET,
       resave: false,
       saveUninitialized: false
@@ -47,10 +53,10 @@ app.use(
 
 const client = new Client({
     host: process.env.DB_HOST,
-    user: process.env.DB_USER,
+    user:process.env.DB_USER,
     port: process.env.DB_PORT,
-    password: process.env.DB_PWD,
-    database: process.env.DB_NAME,
+    password:process.env.DB_PWD,
+    database:process.env.DB_NAME,
     ssl: {
         rejectUnauthorized: false,
         ca: fs.readFileSync('eu-north-1-bundle.pem').toString()
@@ -103,7 +109,18 @@ passport.deserializeUser(function(email, done){
 
 //ST_AsGeoJSON(ST_Transform(geom,4326)) as donnee
 
-
+// Middleware pour vérifier le token JWT
+function authenticateToken(req, res, next) {
+    const token = req.cookies.token; // On récupère le token depuis les cookies
+  
+    if (!token) return res.redirect('/connexion'); // Si aucun token, rediriger vers la page de connexion
+  
+    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+      if (err) return res.redirect('/connexion'); // Token invalide, rediriger vers login
+      req.user = user;
+      next();
+    });
+  }
 
 
 
@@ -154,9 +171,10 @@ app.get('/inscription',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req
 let donnee_connect=[]
 
 
-app.get(`/page`,securedConnect.ensureLoggedIn({redirectTo:'/connexion'}),(req,res)=>{
+app.get(`/page/:id`,authenticateToken,(req,res)=>{
     result.length=0;
-    res.render('dashboard_conn');
+    const {tokenY} = req.user;
+    res.render('dashboard_conn',{id:tokenY});
     
 });
 
@@ -361,54 +379,71 @@ app.post("/inscription",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(re
     }
 });
 let liste_token=[];
-app.post("/connexion",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
+
+app.post("/connexion",async (req,res)=>{
     //donnee_connect.length=0;
 
-    client.query("SELECT nom, email, mp from utilisateurs where email=$1", [req.body.email], (err, result) => {
-        if(err){
-            return cb(err);
+    const { email, mp } = req.body;
 
-        }
-        if(result.rows.length > 0){
-            var usery = {
-                email : result.rows[0].email,
-                mp : result.rows[0].mp
-            };
-            req.login(usery,(err)=>{
-                if(err){
-                    console.log("Erreur de connexion: "+err);
+  try {
+    const result = await client.query('SELECT * FROM utilisateurs WHERE email = $1', [email]);
+    const user = result.rows[0];
+
+    if (!user) return res.status(404).send('Utilisateur non trouvé.');
+
+    // Vérifier le mot de passe
+    const isMatch = await bcrypt.compare(mp, user.mp);
+    if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
+
+    // Créer un JWT
+    const accessToken = jwt.sign({ tokenY: user.token, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
+
+    // Stocker le token dans les cookies
+    res.cookie('token', accessToken, { httpOnly: true });
+    client.query(`CREATE TABLE IF NOT EXISTS parcelles_${user.token} as (select * from parcelles)`,(err,response)=>{
+        if(!err){
+            client.query(`CREATE TABLE IF NOT EXISTS foret_${user.token} as (select * from foret)`,(err,response)=>{
+                if(!err){
+                    res.redirect(`/page/${user.token}`); // Rediriger vers le tableau de bord
                 }else{
-                    passport.authenticate('local', function(err, user, info){
-                        if(err){
-                            console.log(err);
-                        }else{
-                            console.log(user);
-                            res.redirect('/page');
-                        }
-                        
-                    })(req, res);
+                    console.log(err+" Erreur lors de la duplication de la base de données Foret")
                 }
-            });
-        }
-    });
- });
-
- app.get("/log/deconnecter",(req,res)=>{
-    req.logout((err)=>{
-        if (err){
-            console.log(err);
+        
+            })
         }else{
-            liste_token.length=0;
-            res.redirect("/connexion");
+            console.log(err+" Erreur lors de la duplication de la base de données Parcelles")
+        }
+
+    })
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Erreur serveur.');
+  }
+});
+
+ app.get("/log/deconnecter",authenticateToken,(req,res)=>{
+    const { tokenY } = req.user;
+    client.query(`DROP TABLE parcelles_${tokenY},foret_${tokenY}`,(err)=>{
+        if(!err){
+            console.log("Données de l'utilisateur effacées avec succès");
+        }else{
+            console.log("Une erreur s'est produite : "+err)
         }
     });
+    setTimeout(()=>{
+        res.clearCookie('token');
+        res.redirect('/connexion');
+    },3000)
 });
 let liste_element = [];
 let result = [];
 let donn_ref_requete=[];
 
-app.post('/requete',(req)=>{
-    donn_ref_requete.length=0;
+app.post('/requete/:id',authenticateToken,(req,res)=>{
+    const {email} = req.user;
+    const {tokenY} = req.user;
+    /*donn_ref_requete.length=0;
     result.length=0;
     var corresp = {"tene":1,"sangoue":2};
     var ddf = '(';
@@ -418,7 +453,24 @@ app.post('/requete',(req)=>{
         }else if (xl==liste_element.length-1){
             ddf+=`${corresp[liste_element[xl]]})`;
         }
-    }
+    }*/
+    tab_ddf = [];
+    client.query(`SELECT * FROM stock WHERE email like '${email}'`,(error,response)=>{
+        if (error){
+            console.log(error+" Désolé, données non sélectionnées");
+        }else{
+            console.log("Donnees chargés avec succès");
+            
+            console.log(response.rows);
+            console.log(response.rows[0]);
+            console.log(response.rows[0].data);
+            tab_ddf.push(response.rows[0].data);
+            
+        }
+    });
+    setTimeout(()=>{
+
+    let ddf = tab_ddf[0];
     console.log(ddf);
     let {cocher,cocher2,cocher3,cocher4,cocher5,attributes,attributes2,attributes3,attributes4,attributes5,operator,operator2,operator3,operator4,operator5,
         value,value2,value3,value4,value5
@@ -476,24 +528,21 @@ app.post('/requete',(req)=>{
             clause4='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-            FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326) 
-            FROM public.parcelles a  JOIN public.foret b ON a.foret=b.id 
-            WHERE a.foret in ${ddf} 
-            and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
+        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
+        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
             ${clause3} ${attributes4} ${operator4} ${value4} ${clause4} ${attributes5} ${operator5} ${value5}) AS t`,
                 (err,results)=>{
                 if(!err){
-                    result.push(results.rows[0].donnee);
-                    console.log(results.rows[0].donnee);
-                    /*fs.writeFile(`public/json/fichier.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
+                    console.log(results.rows[0].donnee)
+                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
                         console.log(err);               
-                        });*/
-                    
+                        });
                 }else{
                     console.log(err);
                 }
                 client.end;
-            });
+    });
     }else if (cocher && cocher2 && cocher3 && cocher4){
         if(operator=='ilike' || operator=='not ilike'){
             value=`'${value}%'`;
@@ -534,24 +583,21 @@ app.post('/requete',(req)=>{
             clause3='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-            FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326) 
-            FROM public.parcelles a  JOIN public.foret b ON a.foret=b.id 
-            WHERE a.foret in ${ddf}
-            and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
+        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
+        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
             ${clause3} ${attributes4} ${operator4} ${value4}) AS t`,
                 (err,results)=>{
                 if(!err){
-                    result.push(results.rows[0].donnee);
-                    console.log(results.rows[0].donnee);
-                    /*fs.writeFile(`public/json/fichier.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
+                    console.log(results.rows[0].donnee)
+                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
                         console.log(err);               
-                        });*/
-                    
+                        });
                 }else{
                     console.log(err);
                 }
                 client.end;
-            });
+    });
     }else if (cocher && cocher2 && cocher3){
         if(operator=='ilike' || operator=='not ilike'){
             value=`'${value}%'`;
@@ -581,23 +627,20 @@ app.post('/requete',(req)=>{
             clause2='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-            FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326) 
-            FROM public.parcelles a  JOIN public.foret b ON a.foret=b.id 
-            WHERE a.foret in ${ddf}
-            and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3}) AS t`,
+        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
+        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3}) AS t`,
                 (err,results)=>{
                 if(!err){
-                    result.push(results.rows[0].donnee);
-                    console.log(results.rows[0].donnee);
-                    /*fs.writeFile(`public/json/fichier.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
+                    console.log(results.rows[0].donnee)
+                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
                         console.log(err);               
-                        });*/
-                    
+                        });
                 }else{
                     console.log(err);
                 }
                 client.end;
-            });
+    });
     }else if (cocher && cocher2){
         
         if(operator=='ilike' || operator=='not ilike'){
@@ -610,30 +653,27 @@ app.post('/requete',(req)=>{
         }else{
             value2=value2;
         }
-        let clause = 'et';
+        let clause1 = 'AND';
         if (attributes==attributes2){
             clause='OR';
         }else{
             clause='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-            FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326) 
-            FROM public.parcelles a  JOIN public.foret b ON a.foret=b.id 
-            WHERE a.foret in ${ddf} 
-            and ${attributes} ${operator} ${value} ${clause} ${attributes2} ${operator2} ${value2}) AS t`,
+        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
+        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2}) AS t`,
                 (err,results)=>{
                 if(!err){
-                    result.push(results.rows[0].donnee);
-                    console.log(results.rows[0].donnee);
-                    /*fs.writeFile(`public/json/fichier.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
+                    console.log(results.rows[0].donnee)
+                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
                         console.log(err);               
-                        });*/
-                    
+                        });
                 }else{
                     console.log(err);
                 }
                 client.end;
-            });
+    });
     }else if (cocher){
         if(operator=='ilike' || operator=='not ilike'){
             value=`'${value}%'`;
@@ -641,36 +681,29 @@ app.post('/requete',(req)=>{
             value=value;
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-            FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326) 
-            FROM public.parcelles a  JOIN public.foret b ON a.foret=b.id 
-            WHERE a.foret in ${ddf} 
-            and ${attributes} ${operator} ${value}) AS t`,(err,results)=>{
+        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
+        and ${attributes} ${operator} ${value}) AS t`,
+                (err,results)=>{
                 if(!err){
-                    //donn_ref_requete.push("element");
-                    result.push(results.rows[0].donnee);
-                    console.log(results.rows[0].donnee);
-                    /*fs.writeFile(`public/json/fichier.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
+                    console.log(results.rows[0].donnee)
+                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
                         console.log(err);               
-                        });*/
-                    
+                        });
                 }else{
                     console.log(err);
                 }
                 client.end;
-            });
+    });
     }
-    
-    console.log(donn_ref_requete);
-    console.log(operator);
-    console.log(attributes);
-    console.log(value);
-    //res.send("Salut");
-    //res.end();
-    //res.redirect('/page')
+    },2000)
+    res.status(204).end();
 })
 
-app.post('/dashboard/00000',(req,res)=>{
+app.post('/dashboard/00000/:id',authenticateToken,(req,res)=>{
     //result.length=0;
+    const { email } = req.user;
+    const {tokenY} = req.user;
     liste_token.length=0
     var corresp = {"tene":1,"sangoue":2};
     
@@ -678,6 +711,7 @@ app.post('/dashboard/00000',(req,res)=>{
     if(count.length>0){
         count.length=0;
     }*/
+    //let user_mail = req.session.email;
     let tout_ugf = req.body.tout_ugf;
     let ugf_tene = req.body.ugf_tene;
     let ugf_sangoue = req.body.ugf_sangoue;
@@ -724,40 +758,78 @@ app.post('/dashboard/00000',(req,res)=>{
             ddf+=`${corresp[liste_element[xl]]})`;
         }
     }
+    
+    client.query(`SELECT * FROM stock WHERE email like '${email}'`,(error,response)=>{
+        if (error){
+            console.log(error+" Désolé, données non sélectionnées")
+        }else{
+            if(response.rows.length>0){
+                console.log("Données existentes");
+                client.query(`UPDATE stock SET data = '${ddf}' WHERE email like '${email}'`,(err)=>{
+                    if(!err){
+                        console.log("Ddf mise à jour avec succès");
+                    }else{
+                        console.log(err+ " Impossible de mettre le Ddf à jour");
+                    }
+                })
+            }else{
+                console.log("Données vides");
+                client.query(`INSERT INTO stock (email,data) VALUES ('${email}','${ddf}')`,(err)=>{
+                    if(!err){
+                        console.log("Données insérées avec succès");
+                    }else{
+                        console.log(err+ " Impossible d'insérer les données");
+                    }
+                })
+            }
+            
+        }
+    });
+
     console.log(ddf);
     client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
         FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
-        FROM public.parcelles a  JOIN public.foret b ON a.foret=b.id WHERE a.foret in ${ddf}) AS t`,
+        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}) AS t`,
                 (err,results)=>{
                 if(!err){
-                    result.push(results.rows[0].donnee);
-                    console.log(results.rows[0].donnee);
-                    fs.writeFile(`public/json/fichier.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
+                    console.log(results.rows[0].donnee)
+                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
                         console.log(err);               
                         });
-                    
                 }else{
                     console.log(err);
                 }
                 client.end;
-            });
+    });
+    res.status(204).end();
     console.log(liste_choix);
-    //tokenGen=liste_token[liste_token.length-1];
-    //res.redirect('/page');
-    /*if (tout_ugf.checked==true){
-        nom_ugf=tout_ugf;
-    }else{
+    //let tokenT = token(10);
+    liste_token.push(ddf);
 
-    }*/
-    //console.log(tout_ugf);
-    //liste_element.length=0;
-    let tokenT = token(10);
-    liste_token.push(tokenT);
-    //res.status(200);
 });
 
-app.get('/elements/elem',(req,res)=>{
-    res.send(result[0]);
+app.post(`/page/init/:id`,(req,res)=>{
+    res.redirect(`/page/${req.params.id}`);
+})
+
+app.get('/elements/elem/:id',authenticateToken,(req,res)=>{
+    const { email } = req.user;
+    setTimeout(()=>{client.query(`SELECT data FROM stock WHERE email like '${email}'`,(error,response)=>{
+        if (error){
+            console.log(error+" Désolé, données non sélectionnées")
+        }else{
+            console.log("Donnees envoyés avec succès");
+            //result.push(response.rows[0].data);
+            //console.log(response.rows[0].data);
+            setTimeout(()=>{
+                res.json(response.rows[0].data);
+            },2000)
+            
+        }
+    })
+},3000);
+
+    
     //liste_element=[];
 })
 app.get('/elements/token',(req,res)=>{

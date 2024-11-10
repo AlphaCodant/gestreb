@@ -121,7 +121,7 @@
         $(document).ready(()=>{
             var donnees_stats = [];
             $.ajax({
-                url:'/elements/elem',
+                url:`/json/fichier-${ids}.geojson`,
                 success: (data)=>{
                     //donnees_stats.push(data.features.properties);
                     console.log(data);

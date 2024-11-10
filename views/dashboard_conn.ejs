@@ -55,7 +55,7 @@
               </div>
               <div>
                 <!--<form action="/reinit" method="POST">-->
-                  <button onclick="clear_all()"  id="clear_btn" class="flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group">☰ REINITIALISER</button>
+                  <button onclick="effacer_tout()"  id="clear_btn" class="flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group">☰ REINITIALISER</button>
                 <!--</form>-->
               </div>
                   <div class="z-50 hidden my-4 text-base list-none bg-black divide-y divide-gray-100 rounded shadow " id="dropdown-user">
@@ -189,7 +189,7 @@
   
     <div id="map" style="height:100%;">
       <div id="cadre_frame" style="left:3% ;width:50%;height:100%;border:1px solid #a6a6a8; display:none;position: absolute; top: 0%; background-color: #ffffff; ">
-        <button id="imprimer" style="display: inline-block;" onclick="imprimer_fiche_pr()">Imprimer/Enregistrer</button>
+        <!--<button id="imprimer" style="display: inline-block;" onclick="imprimer_fiche_pr()">Imprimer/Enregistrer</button>-->
         <button id="fermer" style="display: inline-block;" onclick="fermer_cadre()">Fermer</button>
         <iframe name="display-frame" id="framedis"
         style="width:100%;height:92%;border:none; z-index: 80;position: relative; top: 2%; display: inline-block;">
@@ -204,7 +204,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <form action='/dashboard/00000' method="post" name="frame_c_g" id="frame_c_g"
+                  <form action='/dashboard/00000/<%= id %>' method="post" name="frame_c_g" id="frame_c_g"
                   style="width:100%;height:100%;width:100%;border:none;position: relative; top: 0%;left:1%; display: inline-block;">
                   <div class="font-semibold">
                     <div class="pt-2 pb-2 bg-blue-500 rounded-sm">
@@ -258,16 +258,16 @@
                 </div>
                 <div class="modal-footer">
                     <button onclick="close_wms_window()" type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">FERMER</button>
-                    <button  type="submit" id="add_map_btn" class="btn btn-primary btn-sm">AJOUTER A LA CARTE</button>
+                    <button  onclick="action_affichage()" type="submit" id="add_map_btn" class="btn btn-primary btn-sm">AJOUTER A LA CARTE</button>
                 </div>
               </form>
             </div>
         </div>
         </div>
     </div>
-          
+          <div id="postData" post="<%= id %>"></div>
           <div id="fenetre_requete" title="Requete">
-            <form action="/requete" method="POST">
+            <form action="/requete/<%= id %>" method="POST">
               <div id="form2">
                 <!--<label for="layer">Selection couche</label>
                 <select class="form-control" id="layer" name="layer">
@@ -381,7 +381,7 @@
     <div id="table_data" style="font-size:17px;"></div>
     
     <script src="/js/map.js"></script>
-    <script src="/js/stats.js"></script>
+    <!--<script src="/js/stats.js"></script>-->
     <script src="/js/particules.js"></script>
     <script src="/js/print.js"></script>
   </body>

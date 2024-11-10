@@ -7,7 +7,10 @@ var selectedFeature;
 var declencheur=0;
 let id;
 let dn;
-
+//document.cookie = `expires = Fri, 11 oct 2024 12:30 UTC; path=/;connect.sid=/`;
+                    
+//console.log(document.cookie);
+//console.log(cookie.get('sid'));
 var view = new ol.View({
     projection: 'EPSG:4326',
     center: [-5.9394, 6.1310],
@@ -165,26 +168,23 @@ $(document).ready(()=>{
     
     map_visiere.on('singleclick',expo);
 });
+
 function post(path,method='post',params,key) {
 
     const form = document.createElement('form');
     form.method = method;
     form.action = path;
-  
-    //for (const key in params) {
-      //if (params.hasOwnProperty(key)) {
-        const hiddenField = document.createElement('input');
-        hiddenField.type = 'checkbox';
-        hiddenField.name = key+params;
-        hiddenField.value = params;
-        hiddenField.checked=true;
-        form.appendChild(hiddenField);
-     // }
-    //}
+    const hiddenField = document.createElement('input');
+    hiddenField.type = 'checkbox';
+    hiddenField.name = key+params;
+    hiddenField.value = params;
+    hiddenField.checked=true;
+    form.appendChild(hiddenField);
     document.body.appendChild(form);
     form.submit();
-  }
+}
 
+let ids = document.getElementById('postData').getAttribute('post');
 function expo(evt){
     map_visiere.removeLayer(geojson2);
     style_contour_s = new ol.style.Style({
@@ -260,15 +260,15 @@ function choix(evt){
             }),
             text: new ol.style.Text({
                 font: 'bold 10px nunito',
-                text:feature.get('FORET'),
+                //text:feature.get('FORET'),
                 fill: new ol.style.Fill({
                     color: 'black'
                 })
             })
         });
-    post('/dashboard/00000',method='post',params=feature.get('FORET'),key='ugf_');
-    //feature.setStyle(style_foret)
-    
+    post(`/dashboard/00000/${ids}`,method='post',params=feature.get('FORET'),key='ugf_');
+    feature.setStyle(style_foret)
+    action_affichage()
     console.log(feature.get('FORET'));
 }
 
@@ -443,86 +443,143 @@ function choix2(){
 //url_x.onchange
 var resultat_recent = ''
 nom_donnees=[];
-setInterval(()=>{
-    
-    $.ajax({
-        url: `/elements/token`,
-        //dataType: "json",
-        success: function(data) {
-            var forets_cl = data;
-            console.log("donnee = "+forets_cl);
-            style_base = new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: 'rgba(37, 150, 190, 0.5)'
-                }),
-                
-                stroke: new ol.style.Stroke({
-                    color: 'black',
-                    width: 1
-                }),
-        
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({
-                        color: 'cyan'
-                    })
-                }),
-                text: new ol.style.Text({
-                    font: 'bold 15px serif',
-                    fill: new ol.style.Fill({
-                        color: 'yellow'
-                    })
-                })
-            });
-            
-            if (forets_cl !== resultat_recent) {
-                //nom_donnees.length=0;
-                /*$.ajax({
-                    url : '/elements/element',
-                    success :(data)=>{
-                        nom_donnees.push(data);
-                    }
-                });
-                expo2();*/
-                map.removeLayer(geojson);
-                document.getElementById('stats_stats').style.display='none';
-                geojson = new ol.layer.Vector({
-                    //title:`Parcelles de reboisement`,
-                    //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
-                    source: new ol.source.Vector({
-                        url: `/elements/elem`,
-                        format: new ol.format.GeoJSON()
-                    }),
-                    style: function (feature) {
-                        style_base.getText().setText(feature.get('numero'));
-                        return style_base;
-                      }
-                });
-                
-                map.addLayer(geojson);
-                //overlays.getLayers().push(geojson);
-                geojson.getSource().on('addfeature', function() {
-                    //alert(geojson.getSource().getExtent());
-                    map.getView().fit(
-                        geojson.getSource().getExtent(), {
-                            duration: 1590,
-                            size: map.getSize()
-                        }
-                    );
-                });
-                resultat_recent=forets_cl;
-                fen_requete_fermer();
-                clear_all();                    
-                attrs();
-                fen_requete();
-                
-            }
-            
-        }
-    })
-    
-},1000)
 
+//setInterval(()=>{
+function action_affichage(){
+    setTimeout(()=>{
+        style_base = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(37, 150, 190, 0.5)'
+        }),
+        
+        stroke: new ol.style.Stroke({
+            color: 'black',
+            width: 1
+        }),
+
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: 'cyan'
+            })
+        }),
+        text: new ol.style.Text({
+            font: 'bold 15px serif',
+            fill: new ol.style.Fill({
+                color: 'yellow'
+            })
+        })
+    });
+    
+    map.removeLayer(geojson);
+    
+    geojson = new ol.layer.Vector({
+        //title:`Parcelles de reboisement`,
+        //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
+        source: new ol.source.Vector({
+            url: `/json/fichier-${ids}.geojson`,
+            format: new ol.format.GeoJSON()
+        }),
+        style: function (feature) {
+            style_base.getText().setText(feature.get('numero'));
+            return style_base;
+            }
+    });
+    
+    map.addLayer(geojson);
+    //map.addOverlay(geojson);
+    //overlays.getLayers().push(geojson);
+    geojson.getSource().on('addfeature', function() {
+        //alert(geojson.getSource().getExtent());
+        map.getView().fit(
+            geojson.getSource().getExtent(), {
+                duration: 1590,
+                size: map.getSize()
+            }
+        );
+    });
+    fen_requete_fermer();
+    clear_all();                    
+    attrs();
+    //map.on('singleclick',highlight);
+    
+},3000)
+setTimeout(()=>{
+    stats()
+},3500) 
+}
+
+//},3000)
+
+function stats(){
+    document.getElementById('stats_stats').style.display='inline-block';
+    $(document).ready(()=>{
+        let donnees_stats = [];
+        $.ajax({
+            url:`/json/fichier-${ids}.geojson`,
+            success: (data)=>{
+                //donnees_stats.push(data.features.properties);
+                console.log(data);
+                let sup = 0;
+                let superf = 0;
+                let data_operateur = [];
+                let sup_operateur =[];           
+                for(let i=0;i<data.features.length;i++){
+                    sup+=data.features[i].properties['superficie'];
+                    superf = data.features[i].properties['superficie']
+                    donnees_stats.push(superf)
+                    
+                    if (data.features[i].properties['partenaire'] in data_operateur){
+                                console.log("ok");
+                        }
+                        else{
+                            data_operateur.push(data.features[i].properties['partenaire']);
+                        }
+                    
+                }
+                
+
+                console.log(data_operateur);
+                document.getElementById("sup_totale").innerHTML=(Math.round(sup * 100)/100).toFixed(2)+ ' ha';
+               //document.getElementById("sup_moyenne").innerHTML=(Math.round(sup/data.features.length * 100)/100).toFixed(2)+ ' ha';
+                document.getElementById("sup_min").innerHTML=(Math.round(Math.min(...donnees_stats) * 100)/100).toFixed(2)+ ' ha';       
+                document.getElementById("sup_max").innerHTML=(Math.round((Math.max(...donnees_stats)) * 100)/100).toFixed(2)+ ' ha';  
+                console.log(donnees_stats.sort())  
+                function uniqueFilter(value, index, self) {
+                    return self.indexOf(value) === index;
+                }         
+                let operateur = data_operateur.filter(uniqueFilter);
+                console.log(operateur); 
+                
+                for(let j=0;j<operateur.length;j++){
+                    let sup_op =0;
+                    for(let k=0;k<data.features.length;k++){
+                        if(data.features[k].properties['partenaire'] == operateur[j]){
+                            sup_op+=data.features[k].properties['superficie'];
+                        }
+                    
+                    }
+                    sup_operateur.push(sup_op);
+                }
+
+                /*for (operateurs in operateur){
+                    let ul = document.getElementById("nom_operateurs");
+                    let li = document.createElement('li');
+                    li.appendChild(document.createTextNode(`${operateur[operateurs]} ${(Math.round(sup_operateur[operateurs] * 100)/100).toFixed(2)} ha`));
+                    ul.appendChild(li);
+                }*/
+                document.getElementById("nom_operateurs").innerHTML=operateur[sup_operateur.indexOf(Math.max(...sup_operateur))];
+                document.getElementById("sup_operateurs").innerHTML=(Math.round(Math.max(...sup_operateur)* 100)/100).toFixed(2)+' ha';
+                //document.getElementById("nb_operateur").innerHTML=(Math.round(operateur.length * 100)/100);
+                document.getElementById("nb_parcelles").innerHTML=(Math.round(data.features.length * 100)/100);
+
+                console.log(sup_operateur);
+
+
+            }
+        })
+})
+};
 
 
 // Send a request
@@ -1017,7 +1074,6 @@ var highlightStyle = new ol.style.Style({
     })
 });
 
-// function for finding row in the table when feature selected on map
 function findRowNumber(cn1, v1) {
 
     var table = document.querySelector('#table');
@@ -1033,17 +1089,14 @@ function findRowNumber(cn1, v1) {
     return msg;
 }
 
-
-
-// function for loading query
-
 function query() {
-
-    var url = "/elements/elem";
+    
+    var url = `/json/fichier-${ids}.geojson`;
     setTimeout(()=>{
         $(document).ready(()=>{
             $.ajax({
                 url:url,
+                xhrFields: { withCredentials: true },
                 success : (data)=>{
                     if(data["features"]==null){
                         fen_requete_fermer();
@@ -1051,7 +1104,7 @@ function query() {
                         clear_all();                    
                         attrs();
                         fen_requete();
-                    }else{
+                    }else{                  
                         style_init = new ol.style.Style({
                             fill: new ol.style.Fill({
                                 color: 'rgba(37, 150, 190, 0.5)'
@@ -1075,40 +1128,24 @@ function query() {
                                 })
                             })
                         });
-                        geojson.setStyle(style_init);
-                        
+                        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
+                        map.removeLayer(geojson);
                         $(document).ready(()=>{
                             fen_requete_fermer();
-                            document.getElementById("stats_stats").style.display='none';
+
                             document.getElementById("fenetre_requete").style.display='none';
                             document.getElementById("table_data").style.display='none';
-                            //document.getElementById("particles-js").style.display='inline-block';
-                            //document.getElementById("fermer_stats").style.display='none';       
-                           // document.getElementById('cadre_frame').style.height='68%'; 
                         })
                         setTimeout(function(){
-                            //document.getElementById("particles-js").style.display='none';
                             document.getElementById("table_data").style.display='inline-block';
-                            //document.getElementById('cadre_stats').style.height='68%';
-                            
-                        
-                    
                         $('#table').empty();
-                        /*if (geojson) {
-                            map.removeLayer(geojson);
-                    
-                        }*/
                         if (selectedFeature) {
                             selectedFeature.setStyle();
                             selectedFeature = undefined;
                         }
                         if (vector1) {
                             vector1.getSource().clear();
-                            // $('#table').empty();
-                        }
-                    
-                        
-                        
+                        }  
                         let labelStyle = new ol.style.Style({
                             text: new ol.style.Text({
                                 font: 'bold 20px serif',
@@ -1142,7 +1179,7 @@ function query() {
                                 })
                             })
                         });
-                        geojson_select = new ol.layer.Vector({
+                        geojson= new ol.layer.Vector({
                             //title:'dfdfd',
                             //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
                             source: new ol.source.Vector({
@@ -1155,11 +1192,11 @@ function query() {
                               }
                         });
                         //geojson.setStyle(style);
-                    
-                        geojson_select.getSource().on('addfeature', function() {
+                        
+                        geojson.getSource().on('addfeature', function() {
                             //alert(geojson.getSource().getExtent());
                             map.getView().fit(
-                                geojson_select.getSource().getExtent(), {
+                                geojson.getSource().getExtent(), {
                                     duration: 1590,
                                     size: map.getSize()
                                 }
@@ -1167,7 +1204,7 @@ function query() {
                         });
                     
                         //overlays.getLayers().push(geojson_select);
-                        map.addLayer(geojson_select);
+                        map.addLayer(geojson);
                     
                         $.getJSON(url, function(data) {
                     
@@ -1276,19 +1313,21 @@ function query() {
                     
                         });
                         map.on('singleclick', highlight);
-                    },1500)
+                    },1000)
                     }
                 }
             })
         })
-    },1000);
-    
+    },3000);
+    setTimeout(()=>{
+        stats()
+    },3500)
 
     
 }
-// highlight the feature on map and table on map click
+
 function highlight(evt) {
-    if (geojson_select){
+    if (geojson){
         if (selectedFeature) {
             selectedFeature.setStyle();
             selectedFeature = undefined;
@@ -1298,6 +1337,8 @@ function highlight(evt) {
             function(feature, layer) {
                 return feature;
             });
+        
+        
     
         if (feature && feature.getProperties()["id"] != undefined) {
     
@@ -1426,19 +1467,6 @@ function addRowHandlers() {
 
 function valider1(){
     let gagnoa = document.getElementById("cg_gagnoa");
-    /*let nbCg = 10;
-    let centresDeGestion = ["Gagnoa","Daloa","Agboville"];
-    let jsons = [{"Gagnoa":["Tene","Sangoue","Laouda"]},"Daloa","Agboville"];
-    let unitesGestion = ["u1","u2","u3"];
-    for (leti=0;i<centresDeGestion.length;i++){
-        if(document.getElementById(`${centresDeGestion[i]}`).checked==true){
-            for (let j=0;j<jsons[0][centresDeGestion[i]].length;j++){
-                document.getElementById(unitesGestion[j]).innerHTML=jsons[0][centresDeGestion[j]];
-                document.getElementById(unitesGestion[j]).style.display="inline-bloc";
-                document.getElementById(unitesGestion[j]).setAttribute('class',jsons[0][centresDeGestion[j]]);
-            }
-        }
-    }*/
     if (gagnoa.checked===true){
         let ugfs=document.getElementById("frame_c_g2");
         //let ugfs=document.getElementById("ugf_tene");
@@ -1446,7 +1474,6 @@ function valider1(){
     }
 };
 
-//list of wms_layers_ in window on click of button
 
 function wms_layers() {
         
@@ -1457,28 +1484,19 @@ function wms_layers() {
         });
         $("#wms_layers_window").draggable();
         $("#wms_layers_window").modal('show');
-        
-        
-        //$("#frame_c_g").appendTo("#wms_layers_window");
-        //$('<tr></tr>').html('<th>Centre de gestion</th><th>U.G.F</th><th>Forêt</th>').appendTo('#table_wms_layers');
-
 
     });
 }
-// function on click of getinfo
+
 function info() {
     if (document.getElementById("info_btn").innerHTML == "☰ ACTIVER INFOS") {
         document.getElementById("info_btn").innerHTML = "☰ DESACTIVER INFOS";
         map.on('singleclick', getinfo);
         }
         else {
-
         map.un('singleclick', getinfo);
         document.getElementById("info_btn").innerHTML = "☰ ACTIVER INFOS";
         document.getElementById("info_btn").setAttribute("class","flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group");
-        //document.getElementById('fiche_parcellaire').style.display='none';
-        //document.getElementById('fiche_sylvicole').style.display='none';
-        //document.getElementById('stats').style.display='none';
         if (popup) {
             popup.hide();
         }
@@ -1488,14 +1506,7 @@ function info() {
 
 var
     container = document.getElementById('popup'),
-    //content_element = document.getElementById('popup-content'),
     closer = document.getElementById('popup-closer');
-
-/*closer.onclick = function() {
-    overlay.setPosition(undefined);
-    closer.blur();
-    return false;
-};*/
 var overlay = new ol.Overlay({
     element: container,
     autoPan: true,
@@ -1505,58 +1516,6 @@ map.addOverlay(overlay);
 
 var fullscreen = new ol.control.FullScreen();
 map.addControl(fullscreen);
-
-/*function getinfo(evt){
-
-    
-    let container = document.getElementById('popup');
-    let content_element = document.getElementById('popup-content');
-    let closer = document.getElementById('popup-closer');
-    var feature = map.forEachFeatureAtPixel(evt.pixel,
-      function(feature, layer) {
-        return feature;
-      });
-    if (feature) {
-        var geometry = feature.getGeometry();
-        var coord = geometry.getCoordinates();
-        
-        var content = '<h3>Bonjour</h3>';
-        //content += '<h5>' + feature.get('description') + '</h5>';
-        
-        //content_element.innerHTML = content;
-        //overlay.setPosition(coord);
-        popup.show(coord,content);
-        
-        console.log(feature.getProperties());
-    }
-};
-
-function getinfos (evt) {
-
-    // Hide existing popup and reset it's offset
-    //popup.hide();
-    //popup.setOffset([0, 0]);
-
-    // Attempt to find a feature in one of the visible vector layers
-    var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-        return feature;
-    });
-
-    if (feature) {
-
-        var coord = feature.getGeometry().getCoordinates();
-        var props = feature.getProperties();
-        var info = "<h2><a href='" + props["NUMERO"] + "'>"+ "</a></h2>";
-            //info += "<p>" + props.ESSENCE + "</p>";
-            //info += "<p>Status: " + props.NUMERO + " " + props.NUMERO + "</p>";
-        // Offset the popup so it points at the middle of the marker not the tip
-       //popup.setOffset([0, -22]);
-       overlay.setPosition(coordinates);
-        popup.show(coord, info);
-
-    }
-
-};*/
 
 function fermer_cadre(){
     document.getElementById("cadre_frame").style.display="none";
@@ -1576,28 +1535,8 @@ function imprimer_fiche_pr(){
     wspFrame.focus();
     wspFrame.print();
 }
-// getinfo function
+
 function getinfo(evt) {
-
-    //var coordinate = evt.coordinate;
-    //var viewResolution = /** @type {number}  (view.getResolution());
-/*
-
-    if (popup) {
-        popup.hide();
-    }
-    if (content) {
-        content = '';
-    }
-    if (document.getElementById('map').style.height == '68%'){
-        overlays.getLayers().getArray().slice().forEach(layer => {
-            var visibility = layer.getVisible();
-            console.log(visibility);
-
-
-
-           // if (visibility == true) {*/
-
     var feature = map.forEachFeatureAtPixel(evt.pixel,
     function(feature, layer) {
         return feature;
@@ -1606,319 +1545,64 @@ function getinfo(evt) {
 
         var geometry = feature.getGeometry();
         var coord = geometry.getCoordinates();
-        
-        //var content = '<h3>Bonjour</h3>';
-        //content += '<h5>' + feature.get('description') + '</h5>';
-        
-        //content_element.innerHTML = content;
-        //overlay.setPosition(coord);
-        //popup.show(coord,content);
-        
         console.log(feature.getProperties());
 
-                if (document.getElementById("framedis")){
-                    function effacer () {
-                        //var d = window.parent.document;
-                        var frame = document.getElementById('framedis');
-                        frame.style.display="none";
-                        var frame2 = document.getElementById('cadre_frame');
-                        frame2.style.display="none";
-                        //frame.parentNode.removeChild(frame);
-                        //e.preventDefault();
-                    }
-                    effacer()
-                }
-
-                //document.getElementById("framedis").style.top="8%";
-                //document.getElementById("framedis").style.height="92%";
-                //var layer_title = layer.get('title');
-                
-                //if (layer_title!=='gagnoa:Forets Gagnoa'&&layer_title!=='gagnoa:Centre de Gestion Gagnoa'){
-                
-                /*var wmsSource = new ol.source.ImageWMS({
-                    url: 'http://localhost:8080/geoserver/wms',
-                    params: {
-                        'LAYERS': layer_title
-                    },
-                    serverType: 'geoserver',
-                    crossOrigin: 'anonymous'
-                });
-                var url = wmsSource.getFeatureInfoUrl(
-                    evt.coordinate, viewResolution, 'EPSG:4326', {
-                        'INFO_FORMAT': 'text/html'
-                    });
-                var url1 = wmsSource.getFeatureInfoUrl(
-                    evt.coordinate, viewResolution, 'EPSG:4326', {
-                        'INFO_FORMAT': 'application/json'
-                    });*/
-    
-                //assuming you use jquery
-                /*$.get(url, function(data) {
-    
-                    // $("#popup-content").append(data);
-                    //document.getElementById('popup-content').innerHTML = '<p>Feature Info</p><code>' + data + '</code>';
-                    content += data;
-                    // overlay.setPosition(coordinate);
-                    popup.show(evt.coordinate, content);
-                    //console.log(data.features[0].properties);
-                    //document.getElementById('fiche_parcellaire').style.display='inline-block';
-                    //document.getElementById('fiche_sylvicole').style.display='inline-block';
-    
-    
-                });*/
-                /*$.get('js/fichier.geojson', function(data) {
-                    
-                    document.cookie = `ide =${data.features[0].properties.numero};expires = Fri, 11 oct 2024 12:30 UTC; path=/`;
-                    let mot = "ide=";
-                    let tab = document.cookie.split(";");
-                    let id_id;
-                    for (let i=0;i<tab.length;i++){
-                        let c = tab[i];
-                        while (c.charAt("0")==' '){
-                            c = c.substring(1,c.length);
-                        }
-                        if (c.indexOf(mot)==0){
-                            id_id = c.substring(mot.length,c.length);
-                        }
-                    }
-                    document.querySelector('#fiche_parcellaire').addEventListener('click', function () {
-                        let cadre = document.getElementById('cadre_frame');
-                        cadre.style.display='inline-block';
-                        cadre.style.top="8%";
-                        cadre.style.height="89%";
-                        let cadre2 = document.getElementById('framedis');
-                        cadre2.style.display='inline-block';
-                        cadre2.style.top='1.5%';
-                        let printit = document.getElementById('imprimer');
-                        printit.style.display= "inline-block";
-                        let close = document.getElementById('fermer');
-                        close.style.display= "inline-block";
-                    });
-                
-                    // $("#popup-content").append(data);*/
-                    //document.getElementById('popup-content').innerHTML = '<p>Feature Info</p><code>' + data + '</code>';
-                    //data = document.getElementById('table11');
-                    /*content+= `<table id='table_popup' style=""><tr><th>Numero</th><th>Densite</th><th>Longitude</th><th>Latitude</th></tr><tr><td>${feature.get('NUMERO')}</td><td>${feature.get('DENSITE')}</td>\n
-                    <td>${feature.get('LONGITUDE')}</td><td>${feature.get('LATITUDE')}</td></tr></table>`;*/
-                    /*content = '<h5>' + feature.get('NUMERO') + '</h5>';
-                    content += '<h5>' + feature.get('NUMERO') + '</h5>';
-                    content += '<h5>' + feature.get('NUMERO') + '</h5>';
-                    content += '<h5>' + feature.get('NUMERO') + '</h5>';
-                    content += '<h5>' + feature.get('NUMERO') + '</h5>';*/
-                    // overlay.setPosition(coordinate);
-                    content=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table><br>`;
-                    content+=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table>`;
-                    content+=`<table style="border-radius:2px;width:100%;background-color:#2157a2;color:white;"><tr><th ><div>Parcelle ${feature.get('numero')}</div></th></tr></table>`;
-                    content+=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table>`;
-                    content+=`<table style="width:100%;"><tr><th style="color:green;">Forêt</th><td style="text-align: left;color=black;">${feature.get('nom')}</td></tr>
-                    
-                    <tr display:table-row;><th style="color:green;">Longitude</th><td style="text-align: left;display:table-cell; color=black;">${feature.get('longitude')}</td></tr>
-                    
-                    <tr><th><div></div></th><th><div></div></th></tr>
-                    
-                    <tr display:table-row;><th style="color:green;">Latitude</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('latitude')}</td></tr>
-                    <tr><th><div></div></th><th><div></div></th></tr>
-                    
-                    <tr display:table-row;><th style="color:green;">Essence</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('essence')}</td></tr>
-                    <tr><th><div></div></th><th><div></div></th></tr>
-                    
-                    <tr display:table-row;><th style="color:green;">Densite</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('densite')} Pied/ha</td></tr>
-                    <tr><th><div></div></th><th><div></div></th></tr>
-                    
-                    <tr display:table-row;><th style="color:green;">Superficie</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('superficie')} ha</td></tr>
-                    <tr><th><div></div></th><th><div></div></th></tr>
-                    
-                    <tr display:table-row;><th style="color:green;">Partenaire</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('partenaire')}</td></tr>
-                    
-                    </table>`;
-                    console.log(coord);
-                    console.log(content);
-                    popup.show(evt.coordinate, content);
-
-                    document.cookie = `ide =${feature.get('numero')};expires = Fri, 10 oct 2025 12:30 UTC; path=/`;
-                    let mot = "ide=";
-                    let tab = document.cookie.split(";");
-                    let id_id;
-                    for (let i=0;i<tab.length;i++){
-                        let c = tab[i];
-                        while (c.charAt("0")==' '){
-                            c = c.substring(1,c.length);
-                        }
-                        if (c.indexOf(mot)==0){
-                            id_id = c.substring(mot.length,c.length);
-                        }
-                    }
-                    console.log(id_id);
-                    
-                }}
-
-                    /*console.log(data.features[0].properties);
-                    console.log(data.features[0].properties.num);
-                    console.log(data.features[0].properties.numéro);
-                    console.log(id);
-                    let dn = donnees_fictives.json;
-                    console.log(dn);
-                    dn = JSON.stringify(dn);
-                    let informations=[];
-                    for (let i = 0; i<dn.length;i++){
-                        let element = dn[i];
-                        if (element["Parcelle"]==id){
-                            informations.push(element);
-                        }
-                        console.log(element);
-                        console.log(informations);
-                    }
-                    let notreTable = document.getElementById("table1");
-
-                    for (let j=0;j<informations.length;j++){
-                        notreTable.innerHTML+=`<tr id="ligne${j}"></tr>`
-                        let notreLigne = document.getElementById(`ligne${j}`);
-                        for(let i=4;i<informations[0].length;i++){
-                            notreLigne.innerHTML += `<td>${i}</td>`;
-                        }
-                    }*/
-
-                 /*   document.getElementById('fiche_parcellaire').style.display='inline-block';
-                    document.getElementById('fiche_sylvicole').style.display='inline-block';
-                    //document.getElementById('stats').style.display='inline-block';
-
-                
-    
-    
-                });
+        if (document.getElementById("framedis")){
+            function effacer () {
+                var frame = document.getElementById('framedis');
+                frame.style.display="none";
+                var frame2 = document.getElementById('cadre_frame');
+                frame2.style.display="none";
             }
-                
-            }
-    
+            effacer()
         }
-    );
+    content=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table><br>`;
+    content+=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table>`;
+    content+=`<table style="border-radius:2px;width:100%;background-color:#2157a2;color:white;"><tr><th ><div>Parcelle ${feature.get('numero')}</div></th></tr></table>`;
+    content+=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table>`;
+    content+=`<table style="width:100%;"><tr><th style="color:green;">Forêt</th><td style="text-align: left;color=black;">${feature.get('nom')}</td></tr>
     
-    }else{
-        overlays.getLayers().getArray().slice().forEach(layer => {
-            var visibility = layer.getVisible();
-            console.log(visibility);
-            if (visibility == true) {
-                if (document.getElementById("framedis")){
-                    function effacer () {
-                        //var d = window.parent.document;
-                        var frame = document.getElementById('framedis');
-                        frame.style.display="none";
-                        var frame2 = document.getElementById('cadre_frame');
-                        frame2.style.display="none";
-                        //frame.parentNode.removeChild(frame);
-                        //e.preventDefault();
-                    }
-                    console.log(layer_title);
-                    effacer()
-                }
-                var layer_title = layer.get('title');
-
-                if (layer_title!=='gagnoa:Forets Gagnoa'&&layer_title!=='gagnoa:Centre de Gestion Gagnoa'){
-
-                    var wmsSource = new ol.source.Vector({
-                    url: 'js/fichier.geojson',
-
-                });
-                var url = wmsSource.getFeatureInfoUrl(
-                    evt.coordinate, viewResolution, 'EPSG:4326', {
-                        'INFO_FORMAT': 'text/html'
-                    });
-                var url1 = wmsSource.getFeatureInfoUrl(
-                    evt.coordinate, viewResolution, 'EPSG:4326', {
-                        'INFO_FORMAT': 'application/json'
-                    });
+    <tr display:table-row;><th style="color:green;">Longitude</th><td style="text-align: left;display:table-cell; color=black;">${feature.get('longitude')}</td></tr>
     
-                //assuming you use jquery
-                $.get('js/fichier.geojson', function(data) {
-
-                    
-                    //$("#popup-content").append(data);
-                    // $("#popup-content").append(data);
-                    //document.getElementById('popup-content').innerHTML = '<p>Feature Info</p><code>' + data + '</code>';
-                    content += data;
-                    // overlay.setPosition(coordinate);
-                    popup.show(evt.coordinate, data);
-                
-                    //console.log(data.features[0].properties);
-                    //document.getElementById('fiche_parcellaire').style.display='inline-block';
-                    //document.getElementById('fiche_sylvicole').style.display='inline-block';
+    <tr><th><div></div></th><th><div></div></th></tr>
     
+    <tr display:table-row;><th style="color:green;">Latitude</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('latitude')}</td></tr>
+    <tr><th><div></div></th><th><div></div></th></tr>
     
-                });
-                $.get('js/fichier.geojson', function(data) {
-                        
-                    $("#popup-content").append(data);
-                    //document.getElementById('popup-content').innerHTML = '<p>Feature Info</p><code>' + data + '</code>';
-                    content += JSON.stringify(data.features[0].properties);
-
-                    //overlays.setPosition(coordinate);
-                    popup.show(evt.coordinate, content);
-                    console.log(data.features[0].properties);
-                    console.log(data);
-                    console.log(data.features[0].properties.X+data.features[0].properties.Y)
-
-                    id = data.features[0].properties.numéro;
-                    console.log(id);
-
-                    //console.log(dn);
-                    //dn = JSON.stringify(dn);
-                    
-                    document.cookie = `ide =${data.features[0].properties.numéro};expires = Fri, 11 oct 2024 12:30 UTC; path=/`;
-                    let mot = "ide=";
-                    let tab = document.cookie.split(";");
-                    let id_id;
-                    for (let i=0;i<tab.length;i++){
-                        let c = tab[i];
-                        while (c.charAt("0")==' '){
-                            c = c.substring(1,c.length);
-                        }
-                        if (c.indexOf(mot)==0){
-                            id_id = c.substring(mot.length,c.length);
-                        }
-                    }
-                    console.log(id_id);
-
-
-                    //console.log(document.cookie);
-                    //document.getElementById('fiche_parcellaire').style.display='inline-block';
-                    //document.getElementById('fiche_sylvicole').style.display='inline-block';
-                    //document.getElementById('stats').style.display='inline-block';
-                });
-                }
-
-                
-            }else{document.getElementsByClassName('fiche_parcelle').style.display='none';}
-        });
-    }
-}*/
-
-/*document.querySelector("#fiche_parcellaire").addEventListener('click',function(){
+    <tr display:table-row;><th style="color:green;">Essence</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('essence')}</td></tr>
+    <tr><th><div></div></th><th><div></div></th></tr>
     
-    let informations=[];
-                    
-    for (let i = 0; i<dn.length;i++){
-        let element = dn[i];
-        if (element["Parcelle"]==id){
-            informations.push(element);
+    <tr display:table-row;><th style="color:green;">Densite</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('densite')} Pied/ha</td></tr>
+    <tr><th><div></div></th><th><div></div></th></tr>
+    
+    <tr display:table-row;><th style="color:green;">Superficie</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('superficie')} ha</td></tr>
+    <tr><th><div></div></th><th><div></div></th></tr>
+    
+    <tr display:table-row;><th style="color:green;">Partenaire</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('partenaire')}</td></tr>
+    
+    </table>`;
+    console.log(coord);
+    console.log(content);
+    popup.show(evt.coordinate, content);
+
+    document.cookie = `ide =${feature.get('numero')};expires = Fri, 10 oct 2025 12:30 UTC; path=/`;
+    let mot = "ide=";
+    let tab = document.cookie.split(";");
+    let id_id;
+    for (let i=0;i<tab.length;i++){
+        let c = tab[i];
+        while (c.charAt("0")==' '){
+            c = c.substring(1,c.length);
+        }
+        if (c.indexOf(mot)==0){
+            id_id = c.substring(mot.length,c.length);
         }
     }
-    console.log(informations);
-    
-    let notreTable = document.getElementById("table1");
-    let parce = document.querySelector("#parcelle"); 
-    
-    for (let j=0;j<2;j++){
-        parce.innerHTML=id;
-        let notreLigne = document.getElementById(`ligne${j}`);
-        for(let i=4;i<2;i++){
-            notreLigne.innerHTML += `<td>${i}</td>`;
-        }
+    console.log(id_id);                
     }
-});*/
+}
 
-// clear function
 function clear_all() {
-   
     document.getElementById('map').style.height = '100%';
     document.getElementById('map').style.width = '83.33%';
     document.getElementById('map').style.left = '16.66%';
@@ -1949,56 +1633,7 @@ function clear_all() {
     });
     
     map.updateSize();
-    $('#table').empty();
-    $('#legend').empty();
-    if (geojson) {
-        geojson_select.getSource().clear();
-        map.removeLayer(geojson_select);
-        geojson.getSource().clear();
-        map.removeLayer(geojson);
-        geojson = new ol.layer.Vector({
-            title:`Parcelles de reboisement`,
-            //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
-            source: new ol.source.Vector({
-                url: `/json/fichier.geojson`,
-                format: new ol.format.GeoJSON()
-            }),
-            style: function (feature) {
-                style_base.getText().setText(feature.get('numero'));
-                return style_base;
-              }
-        });
-        
-        map.addLayer(geojson);
-        //overlays.getLayers().push(geojson);
-        geojson.getSource().on('addfeature', function() {
-            //alert(geojson.getSource().getExtent());
-            map.getView().fit(
-                geojson.getSource().getExtent(), {
-                    duration: 1590,
-                    size: map.getSize()
-                }
-            );
-        });
-    }
-    
-
-    if (selectedFeature) {
-        selectedFeature.setStyle(style_b());
-        selectedFeature = undefined;
-    }
-    if (popup) {
-        popup.hide();
-    }
-    /*map.getView().fit([-5.9428, 6.1288, -5.9363, 6.1336], {
-        duration: 1590,
-        size: map.getSize()
-    });*/
-
-
-    //document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
-   // document.getElementById("query_panel_btn").setAttribute("class", "btn btn-success btn-sm");
-
+    $('#table').empty();  
     document.getElementById("query_tab").style.width = "0%";
     document.getElementById("map").style.width = "100%";
     document.getElementById("map").style.left = "0%";
@@ -2006,205 +1641,58 @@ function clear_all() {
     document.getElementById('table_data').style.left = '0%';
 
     //document.getElementById("legend_btn").innerHTML = "☰ VOIR LEGENDE";
-    document.getElementById("legend").style.width = "0%";
-    document.getElementById("legend").style.visibility = "hidden";
-    document.getElementById('legend').style.height = '0%';
-
-    map.un('singleclick', getinfo);
-    map.un('singleclick', highlight);
     //document.getElementById("info_btn").innerHTML = "☰ ACTIVER INFOS";
     //document.getElementById("info_btn").setAttribute("class", "btn btn-success btn-sm");
     map.updateSize();
+}
 
+function posted_init() {
 
-
-    /*overlays.getLayers().getArray().slice().forEach(layer => {
-
-        overlays.getLayers().remove(layer);
-
-    });
-
-    layerSwitcher.renderPanel();
-
-    if (draw) {
-        map.removeInteraction(draw)
-    };
-    if (vectorLayer) {
-        vectorLayer.getSource().clear();
-    }
-    map.removeOverlay(helpTooltip);
-
-    if (measureTooltipElement) {
-        var elem = document.getElementsByClassName("tooltip tooltip-static");
-        //$('#measure_tool').empty(); 
-
-        //alert(elem.length);
-        for (var i = elem.length - 1; i >= 0; i--) {
-
-            elem[i].remove();
-            //alert(elem[i].innerHTML);
-        }
-    }*/
-
-
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = `/page/init/${ids}`;
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function effacer_tout() {
-    if (vector1) {
-        vector1.getSource().clear();
-        map.removeLayer(geojson);
-    }
-    if (draw1) {
-        map.removeInteraction(draw1);
-    }
-    document.getElementById('map').style.height = '100%';
-    document.getElementById('table_data').style.height = '0%';
-    document.getElementById('table_data').style.display = 'none';
-    document.getElementById('table').style.display = 'none';
-    document.getElementById('barre_menu').style.height = '6%';
-    document.getElementById('logo').style.height = '5%';
-    document.getElementById('fenetre_requete').style.display = 'none';
-    map.updateSize();
-    $('#table').empty();
-    $('#legend').empty();
-    if (geojson) {
-        geojson.getSource().clear();
-        map.removeLayer(geojson);
-    }
-    if (selectedFeature) {
-        selectedFeature.setStyle();
-        selectedFeature = undefined;
-    }
-    if (popup) {
-        popup.hide();
-    }
-    map.getView().fit([-5.9428, 6.1288, -5.9363, 6.1336], {
-        duration: 1590,
-        size: map.getSize()
-    });
-    document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
-    document.getElementById("query_panel_btn").setAttribute("class", "btn btn-success btn-sm");
-    document.getElementById("query_tab").style.width = "0%";
-    document.getElementById("map").style.width = "100%";
-    document.getElementById("map").style.left = "0%";
-    document.getElementById("query_tab").style.visibility = "hidden";
-    document.getElementById('table_data').style.left = '0%';
-    document.getElementById("legend_btn").innerHTML = "☰ VOIR LEGENDE";
-    document.getElementById("legend").style.width = "0%";
-    document.getElementById("legend").style.visibility = "hidden";
-    document.getElementById('legend').style.height = '0%';
-    map.un('singleclick', getinfo);
-    map.un('singleclick', highlight);
-    document.getElementById("info_btn").innerHTML = "☰ ACTIVER INFOS";
-    document.getElementById("info_btn").setAttribute("class", "btn btn-success btn-sm");
-    map.updateSize();
-    overlays.getLayers().getArray().slice().forEach(layer => {
-        overlays.getLayers().remove(layer);
-    });
-    layerSwitcher.renderPanel();
-    if (draw) {
-        map.removeInteraction(draw)
-    };
-    if (vectorLayer) {
-        vectorLayer.getSource().clear();
-    }
-    map.removeOverlay(helpTooltip);
-    if (measureTooltipElement) {
-        var elem = document.getElementsByClassName("tooltip tooltip-static");
-        //$('#measure_tool').empty(); 
+    //posted_init();
+    posted();
+    action_affichage();
+}
 
-        //alert(elem.length);
-        for (var i = elem.length - 1; i >= 0; i--) {
-            elem[i].remove();
-            //alert(elem[i].innerHTML);
-        }
-    }
+function posted() {
+
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = `/dashboard/00000/${ids}`;
+    const el = document.createElement('input');
+    el.type = 'checkbox';
+    el.name = document.getElementById('tene').name;
+    el.value = document.getElementById('tene').value;
+    form.appendChild(el);
+    const il = document.createElement('input');
+    il.type = 'checkbox';
+    il.name = document.getElementById('sangoue').name;
+    il.value = document.getElementById('sangoue').value;
+    form.appendChild(il);
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function show_hide_querypanel() {
-    fen_requete()
-
-    /*if (document.getElementById("fenetre_requete").style.visibility == "hidden") {
-
-        document.getElementById("query_panel_btn").innerHTML = "☰ FERMER PANNEAU";
-        document.getElementById("query_panel_btn").setAttribute("class", "btn btn-primary btn-sm");
-        document.getElementById("fenetre_requete").style.visibility = "visible";
-        //document.getElementById("query_tab").style.width = "21%";
-        document.getElementById("map").style.width = "79%";
-        document.getElementById("map").style.left = "21%";
-
-        document.getElementById('table_data').style.left = '21%';
-        map.updateSize();
-    } else {
-        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
-        document.getElementById("query_panel_btn").setAttribute("class", "btn btn-success btn-sm");
-        document.getElementById("query_tab").style.width = "0%";
-        document.getElementById("map").style.width = "100%";
-        document.getElementById("map").style.left = "0%";
-        document.getElementById("query_tab").style.visibility = "hidden";
-        document.getElementById('table_data').style.left = '0%';
-
-        map.updateSize();
-    }*/
-}
-
-function show_hide_legend() {
-
-    if (document.getElementById("legend").style.visibility == "hidden") {
-
-        document.getElementById("legend_btn").innerHTML = "☰ FERMER LEGENDE";
-		document.getElementById("legend_btn").setAttribute("class", "btn btn-primary btn-sm");
-
-        document.getElementById("legend").style.visibility = "visible";
-        document.getElementById("legend").style.width = "15%";
-
-        document.getElementById('legend').style.height = '38%';
-        map.updateSize();
-    } else {
-	    document.getElementById("legend_btn").setAttribute("class", "btn btn-success btn-sm");
-        document.getElementById("legend_btn").innerHTML = "☰ LEGENDE";
-        document.getElementById("legend").style.width = "0%";
-        document.getElementById("legend").style.visibility = "hidden";
-        document.getElementById('legend').style.height = '0%';
-
-        map.updateSize();
-    }
-}
-
-
-
-draw_type.onchange = function() {
-
-    map.removeInteraction(draw1);
-
-    if (draw) {
-        map.removeInteraction(draw);
-        map.removeOverlay(helpTooltip);
-        map.removeOverlay(measureTooltip);
-    }
-    if (vectorLayer) {
-        vectorLayer.getSource().clear();
-    }
-    if (vector1) {
-        vector1.getSource().clear();
-		// $('#table').empty();
-    }
-	
-
-    if (measureTooltipElement) {
-        var elem = document.getElementsByClassName("tooltip tooltip-static");
-        //$('#measure_tool').empty(); 
-
-        //alert(elem.length);
-        for (var i = elem.length - 1; i >= 0; i--) {
-
-            elem[i].remove();
-            //alert(elem[i].innerHTML);
+    
+    if (document.getElementById("query_panel_btn").innerHTML == "☰ REQUETES") {
+        document.getElementById("query_panel_btn").innerHTML = "☰ FERMER REQUETES";
+        fen_requete()
         }
+        else {
+        //posted();
+        //action_affichage();
+        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
     }
 
-    add_draw_Interaction();
-};
+}
 
 
 var source1 = new ol.source.Vector({
