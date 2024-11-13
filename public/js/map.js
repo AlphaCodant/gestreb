@@ -1376,7 +1376,7 @@ function highlight(evt) {
                     //alert(col_no);
                 }
             }
-            var row_no = findRowNumber(col_no, feature.get()["id"]);
+            var row_no = findRowNumber(col_no, feature.getProperties()["id"]);
             //alert(row_no);
     
             var rows = document.querySelectorAll('#table tr');
