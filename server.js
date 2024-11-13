@@ -156,6 +156,9 @@ app.get('/stats',(req,res)=>{
 app.get('/fiche',(req,res)=>{
     res.render('table');
 });
+app.get('/devis',(req,res)=>{
+    res.render('tableau');
+});
 app.get('/statistiques',(req,res)=>{
     res.render('ch_stats');
 });
