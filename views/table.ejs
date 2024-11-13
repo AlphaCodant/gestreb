@@ -164,20 +164,17 @@ let donnee_get =[];
 let jsonCugf =[];
 $(document).ready(function() {  
     $.ajax({
-        url: `/`,
+        url: `/data`,
         dataType: "json",
         success: function(json) {
             jsonCugf.push(json);
             console.log(json[2]);
-            
 
             setTimeout(function (){
-
               let entetes = ["donnees_tableau/date_activite","donnees_tableau/travail","donnees_tableau/sous_traitance/cout1",
 "donnees_tableau/sous_traitance/surface1","donnees_tableau/sous_traitance/montant","donnees_tableau/regie/surface2",
 "donnees_tableau/regie/homme_jour/qte1","donnees_tableau/regie/homme_jour/cout1_001","donnees_tableau/regie/homme_engins/qte1_001",
 "donnees_tableau/regie/homme_engins/cout1_002","donnees_tableau/total/surface3","donnees_tableau/total/cout3","donnees_tableau/obs"]
-			
 			let c_g = document.getElementById("cg");
 			let for_et = document.getElementById("foret");
 			let parce = document.getElementById("parcelle");
@@ -315,7 +312,7 @@ $(document).ready(function() {
     })
     
     });
-    console.log(jsonCugf);
+    //console.log(jsonCugf);
     const { jsPDF } = window.jspdf;
     
     document.getElementById('generatePdfButton').addEventListener('click', function () {

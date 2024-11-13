@@ -1,5 +1,8 @@
-//const { delimiter } = require("ejs");
-
+const loader = document.getElementById('loader');
+loader.style.display = 'inline-block';
+setTimeout(()=>{
+    loader.style.display = 'none';
+},5000);
 var map,map_visiere, geojson, featureOverlay, overlays,overlays_visiere, style;
 var selected, features, layer_name, layerControl;
 var content;
@@ -446,7 +449,12 @@ nom_donnees=[];
 
 //setInterval(()=>{
 function action_affichage(){
+    // script.js
+    const loader = document.getElementById('loader');
+    loader.style.display = 'inline-block';
     setTimeout(()=>{
+        loader.style.display = 'none';
+        //content.classList.add('loaded'); 
         style_base = new ol.style.Style({
         fill: new ol.style.Fill({
             color: 'rgba(37, 150, 190, 0.5)'
@@ -860,7 +868,7 @@ $(function () {
         var value_type = $(this).val();
         var value_attribute = $('#attributes option:selected').text();
         operator.options[0] = new Option('Select operateur', "");
-        if (value_type == 'superficie' || value_type == 'longitude' || value_type == 'latitude'){
+        if (value_type == 'superficie' || value_type == 'annee' || value_type == 'longitude' || value_type == 'latitude'){
             var operator1 = document.getElementById("operator");
             operator1.options[1] = new Option('Superieur', '>');
             operator1.options[2] = new Option('Inferieur', '<');
@@ -887,7 +895,7 @@ $(function () {
         var value_type2 = $(this).val();
         var value_attribute2 = $('#attributes2 option:selected').text();
         operator2.options[0] = new Option('Select operateur', "");
-        if (value_type2 == 'superficie' || value_type2 == 'longitude' || value_type2 == 'latitude'){
+        if (value_type2 == 'superficie' || value_type2 == 'annee' || value_type2 == 'longitude' || value_type2 == 'latitude'){
             var operator2 = document.getElementById("operator2");
             operator2.options[1] = new Option('Superieur', '>');
             operator2.options[2] = new Option('Inferieur', '<');
@@ -914,7 +922,7 @@ $(function () {
         var value_type3 = $(this).val();
         var value_attribute3 = $('#attributes3 option:selected').text();
         operator3.options[0] = new Option('Select operator', "");
-        if (value_type3 == 'superficie' || value_type3 == 'longitude' || value_type3 == 'latitude'){
+        if (value_type3 == 'superficie' || value_type3 == 'annee' || value_type3 == 'longitude' || value_type3 == 'latitude'){
             var operator3 = document.getElementById("operator3");
             operator3.options[1] = new Option('Superieur', '>');
             operator3.options[2] = new Option('Inferieur', '<');
@@ -941,7 +949,7 @@ $(function () {
         var value_type4 = $(this).val();
         var value_attribute4 = $('#attributes4 option:selected').text();
         operator4.options[0] = new Option('Select operator', "");
-        if (value_type4 == 'superficie' || value_type4 == 'longitude' || value_type4 == 'latitude'){
+        if (value_type4 == 'superficie' || value_type4 == 'annee' || value_type4 == 'longitude' || value_type4 == 'latitude'){
             var operator4 = document.getElementById("operator4");
             operator4.options[1] = new Option('Superieur', '>');
             operator4.options[2] = new Option('Inferieur', '<');
@@ -967,7 +975,7 @@ $(function () {
         var value_type5 = $(this).val();
         var value_attribute5 = $('#attributes5 option:selected').text();
         operator5.options[0] = new Option('Select operator', "");
-        if (value_type5 == 'superficie' || value_type5 == 'longitude' || value_type5 == 'latitude'){
+        if (value_type5 == 'superficie' || value_type5 == 'annee' || value_type5 == 'longitude' || value_type5 == 'latitude'){
             var operator5 = document.getElementById("operator5");
             operator5.options[1] = new Option('Superieur', '>');
             operator5.options[2] = new Option('Inferieur', '<');
@@ -1090,7 +1098,8 @@ function findRowNumber(cn1, v1) {
 }
 
 function query() {
-    
+    const loader = document.getElementById('loader');
+    loader.style.display = 'inline-block';
     var url = `/json/fichier-${ids}.geojson`;
     setTimeout(()=>{
         $(document).ready(()=>{
@@ -1099,12 +1108,17 @@ function query() {
                 xhrFields: { withCredentials: true },
                 success : (data)=>{
                     if(data["features"]==null){
+                        loader.style.display = 'none';
+                        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
                         fen_requete_fermer();
                         alert("Aucune information trouvée !");
                         clear_all();                    
                         attrs();
                         fen_requete();
-                    }else{                  
+                        
+                    }else{    
+                        loader.style.display = 'none';   
+                        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";           
                         style_init = new ol.style.Style({
                             fill: new ol.style.Fill({
                                 color: 'rgba(37, 150, 190, 0.5)'
@@ -1337,15 +1351,10 @@ function highlight(evt) {
             function(feature, layer) {
                 return feature;
             });
-        
-        
-    
+
         if (feature && feature.getProperties()["id"] != undefined) {
-    
-    
             var geometry = feature.getGeometry();
             var coord = evt.coordinate;
-    
             $(function() {
                 $("#table td").each(function() {
                     $(this).parent("tr").css("background-color", "white");
@@ -1367,7 +1376,7 @@ function highlight(evt) {
                     //alert(col_no);
                 }
             }
-            var row_no = findRowNumber(col_no, feature.getProperties()["id"]);
+            var row_no = findRowNumber(col_no, feature.get()["id"]);
             //alert(row_no);
     
             var rows = document.querySelectorAll('#table tr');
@@ -1560,19 +1569,19 @@ function getinfo(evt) {
     content+=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table>`;
     content+=`<table style="border-radius:2px;width:100%;background-color:#2157a2;color:white;"><tr><th ><div>Parcelle ${feature.get('numero')}</div></th></tr></table>`;
     content+=`<table style="width:100%;"><tr><th><div></div></th><th><div></div></th></tr></table>`;
-    content+=`<table style="width:100%;"><tr><th style="color:green;">Forêt</th><td style="text-align: left;color=black;">${feature.get('nom')}</td></tr>
+    content+=`<table style="width:100%;"><tr><th style="color:green;">Forêt</th><td style="text-align: left;color=black;">${feature.get('foret')}</td></tr>
     
-    <tr display:table-row;><th style="color:green;">Longitude</th><td style="text-align: left;display:table-cell; color=black;">${feature.get('longitude')}</td></tr>
+    <tr display:table-row;><th style="color:green;">Longitude</th><td style="text-align: left;display:table-cell; color=black;">${feature.get('x')}</td></tr>
     
     <tr><th><div></div></th><th><div></div></th></tr>
     
-    <tr display:table-row;><th style="color:green;">Latitude</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('latitude')}</td></tr>
+    <tr display:table-row;><th style="color:green;">Latitude</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('y')}</td></tr>
     <tr><th><div></div></th><th><div></div></th></tr>
     
     <tr display:table-row;><th style="color:green;">Essence</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('essence')}</td></tr>
     <tr><th><div></div></th><th><div></div></th></tr>
     
-    <tr display:table-row;><th style="color:green;">Densite</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('densite')} Pied/ha</td></tr>
+    <tr display:table-row;><th style="color:green;">Densite</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('densité')} Pied/ha</td></tr>
     <tr><th><div></div></th><th><div></div></th></tr>
     
     <tr display:table-row;><th style="color:green;">Superficie</th><td style="text-align: left;display:table-cell;color=black;">${feature.get('superficie')} ha</td></tr>

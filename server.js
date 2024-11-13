@@ -36,6 +36,7 @@ app.set('view engine','ejs')
 app.use(cors({
     origin:'*'
 }));
+app.use(flash());
 app.use(
     session({
       name : 'sid',
@@ -46,7 +47,13 @@ app.use(
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  //app.use(flash());
+
+  app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+  });
   
 
 //Connexion à la base de donnée postgreSql
@@ -142,9 +149,13 @@ app.set('view engine','ejs');
 
 
 app.get('/',(req,res)=>{
+    res.redirect('/dashboard');
+});
+
+app.get('/data',(req,res)=>{
     res.json(control[0]);
     control=[];
-    console.log()
+    console.log();
 });
 
 app.get('/dashboard',(req,res)=>{
@@ -156,11 +167,18 @@ app.get('/stats',(req,res)=>{
 app.get('/fiche',(req,res)=>{
     res.render('table');
 });
+
 app.get('/devis',(req,res)=>{
     res.render('tableau');
 });
-app.get('/statistiques',(req,res)=>{
-    res.render('ch_stats');
+
+app.get('/statistiques/:id',authenticateToken,(req,res)=>{
+    const {tokenY} = req.user;
+    res.render('ch_stats',{id:tokenY});
+});
+app.get('/statistiques',authenticateToken,(req,res)=>{
+    const {tokenY} = req.user;
+    res.redirect(`/statistiques/${tokenY}`);
 });
 
 app.get('/connexion',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
@@ -201,6 +219,42 @@ app.get('/valid/:tokenGen',(req,res)=>{
 app.post('/reinit',(req,res)=>{
     result.length=0;
     res.redirect('/page');
+});
+
+app.post("/rejet/:tokenGen",(req,res)=>{
+    let aleaToken = req.params.tokenGen;
+    console.log(aleaToken);
+    client.query(
+        `SELECT * FROM utilisateur
+        WHERE token like '${aleaToken}'`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                //-----------------------------------------
+                var transporteur = nodemailer.createTransport({
+                    service : "gmail",
+                    auth:{
+                        user :"alphacodant@gmail.com",
+                        pass :"khwr jbvk vstt nyhe"
+                    }
+                });
+                var mailOptions={
+                    from :"alphacodant@gmail.com",
+                    to :results.rows[0].email ,
+                    subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
+                    text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive a été rejétée. Veuillez vous rapprocher de la Direction du Centre de Gestion pour plus d'informations.`
+                };
+                transporteur.sendMail(mailOptions,(err,response)=>{
+                    if(err){
+                        console.log("Erreur d'envoi du mail "+err);
+                    }else{
+                        console.log("Mail envoyé avec succès !");
+                        res.redirect('/connexion');
+                    };
+                });
+          };
+        });
 });
 
 app.post("/validation/:tokenGen",(req,res)=>{
@@ -245,7 +299,7 @@ app.post("/validation/:tokenGen",(req,res)=>{
                                     service : "gmail",
                                     auth:{
                                         user :"alphacodant@gmail.com",
-                                        pass :process.env.PWD
+                                        pass :"khwr jbvk vstt nyhe"
                                     }
                                 });
                                 var mailOptions={
@@ -259,7 +313,7 @@ app.post("/validation/:tokenGen",(req,res)=>{
                                         console.log("Erreur d'envoi du mail "+err);
                                     }else{
                                         console.log("Mail envoyé avec succès !");
-                                        res.redirect('connexion');
+                                        res.redirect('/connexion');
                                     };
                                 });
                                 
@@ -285,7 +339,7 @@ app.post("/validation/:tokenGen",(req,res)=>{
     
 });
 
-app.post("/inscription",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
+app.post("/inscription",(req,res)=>{
     console.log(donnee_connect[donnee_connect.length-1])
     let { prenom, nom,email,contact,mat,ugf, mp, rp_mp } = req.body;
     
@@ -298,6 +352,10 @@ app.post("/inscription",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(re
     if (!nom ||!prenom || !email ||!contact || !mp || !rp_mp) {
         errors.push({ message: "Veillez entrer une valeur" });
     }
+
+    if (ugf.value =='') {
+        errors.push({ message: "Vous devez choisir une UGF" });
+    }
     
     if (mp.length < 8) {
         errors.push({ message: "Le mot de pass doit avoir au moins 8 charactères" });
@@ -307,8 +365,10 @@ app.post("/inscription",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(re
         errors.push({ message: "Les mots de pass ne sont pas concordants" });
     }
     if (errors.length > 0) {
-        res.render("inscription", { errors, nom,prenom, email,contact, mp, rp_mp });
+        req.flash("error",errors);
+        res.redirect("/inscription");
     } else {
+        
         bcrypt.hash(mp,10,(err,hash)=>{
             if(err){
                 console.log(err);
@@ -346,12 +406,12 @@ app.post("/inscription",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(re
                             service : "gmail",
                             auth:{
                                 user :"alphacodant@gmail.com",
-                                pass :process.env.PWD
+                                pass :"khwr jbvk vstt nyhe"
                             }
                         });
                         var mailOptions={
                             from :"alphacodant@gmail.com",
-                            to :"djobianicethugue@gmail.com" ,
+                            to :"alphacodant@gmail.com" ,
                             subject : `Demande d'autorisation d'accès à la l'Application WebSig de ${nom} ${prenom}`,
                             text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n http://localhost:${port}/valid/`+tokenGen
                         };
@@ -367,7 +427,8 @@ app.post("/inscription",securedConnect.ensureLoggedOut({redirectTo:'/page'}),(re
                      
                     console.log(results.rows);
                     console.log("Succès Vous avez validé l'accès");
-                    res.redirect("/connexion");
+                    req.flash("success","Votre inscription a été prise en compte et est en cours de traitement. vous recevrez un e-mail incessament.");
+                    res.redirect("/inscription");
                     }
                     }
                 );
@@ -531,7 +592,8 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             clause4='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
             ${clause3} ${attributes4} ${operator4} ${value4} ${clause4} ${attributes5} ${operator5} ${value5}) AS t`,
@@ -586,7 +648,8 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             clause3='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
             ${clause3} ${attributes4} ${operator4} ${value4}) AS t`,
@@ -630,7 +693,8 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             clause2='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3}) AS t`,
                 (err,results)=>{
@@ -663,7 +727,8 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             clause='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2}) AS t`,
                 (err,results)=>{
@@ -684,7 +749,8 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             value=value;
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value}) AS t`,
                 (err,results)=>{
@@ -791,7 +857,8 @@ app.post('/dashboard/00000/:id',authenticateToken,(req,res)=>{
 
     console.log(ddf);
     client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,a.numero,a.essence,a.superficie,a.partenaire,b.nom,a.latitude,a.longitude,a.densite,ST_Transform(geom, 4326)
+        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}) AS t`,
                 (err,results)=>{
                 if(!err){

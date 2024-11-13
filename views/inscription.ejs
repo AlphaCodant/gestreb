@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <link href="css/tailStyle.css" rel="stylesheet" />
         <link href="css/style_perso.css" rel="stylesheet" />
@@ -65,23 +65,24 @@
                 </div>
                 </aside>
                 <!--<div id="particles-js"></div>-->
-                <div id="insc" class="sm:ml-64 font-[sans-serif] bg-gradient-to-r from-green-100 via-blue-100 to-green-200 items-center justify-center">
-                <div class="flex flex-col justify-center items-center font-[sans-serif] bg-gradient-to-r from-green-200 via-blue-200 to-blue-300 lg:h-screen">
-                    <div class="z-50 grid md:grid-cols-2 items-center gap-y-8 bg-zinc-300/70 max-w-7xl w-5/6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md overflow-hidden">
+                <div id="insc" class="sm:ml-64 font-[sans-serif] bg-black items-center justify-center">
+                <div class="flex flex-col justify-center items-center font-[sans-serif] bg-black border-r-white lg:h-screen">
+                    <div class="z-50 grid md:grid-cols-2 items-center gap-y-8 border border-r-white max-w-7xl w-5/6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md overflow-hidden">
                       <div class="max-md:order-1 flex flex-col justify-center sm:p-8 p-4 bg-green-600/50 w-full h-full">
                         <div class="max-w-md space-y-12 mx-auto">
-                          <!--<div>
-                            <h4 class="text-white text-lg font-semibold">Créer un compte</h4>
-                            <p class="text-[13px] text-white mt-2">Bienvenu sur la page d'inscription.</p>
-                          </div>
+                          <% if(error&&error.length>0){ %>
+                            <% for(let i=0;i<error.length;i++){ %>
                           <div>
-                            <h4 class="text-white text-lg font-semibold">Inscription simple et sécurisée</h4>
-                            <p class="text-[13px] text-white mt-2"></p>
+                                <p class="text-[18px] text-red-500 mt-2"><%= i+1 + " - "+ error[i].message%></p>
                           </div>
-                          <div>
-                            <h4 class="text-white text-lg font-semibold">Agrément aux conditions et termes d'utilisation nécessaire</h4>
-                            <p class="text-[13px] text-white mt-2"></p>
-                          </div>-->
+                            <%}%>
+                          <%} else { %>
+
+                            <div>
+                              <p class="text-[18px] text-white mt-2"><%= success %></p>
+                            </div>
+
+                          <%}%>
                         </div>
                       </div>
               
@@ -92,36 +93,41 @@
               
                         <div class="grid lg:grid-cols-2 gap-6">
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Prénom (s)</label>
-                            <input name="prenom" type="text" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre (vos) prénom (s)" />
+                            <label class="text-white text-sm mb-2 block">Prénom (s)</label>
+                            <input name="prenom" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre (vos) prénom (s)" />
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Nom</label>
-                            <input name="nom" type="text" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre nom" />
+                            <label class="text-white text-sm mb-2 block">Nom</label>
+                            <input name="nom" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre nom" />
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Email</label>
-                            <input name="email" type="text" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre e-mail" />
+                            <label class="text-white text-sm mb-2 block">Email</label>
+                            <input name="email" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre e-mail" />
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Contact</label>
-                            <input name="contact" type="text" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre contact" />
+                            <label class="text-white text-sm mb-2 block">Contact</label>
+                            <input name="contact" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre contact" />
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Matricule</label>
-                            <input name="mat" type="text" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre e-mail" />
+                            <label class="text-white text-sm mb-2 block">Matricule</label>
+                            <input name="mat" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre e-mail" />
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">U.G.F</label>
-                            <input name="ugf" type="text" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre contact" />
+                            <label class="text-white text-sm mb-2 block">U.G.F</label>
+                            <select name="ugf" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre contact">
+                              <option>Sélectionne UGF</option>
+                              <option value="tene">UGF Téné</option>
+                              <option value="sangoue">UGF Sangoué</option>
+                            </select>
+                            <!--<input name="ugf" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre contact" />-->
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Mot de pass</label>
-                            <input name="mp" type="password" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre mot de pass" />
+                            <label class="text-white text-sm mb-2 block">Mot de pass</label>
+                            <input name="mp" type="password" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre mot de pass" />
                           </div>
                           <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Confirmer mot de pass</label>
-                            <input name="rp_mp" type="password" class="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Confirmer votre mot de pass" />
+                            <label class="text-white text-sm mb-2 block">Confirmer mot de pass</label>
+                            <input name="rp_mp" type="password" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Confirmer votre mot de pass" />
                           </div>
                         
               
