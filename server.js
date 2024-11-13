@@ -720,7 +720,7 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
         }else{
             value2=value2;
         }
-        let clause1 = 'AND';
+        let clause = 'AND';
         if (attributes==attributes2){
             clause='OR';
         }else{
@@ -730,7 +730,7 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
         FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
         a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
-        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2}) AS t`,
+        and ${attributes} ${operator} ${value} ${clause} ${attributes2} ${operator2} ${value2}) AS t`,
                 (err,results)=>{
                 if(!err){
                     console.log(results.rows[0].donnee)
