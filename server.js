@@ -1,5 +1,5 @@
 //Port
-const port = 3001;
+const port = normalizePort(process.env.PORT || '3000');
 
 //Importation de modules NPM
 
