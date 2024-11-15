@@ -222,7 +222,7 @@ function expo(evt){
             format: new ol.format.GeoJSON()
         }),
         style: function (feature){
-            style_contour_s.getText().setText(feature.get('FORET'));
+            style_contour_s.getText().setText(feature.getProperties('FORET'));
             style_contour_s.getFill().setColor('green');
             return style_contour_s;
         }
