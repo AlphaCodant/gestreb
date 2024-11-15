@@ -1,5 +1,5 @@
 //Port
-const port = 3000;
+const port = 3001;
 
 //Importation de modules NPM
 
@@ -152,7 +152,7 @@ app.get('/',(req,res)=>{
     res.redirect('/dashboard');
 });
 
-app.get('/data',(req,res)=>{
+app.get('/data',authenticateToken,(req,res)=>{
     res.json(control[0]);
     control=[];
     console.log();
@@ -161,15 +161,20 @@ app.get('/data',(req,res)=>{
 app.get('/dashboard',(req,res)=>{
     res.render('page_accueil');
 });
-app.get('/stats',(req,res)=>{
+app.get('/stats',authenticateToken,(req,res)=>{
     res.render('stats');
 });
-app.get('/fiche',(req,res)=>{
+app.get('/fiche',authenticateToken,(req,res)=>{
     res.render('table');
 });
 
-app.get('/devis',(req,res)=>{
-    res.render('tableau');
+app.get('/devis/:id',authenticateToken,(req,res)=>{
+    const {tokenY} = req.user;
+    res.render('tableau',{id:tokenY});
+});
+app.get('/devis',authenticateToken,(req,res)=>{
+    const {tokenY} = req.user;
+    res.redirect(`/devis/${tokenY}`);
 });
 
 app.get('/statistiques/:id',authenticateToken,(req,res)=>{
@@ -413,7 +418,7 @@ app.post("/inscription",(req,res)=>{
                             from :"alphacodant@gmail.com",
                             to :"alphacodant@gmail.com" ,
                             subject : `Demande d'autorisation d'accès à la l'Application WebSig de ${nom} ${prenom}`,
-                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://ci-sodefor-gagnoa-1.onrender.com/valid/`+tokenGen
+                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n http://localhost:${port}/valid/`+tokenGen
                         };
                         transporteur.sendMail(mailOptions,(err,response)=>{
                             if(err){
@@ -720,17 +725,17 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
         }else{
             value2=value2;
         }
-        let clause = 'AND';
+        let clause1 = 'AND';
         if (attributes==attributes2){
-            clause='OR';
+            clause1='OR';
         }else{
-            clause='AND';
+            clause1='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
         FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
         a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
-        and ${attributes} ${operator} ${value} ${clause} ${attributes2} ${operator2} ${value2}) AS t`,
+        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2}) AS t`,
                 (err,results)=>{
                 if(!err){
                     console.log(results.rows[0].donnee)
