@@ -16,9 +16,14 @@ let dn;
 //console.log(cookie.get('sid'));
 var view = new ol.View({
     projection: 'EPSG:4326',
-    center: [-5.9394, 6.1310],
-    zoom: 9,
+    center: [-5.5294, 7.5610],
+    zoom: 7.5,
 
+});
+var view_ov = new ol.View({
+    projection: 'EPSG:4326',
+    center: [-5.5294, 7.5610],
+    zoom: 7.5,
 });
 var view_visiere = new ol.View({
     projection: 'EPSG:4326',
@@ -26,11 +31,7 @@ var view_visiere = new ol.View({
     zoom: 7,
 
 });
-var view_ov = new ol.View({
-    projection: 'EPSG:4326',
-    center: [-5.9394, 6.1310],
-    zoom: 9,
-});
+
 
 
 var base_maps = new ol.layer.Group({
@@ -89,7 +90,6 @@ let iterateur = [];
 $(document).ready(()=>{
 
     //Fonction d'envoie de formulaire
-
     
 
     style_contour_tene = new ol.style.Style({
@@ -270,13 +270,86 @@ function choix(evt){
             })
         });
     post(`/dashboard/00000/${ids}`,method='post',params=feature.get('FORET'),key='ugf_');
-    feature.setStyle(style_foret)
+    //feature.setStyle(style_foret)
     action_affichage()
     console.log(feature.get('FORET'));
 }
 
 
 $(document).ready(()=>{
+
+    style_contour_ci = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(236, 230, 217, 0.2)'
+        }),
+        
+        stroke: new ol.style.Stroke({
+            color: 'black',
+            width: 0.5
+        }),
+
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: 'cyan'
+            })
+        }),
+        text: new ol.style.Text({
+            font: 'bold 12px nunito',
+            text:'CI',
+            fill: new ol.style.Fill({
+                color: 'White'
+            })
+        })
+    });
+    geojso = new ol.layer.Vector({
+        title:`Contour CI`,
+        //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
+        source: new ol.source.Vector({
+            url: `/json/contour_ci.geojson`,
+            format: new ol.format.GeoJSON()
+        }),
+        style: style_contour_ci
+    });
+
+    //console.log(forets_cl[i]);
+    overlays.getLayers().push(geojso);
+
+    style_contour_js = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'green'
+        }),
+        
+        stroke: new ol.style.Stroke({
+            color: 'black',
+            width: 1
+        }),
+
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: 'cyan'
+            })
+        }),
+        text: new ol.style.Text({
+            font: 'bold 10px nunito',
+            text:'CG Gagnoa',
+            fill: new ol.style.Fill({
+                color: 'white'
+            })
+        })
+    });
+    geojs = new ol.layer.Vector({
+        title:`Contour Centre de Gestion`,
+        //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
+        source: new ol.source.Vector({
+            url: `/json/gagnoa_limite.geojson`,
+            format: new ol.format.GeoJSON()
+        }),
+        style: style_contour_js
+    });
+    overlays.getLayers().push(geojs);
+
     style_contour_tene = new ol.style.Style({
         fill: new ol.style.Fill({
             color: 'rgba(236, 230, 217, 0.2)'
@@ -508,7 +581,7 @@ function action_affichage(){
     });
     fen_requete_fermer();
     clear_all();                    
-    attrs();
+    //attrs();
     //map.on('singleclick',highlight);
     
 },3000)
@@ -1100,6 +1173,7 @@ function findRowNumber(cn1, v1) {
 function query() {
     const loader = document.getElementById('loader');
     loader.style.display = 'inline-block';
+    
     var url = `/json/fichier-${ids}.geojson`;
     setTimeout(()=>{
         $(document).ready(()=>{
@@ -1151,6 +1225,8 @@ function query() {
                             document.getElementById("table_data").style.display='none';
                         })
                         setTimeout(function(){
+                            const lgd = document.getElementById('legendes');
+                            lgd.style.top='30%';
                             document.getElementById("table_data").style.display='inline-block';
                         $('#table').empty();
                         if (selectedFeature) {
@@ -1381,16 +1457,16 @@ function highlight(evt) {
     
             var rows = document.querySelectorAll('#table tr');
     
-            rows[row_no].scrollIntoView({
+            /*rows[row_no].scrollIntoView({
                 behavior: 'smooth',
                 block: 'center'
-            });
+            });*/
     
             $(document).ready(function() {
                 $("#table td:nth-child(" + col_no + ")").each(function() {
     
                     if ($(this).text() == feature.getProperties()["id"]) {
-                        $(this).parent("tr").css("background-color", "#2157a2");
+                        $(this).parent("tr").css("background-color", "cyan");
     
                     }
                 });
@@ -1444,7 +1520,7 @@ function addRowHandlers() {
                 $(document).ready(function() {
                     $("#table td:nth-child(" + col_no + ")").each(function() {
                         if ($(this).text() == id) {
-                            $(this).parent("tr").css("background-color", "#2157a2");
+                            $(this).parent("tr").css("background-color", "cyan");
                         }
                     });
                 })
@@ -1617,6 +1693,8 @@ function clear_all() {
     document.getElementById('map').style.left = '16.66%';
     document.getElementById('table_data').style.height = '0%';
     document.getElementById('table').style.height = '0%';
+    const lgd = document.getElementById('legendes');
+    lgd.style.top='65%';
     style_base = new ol.style.Style({
         fill: new ol.style.Fill({
             color: 'rgba(37, 150, 190, 0.5)'
@@ -1643,7 +1721,7 @@ function clear_all() {
     
     map.updateSize();
     $('#table').empty();  
-    document.getElementById("query_tab").style.width = "0%";
+    //document.getElementById("query_tab").style.width = "0%";
     document.getElementById("map").style.width = "100%";
     document.getElementById("map").style.left = "0%";
     //document.getElementById("query_tab").style.visibility = "hidden";
