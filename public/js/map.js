@@ -222,7 +222,7 @@ function expo(evt){
             format: new ol.format.GeoJSON()
         }),
         style: function (feature){
-            style_contour_s.getText().setText(feature.getProperties('FORET'));
+            style_contour_s.getText().setText(feature.get('FORET'));
             style_contour_s.getFill().setColor('green');
             return style_contour_s;
         }
@@ -239,7 +239,7 @@ function expo(evt){
 
 function choix(evt){
     
-    var feature = map_visiere.forEachFeatureAtPixel(evt.pixel,
+    let feature = map_visiere.forEachFeatureAtPixel(evt.pixel,
         function(feature, layer) {
             return feature;
             
@@ -269,7 +269,7 @@ function choix(evt){
                 })
             })
         });
-    post(`/dashboard/00000/${ids}`,method='post',params=feature.getProperties()('FORET'),key='ugf_');
+    post(`/dashboard/00000/${ids}`,method='post',params=feature.get('FORET'),key='ugf_');
     //feature.setStyle(style_foret)
     action_affichage()
     console.log(feature.get('FORET'));
