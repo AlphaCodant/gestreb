@@ -8,14 +8,14 @@ let dn;
 
 var view = new ol.View({
     projection: 'EPSG:4326',
-    center: [-5.9394, 6.1310],
-    zoom: 9,
+    center: [-5.5294, 7.5610],
+    zoom: 7.5,
 
 });
 var view_ov = new ol.View({
     projection: 'EPSG:4326',
-    center: [-5.9394, 6.1310],
-    zoom: 9,
+    center: [-5.5294, 7.5610],
+    zoom: 7.5,
 });
 
 
@@ -52,6 +52,41 @@ var OSM = new ol.layer.Tile({
 let iterateur = [];
 
 $(document).ready(()=>{
+    style_contour_ci = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(236, 230, 217, 0.2)'
+        }),
+        
+        stroke: new ol.style.Stroke({
+            color: 'black',
+            width: 0.5
+        }),
+
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: 'cyan'
+            })
+        }),
+        text: new ol.style.Text({
+            font: 'bold 15px nunito',
+            text:'CI',
+            fill: new ol.style.Fill({
+                color: 'black'
+            })
+        })
+    });
+    geojso = new ol.layer.Vector({
+        title:`Contour CI`,
+        //title: '<h5>' + value_crop+' '+ value_param +' '+ value_seas+' '+value_level+'</h5>',
+        source: new ol.source.Vector({
+            url: `/json/contour_ci.geojson`,
+            format: new ol.format.GeoJSON()
+        }),
+        style: style_contour_ci
+    });
+    //console.log(forets_cl[i]);
+    overlays.getLayers().push(geojso);
     style_contour_tene = new ol.style.Style({
         fill: new ol.style.Fill({
             color: 'rgba(236, 230, 217, 0.2)'
