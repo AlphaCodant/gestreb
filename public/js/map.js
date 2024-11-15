@@ -269,7 +269,7 @@ function choix(evt){
                 })
             })
         });
-    post(`/dashboard/00000/${ids}`,method='post',params=feature.get('FORET'),key='ugf_');
+    post(`/dashboard/00000/${ids}`,method='post',params=feature.properties['FORET'],key='ugf_');
     //feature.setStyle(style_foret)
     action_affichage()
     console.log(feature.get('FORET'));
