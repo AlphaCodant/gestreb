@@ -60,7 +60,8 @@ body{
     /* for Safari */
     position: sticky;
     top: 0px;
-    background-color: #676d67;
+    color:white;
+    background-color: black;
 }
 #map {
     position: absolute;
@@ -129,7 +130,7 @@ body{
     position: fixed;
     top: 0;
     left: 16.33%;
-    width: 83.34%;
+    width: 84%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.9); /* Fond semi-transparent */
     display: flex;
@@ -163,5 +164,26 @@ body{
     left :45%;
     width: 200px; 
 }
+.loader3 {
+    position: fixed;
+    top: 0;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1); /* Fond semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+}
 
+.loader3 img {
+    position: absolute;
+    top :50%;
+    left :50%;
+    width: 200px; 
+}
+#legendes{
+    z-index: 1000;
+}
 
