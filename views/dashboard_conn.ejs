@@ -42,7 +42,8 @@
           <div class="flex items-center">
               <div class="flex items-center ms-3">
                 <div>
-                  <button onclick="stats()" type="button" id="stats" class="flex items-center mr-24 p-2 font-bold text-white rounded-lg bg-black hover:bg-zinc-500  group">RESUME</button>
+                  <a href="/devis/<%= id %>" target="_blank" class ="flex items-center mr-24 p-2 font-bold text-white rounded-lg bg-black hover:bg-zinc-500  group">DEVIS</a>
+                  <!--<button onclick="stats()" type="button" id="stats" class="flex items-center mr-24 p-2 font-bold text-white rounded-lg bg-black hover:bg-zinc-500  group">DEVIS</button>-->
               </div>
                 <div>
                   <button onclick="wms_layers()" type="button" id="wms_layers_btn" class="flex items-center mr-16 p-2 font-bold text-black rounded-lg bg-zinc-200 hover:bg-zinc-500  group">☰ BASE DE DONNEES</button>
@@ -189,6 +190,30 @@
   <div id="loader" class="loader">
     <img src="/img/loader.gif" alt="Loading...">
   </div>
+  <div id="legendes" style="position: absolute; display:inline-block; height:30%;width:12%;background-color: white;top :65%;left:87%;border-radius: 3%;">
+    <div id="titre-legende" style="position: relative; justify-items: center; text-align: center;padding-top: 3%;">
+      <p id="text-titre" style="font-size:20px; font-family: sans-serif; ">Légende</p>
+    </div>
+    <div id="elmt-lgd" style="position: relative;  text-align: left;padding: 10%;">
+      <ul>
+        <li style="margin-top: 10%;">
+          <img style="display: inline-block;" src="
+          https://mapmarker.io/api/v3/font-awesome/v6/icon-stack?size=25&icon=fa-solid%20fa-minus&iconsize=35&color=000001&on=fa-solid%20fa-map&oncolor=FAFAFB&hoffset=0&voffset=0">
+          &nbsp;&nbsp;Contour CG
+        </li>
+        <li style="margin-top: 10%;">
+          <img style="display: inline-block;" src="
+          https://mapmarker.io/api/v3/font-awesome/v6/icon-stack?size=25&icon=fa-solid%20fa-minus&iconsize=35&color=98F5F9&on=fa-solid%20fa-map&oncolor=98F5F9&hoffset=0&voffset=0">
+          &nbsp;&nbsp;Parcelles de rbmt
+        </li>
+        <li style="margin-top: 10%;">
+          <img style="display: inline-block;" src="
+          https://mapmarker.io/api/v3/font-awesome/v6/icon-stack?size=25&icon=fa-solid%20fa-minus&iconsize=35&color=0E08AF&on=fa-solid%20fa-map&oncolor=0E08AF&hoffset=0&voffset=0">
+          &nbsp;&nbsp;Parcelles filtrés
+        </li>
+      </ul>
+    </div>
+  </div>
     <div id="map" style="height:100%;">
       <div id="cadre_frame" style="left:3% ;width:50%;height:100%;border:1px solid #a6a6a8; display:none;position: absolute; top: 0%; background-color: #ffffff; ">
         <!--<button id="imprimer" style="display: inline-block;" onclick="imprimer_fiche_pr()">Imprimer/Enregistrer</button>-->
@@ -196,6 +221,7 @@
         <iframe name="display-frame" id="framedis"
         style="width:100%;height:92%;border:none; z-index: 80;position: relative; top: 2%; display: inline-block;">
         </iframe>
+        
     </div> 
         
       <div class="modal fade" id="wms_layers_window" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -266,6 +292,7 @@
             </div>
         </div>
         </div>
+        
     </div>
           <div id="postData" post="<%= id %>"></div>
           <div id="fenetre_requete" title="Requete">
