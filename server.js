@@ -64,10 +64,9 @@ const client = new Client({
     port: process.env.DB_PORT,
     password:process.env.DB_PWD,    
     database:process.env.DB_NAME,
-    /*ssl: {
-        rejectUnauthorized: false,
-        ca: fs.readFileSync('eu-north-1-bundle.pem').toString()
-      }*/
+    ssl: {
+        rejectUnauthorized: true
+      }
 });
 client.connect();
 // Se connecter à une deuxième base de donnees
