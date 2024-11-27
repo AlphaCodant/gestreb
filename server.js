@@ -63,7 +63,8 @@ const client = new Client({
     user:process.env.DB_USER,
     port: process.env.DB_PORT,
     password:process.env.DB_PWD,    
-    database:process.env.DB_NAME    
+    database:process.env.DB_NAME,
+    ssl:true
 });
 client.connect();
 // Se connecter à une deuxième base de donnees
