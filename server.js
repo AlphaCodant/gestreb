@@ -197,7 +197,8 @@ let donnee_connect=[]
 app.get(`/page/:id`,authenticateToken,(req,res)=>{
     result.length=0;
     const {tokenY} = req.user;
-    res.render('dashboard_conn',{id:tokenY});
+    const {ugf} = req.user;
+    res.render('dashboard_conn',{id:tokenY,ugf:ugf});
     
 });
 
@@ -462,7 +463,7 @@ app.post("/connexion",async (req,res)=>{
     if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
 
     // Créer un JWT
-    const accessToken = jwt.sign({ tokenY: user.token, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
+    const accessToken = jwt.sign({ tokenY: user.token, email: user.email,ugf: user.ugf }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
     // Stocker le token dans les cookies
     res.cookie('token', accessToken, { httpOnly: true });
