@@ -242,16 +242,20 @@
                       <h3>UNITES DE GESTION FORESTIERES</h3>
                     </div>
                     <div class="flex columns-3">
-                      <div class="gap-10">
+                      <div id="labels-forets" class="hidden gap-10">
                         <!--<div>
                           <label id="tous_ugf">TOUT AFFICHER</label>
                         </div>-->
-                        <div>
+                        
+                        <div id="tene-label" class="hidden" >
                           <label id="ugf_tene">U.G.F Tene</label>
                         </div>
-                        <div>
+                        <div id="sangoue-label" class="hidden" >
                           <label id="ugf_sangoue">U.G.F Sangoue</label>
                         </div>
+
+                        
+
                         <!--<div>
                           <label id="ugf_laouda">U.G.F Laouda</label>
                         </div>
@@ -262,16 +266,18 @@
                           <label id="ugf_okromodou_sud">U.G.F Okromodou Sud</label>
                         </div>-->
                       </div>
-                      <div class="ml-10 items-center gap-10 pl-8">
+                      <div id="checkbox-forets"  class="hidden ml-10 items-center gap-10 pl-8">
                           <!--<div>
                             <input name="tout_ugf" value="sangoue,tene" type="checkbox">
                           </div>-->
-                          <div>
+                          <div id="tene" class="hidden">
                             <input id="tene" name="ugf_tene" value="tene"  type="checkbox">
                           </div>
-                          <div>
+                          <div id="sangoue" class="hidden">
                             <input id="sangoue" name="ugf_sangoue" value="sangoue"  type="checkbox">
                           </div>
+
+                          <div id="aff_ugf" post="<%= ugf %>"></div>
                           <!--<div>
                             <input name="tout_ugf" value="sangoue,tene" type="checkbox">
                           </div>
@@ -416,5 +422,26 @@
     <!--<script src="/js/stats.js"></script>-->
     <script src="/js/particules.js"></script>
     <script src="/js/print.js"></script>
+    <script>
+      let ugf = document.getElementById('aff_ugf').getAttribute('post');
+      //let aff = document.getElementById(ugf).setAttribute('class','inline-block');
+      let groupe_label = document.getElementById('labels-forets');
+      let groupe_checkbox = document.getElementById('checkbox-forets');
+      //let aff_label = document.getElementById(ugf+'-label').setAttribute('class','inline-block');
+      if (ugf=='dt' || ugf=='cg_gag'){
+          groupe_label.setAttribute('class','inline-block gap-10');
+          document.getElementById('tene').setAttribute('class','inline-block');
+          groupe_checkbox.setAttribute('class','inline-block ml-10 items-center gap-10 pl-8');
+          document.getElementById('tene-label').setAttribute('class','inline-block');
+          document.getElementById('sangoue').setAttribute('class','inline-block');
+          document.getElementById('sangoue-label').setAttribute('class','inline-block');
+      }else{
+        groupe_label.setAttribute('class','inline-block gap-10');
+        groupe_checkbox.setAttribute('class','inline-block ml-10 items-center gap-10 pl-8');
+        document.getElementById(ugf+'-label').setAttribute('class','inline-block');
+        document.getElementById(ugf).setAttribute('class','inline-block');
+      }
+
+    </script>
   </body>
 </html>
