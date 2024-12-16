@@ -1615,6 +1615,10 @@ function fermer_cadre(){
     document.getElementById('stats').setAttribute('class','"flex items-center mr-16 p-2 font-bold text-black rounded-lg bg-white hover:bg-zinc-500  group"');
 
 }
+function fermer_cadre2(){
+    document.getElementById("cadre_frame").style.display="none";
+}
+
 function imprimer_fiche_pr(){
     let wspFrame = document.getElementById('framedis').contentWindow;
     wspFrame.focus();
