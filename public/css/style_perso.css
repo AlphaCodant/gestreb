@@ -116,6 +116,27 @@ body{
     border-radius: 10px;
 }
 
+#imprimer2 {
+    position: absolute;
+    z-index: 500;
+    top: 3%;
+    left: 2%;
+    color: rgb(0, 0, 0);
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 10px;
+}
+#fermer2 {
+    position: absolute;
+    z-index: 500;
+    top: 3%;
+    right:7%;
+    color: rgb(0, 0, 0);
+    background-color: rgb(174, 10, 10);
+    border:none;
+    border-radius: 10px;
+}
+
 #fermer_stats {
     position: absolute;
     z-index: 500;
