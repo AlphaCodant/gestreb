@@ -1616,7 +1616,7 @@ function fermer_cadre(){
 
 }
 function fermer_cadre2(){
-    document.getElementById("cadre_frame").style.display="none";
+    document.getElementById("cadre_frame2").style.display="none";
 }
 
 function imprimer_fiche_pr(){
