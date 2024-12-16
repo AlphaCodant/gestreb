@@ -296,10 +296,21 @@ $(document).ready(function() {
 
           let tableau = document.getElementById(`ligne_table${l}`);
           for (let k = 0; k<13;k++){
-            if (element[entetes[k]]==undefined){
+            if (element[entetes[k]]==undefined || element[entetes[k]]==""){
               tableau.innerHTML += `<td></td>`
             }else{
-              tableau.innerHTML += `<td>${element[entetes[k]]}</td>`
+              if (entetes[k]=="donnees_tableau/sous_traitance/montant" || entetes[k]=="donnees_tableau/sous_traitance/cout1" 
+              || entetes[k]=="donnees_tableau/regie/homme_jour/cout1_001" ||entetes[k]=="donnees_tableau/regie/homme_engins/cout1_002"
+              || entetes[k]=="donnees_tableau/total/cout3" ){
+                const amount = element[entetes[k]];
+                const options1 = { style: 'currency', currency: 'XOF' };
+                const numberFormat1 = new Intl.NumberFormat('XOF', options1);
+                tableau.innerHTML += `<td>${numberFormat1.format(amount)}</td>`
+
+              }else{
+                tableau.innerHTML += `<td>${element[entetes[k]]}</td>`
+              }
+              
             }
             
           }
