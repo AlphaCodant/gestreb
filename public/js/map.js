@@ -1621,6 +1621,12 @@ function imprimer_fiche_pr(){
     wspFrame.print();
 }
 
+function imprimer_fiche_pr2(){
+    let wspFrame = document.getElementById('framedis2').contentWindow;
+    wspFrame.focus();
+    wspFrame.print();
+}
+
 function getinfo(evt) {
     var feature = map.forEachFeatureAtPixel(evt.pixel,
     function(feature, layer) {
