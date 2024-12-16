@@ -165,6 +165,10 @@ app.get('/fiche',authenticateToken,(req,res)=>{
     res.render('table');
 });
 
+app.get('/fiche2',authenticateToken,(req,res)=>{
+    res.render('tableau');
+});
+
 app.get('/devis/:id',authenticateToken,(req,res)=>{
     const {tokenY} = req.user;
     res.render('tableau',{id:tokenY});
