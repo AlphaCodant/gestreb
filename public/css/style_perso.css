@@ -148,10 +148,10 @@ body{
     border-radius: 10px;
 }
 .loader {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 16.33%;
-    width: 84%;
+    width: 83.7%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.9); /* Fond semi-transparent */
     display: flex;
@@ -161,16 +161,16 @@ body{
 }
 
 .loader img {
-    position: absolute;
-    top :45%;
-    left :45%;
+    position: relative;
+    top :40%;
+    left :42%;
     width: 200px; 
 }
 .loader2 {
     position: fixed;
     top: 0;
     left: 16.33%;
-    width: 83.34%;
+    width: 83.7%;
     height: 100%;
     background-color: rgba(0, 0, 0, 1); /* Fond semi-transparent */
     display: flex;
@@ -180,14 +180,14 @@ body{
 }
 
 .loader2 img {
-    position: absolute;
-    top :45%;
-    left :45%;
+    position: relative;
+    top :40%;
+    left :42%;
     width: 200px; 
 }
 .loader3 {
     position: fixed;
-    top: 0;
+    top: 0%;
     left: 0%;
     width: 100%;
     height: 100%;
@@ -200,8 +200,8 @@ body{
 
 .loader3 img {
     position: absolute;
-    top :50%;
-    left :50%;
+    top :40%;
+    left :45%;
     width: 200px; 
 }
 #legendes{
