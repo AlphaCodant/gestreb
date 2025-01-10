@@ -539,7 +539,7 @@ function action_affichage(){
         }),
         
         stroke: new ol.style.Stroke({
-            color: 'black',
+            color: 'white',
             width: 1
         }),
 
