@@ -525,6 +525,11 @@ function action_affichage(){
     // script.js
     const loader = document.getElementById('loader');
     loader.style.display = 'inline-block';
+    let opr_col = {"NSMS":'rgba(8, 192, 80, 0.4)',"CCCO":'rgba(56, 39, 4, 0.1)',
+                    "BALJI":'rgba(199, 154, 1, 0.6)',"GCCI":'rgba(180, 116, 159, 0.6)',"WWA":'rgba(234, 149, 203, 0.7)',
+                    "AK INTERNATIONNAL":'rgba(52, 218, 223, 0.7)',
+                    "STE":'rgba(43, 202, 37, 0.5)',"SNG":'rgba(12, 69, 117, 0.8)',"EMBD":'rgba(89, 223, 183, 0.5)',"BALAJI":'rgba(207, 168, 110, 0.4)',
+                    "BALAJI IMPEX":'rgba(154, 38, 169, 0.6)',"TAUNGYA UGF":'rgba(179, 239, 21, 0.5) '};
     setTimeout(()=>{
         loader.style.display = 'none';
         //content.classList.add('loaded'); 
@@ -541,7 +546,7 @@ function action_affichage(){
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: '#6A9B2E'
             })
         }),
         text: new ol.style.Text({
@@ -563,6 +568,7 @@ function action_affichage(){
         }),
         style: function (feature) {
             style_base.getText().setText(feature.get('numero'));
+            style_base.getFill().setColor(opr_col[feature.get('partenaire')]);
             return style_base;
             }
     });
