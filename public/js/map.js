@@ -529,7 +529,7 @@ function action_affichage(){
                     "BALJI":'rgba(199, 154, 1, 0.6)',"GCCI":'rgba(180, 116, 159, 0.6)',"WWA":'rgba(234, 149, 203, 0.7)',
                     "AK INTERNATIONNAL":'rgba(52, 218, 223, 0.7)',
                     "STE":'rgba(43, 202, 37, 0.5)',"SNG":'rgba(12, 69, 117, 0.8)',"EMBD":'rgba(89, 223, 183, 0.5)',"BALAJI":'rgba(207, 168, 110, 0.4)',
-                    "BALAJI IMPEX":'rgba(154, 38, 169, 0.6)',"TAUNGYA UGF":'rgba(179, 239, 21, 0.5) '};
+                    "BALAJI IMPEX":'rgba(154, 38, 169, 0.6)',"TAUNGYA UGF":'rgba(44, 247, 112, 1)'};
     setTimeout(()=>{
         loader.style.display = 'none';
         //content.classList.add('loaded'); 
