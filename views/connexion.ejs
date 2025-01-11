@@ -1,75 +1,102 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <link rel="icon" 
-     type="image/jpg" 
-     href="/img/logo2.jpg">
+        <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
         <link href="css/tailStyle.css" rel="stylesheet" />
-        <link href="css/style_perso.css" rel="stylesheet" />
+       
+        <link href="/css/styles.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
+        <meta lang="fr">
     </head>
-    <body style="font-family: sans-serif;">
-        <nav class="fixed top-0 z-50 w-full bg-green-100/0  shadow-zinc-600 text-black">
-            <div class="px-3 py-3 lg:px-5 lg:pl-3">
-                <div class="flex items-center justify-between">
-                <div class="flex items-center justify-start rtl:justify-end">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                        <span class="sr-only"></span>
-                        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                        </svg>
-                    </button>
-                    <a href="#" class="flex ms-2 md:me-24">
-                    <img src="img/logo2.jpg" class="h-8 me-3" alt="Logo Sodefor" />
-                    <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
-                    </a>
-                </div>
-                
+    <body>
+      <div class="grid-container">
+      
+     <!--<nav class="fixed top-0 z-50 w-full bg-green-100/0  shadow-zinc-600 text-black">
+      <div class="px-3 py-3 lg:px-5 lg:pl-3">
+          <div class="flex items-center justify-between">
+            <div class="menu-icon" onclick="openSidebar()">
+              <span class="material-icons-outlined">menu</span>
             </div>
-            </nav>
-        
-            <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-1/6 h-screen pt-20 transition-transform -translate-x-full bg-white  border-b  shadow-zinc-600 sm:translate-x-0" aria-label="Sidebar">
-                <div class="h-full px-3 pb-4 overflow-y-auto  bg-white border-b  shadow-zinc-600">
-                    <ul class="space-y-2 font-medium">
-                        <li>
-                            <a href="/dashboard" class="flex items-center mt-16 p-2 text-black  hover:border-y hover:border-green-500 group">
-                              <svg class="w-5 h-5 text-green-500 transition duration-75  group-hover:text-green-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30">
-                                <title/><g data-name="Layer 2" id="Layer_2"><g id="Interface-Solid"><g id="interface-solid-pin-location">
-                                  <circle cx="15" cy="9.57129" fill="none" r="3.42865"/>
-                                  <path d="M25.31152,20.40039a1,1,0,1,0-.623,1.90039C26.97607,23.05078,28,23.94629,28,24.5c0,1.39355-5.18506,3.5-13,3.5S2,25.89355,2,24.5c0-.55371,1.02393-1.44922,3.31152-2.19922a1,1,0,1,0-.623-1.90039C.81348,21.6709,0,23.33105,0,24.5,0,28.11035,7.5459,30,15,30s15-1.88965,15-5.5C30,23.33105,29.18652,21.6709,25.31152,20.40039Z"/>
-                                  <path d="M14.37549,25.78125a1.00083,1.00083,0,0,0,1.249,0c.36572-.293,8.94678-7.26074,8.94678-16.21a9.57129,9.57129,0,0,0-19.14258,0C5.42871,18.52051,14.00977,25.48828,14.37549,25.78125Zm-2.80408-16.21A3.42859,3.42859,0,1,1,15,13,3.4287,3.4287,0,0,1,11.57141,9.57129Z"/></g></g></g>
-                              </svg>
-                            <span class="ms-3">Carte interactive</span>
-                            </a>
-                        </li>
-                        
-                        <li>
-                            <span class="flex items-center py-3 px-1  mt-16 p-2 dark:text-black  border-y  group">
-                            <svg class="flex-shrink-0 w-5 h-5 text-purple-500 transition duration-75  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/>
-                            </svg>
-                            <span class="flex-1 ms-3 whitespace-nowrap">Connexion</span>
-                          </span>
-                        </li>
-                        <li>
-                            <a href="/inscription" class="flex items-center mt-16 p-2 text-black  hover:border-y hover:border-blue-500 group">
-                            <svg class="flex-shrink-0 w-5 h-5 text-blue-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.96 2.96 0 0 0 .13 5H5Z"/>
-                                <path d="M6.737 11.061a2.961 2.961 0 0 1 .81-1.515l6.117-6.116A4.839 4.839 0 0 1 16 2.141V2a1.97 1.97 0 0 0-1.933-2H7v5a2 2 0 0 1-2 2H0v11a1.969 1.969 0 0 0 1.933 2h12.134A1.97 1.97 0 0 0 16 18v-3.093l-1.546 1.546c-.413.413-.94.695-1.513.81l-3.4.679a2.947 2.947 0 0 1-1.85-.227 2.96 2.96 0 0 1-1.635-3.257l.681-3.397Z"/>
-                                <path d="M8.961 16a.93.93 0 0 0 .189-.019l3.4-.679a.961.961 0 0 0 .49-.263l6.118-6.117a2.884 2.884 0 0 0-4.079-4.078l-6.117 6.117a.96.96 0 0 0-.263.491l-.679 3.4A.961.961 0 0 0 8.961 16Zm7.477-9.8a.958.958 0 0 1 .68-.281.961.961 0 0 1 .682 1.644l-.315.315-1.36-1.36.313-.318Zm-5.911 5.911 4.236-4.236 1.359 1.359-4.236 4.237-1.7.339.341-1.699Z"/>
-                            </svg>
-                            <span class="flex-1 ms-3 whitespace-nowrap">Inscription</span>
-                            </a>
-                        </li> 
-                       
-                        
-                    </ul>
+          <div class="flex items-center justify-start rtl:justify-end">
+              <a href="#" class="flex ms-2 md:me-24">
+              <img src="img/logo2.jpg" class="h-8 me-3" alt="Logo Sodefor" />
+              <span class="self-center text-blue text-md font-semibold md:text-xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
+              </a>
+          </div>
+          
+      </div>
+      </nav>-->
+      <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left">
+          <div class="main-title">
+            <span><h1>CONNEXION</h1></span>
+          </div>
+        </div>
+        <!--<div class="header-right">
+          <span class="material-icons-outlined">notifications</span>
+          <span class="material-icons-outlined">email</span>
+          <span class="material-icons-outlined">account_circle</span>
+        </div>-->
+      </header>
+      <aside id="sidebar" >
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <a href="#" class="flex ms-2 md:me-24">
+              <img src="/img/logo2.jpg" class="h-8 me-2" alt="Logo Sodefor" />
+              <span class="self-center text-blue text-md font-semibold md:text-xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
+              </a>
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+        <div class="px-2 pb-4 bg-green  shadow-zinc-600">
+          <ul class="space-y-2 font-medium">
+            <li>
+              <a href="/dashboard" class="flex items-center mt-16 p-2 text-black  hover:border-y hover:border-green-500 group">
+                <svg class="w-5 h-5 text-green-500 transition duration-75  group-hover:text-green-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30">
+                  <title/><g data-name="Layer 2" id="Layer_2"><g id="Interface-Solid"><g id="interface-solid-pin-location">
+                    <circle cx="15" cy="9.57129" fill="none" r="3.42865"/>
+                    <path d="M25.31152,20.40039a1,1,0,1,0-.623,1.90039C26.97607,23.05078,28,23.94629,28,24.5c0,1.39355-5.18506,3.5-13,3.5S2,25.89355,2,24.5c0-.55371,1.02393-1.44922,3.31152-2.19922a1,1,0,1,0-.623-1.90039C.81348,21.6709,0,23.33105,0,24.5,0,28.11035,7.5459,30,15,30s15-1.88965,15-5.5C30,23.33105,29.18652,21.6709,25.31152,20.40039Z"/>
+                    <path d="M14.37549,25.78125a1.00083,1.00083,0,0,0,1.249,0c.36572-.293,8.94678-7.26074,8.94678-16.21a9.57129,9.57129,0,0,0-19.14258,0C5.42871,18.52051,14.00977,25.48828,14.37549,25.78125Zm-2.80408-16.21A3.42859,3.42859,0,1,1,15,13,3.4287,3.4287,0,0,1,11.57141,9.57129Z"/></g></g></g>
+                </svg>
+              <span class="ms-3">Carte interactive</span>
+              </a>
+          </li>
+          
+          <li>
+              <span class="flex items-center py-3 px-1  mt-16 p-2 dark:text-black  border-y  group">
+              <svg class="flex-shrink-0 w-5 h-5 text-purple-500 transition duration-75  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/>
+              </svg>
+              <span class="flex-1 ms-3 whitespace-nowrap">Connexion</span>
+            </span>
+          </li>
+          <li>
+              <a href="/inscription" class="flex items-center mt-16 p-2 text-black  hover:border-y hover:border-blue-500 group">
+              <svg class="flex-shrink-0 w-5 h-5 text-blue-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.96 2.96 0 0 0 .13 5H5Z"/>
+                  <path d="M6.737 11.061a2.961 2.961 0 0 1 .81-1.515l6.117-6.116A4.839 4.839 0 0 1 16 2.141V2a1.97 1.97 0 0 0-1.933-2H7v5a2 2 0 0 1-2 2H0v11a1.969 1.969 0 0 0 1.933 2h12.134A1.97 1.97 0 0 0 16 18v-3.093l-1.546 1.546c-.413.413-.94.695-1.513.81l-3.4.679a2.947 2.947 0 0 1-1.85-.227 2.96 2.96 0 0 1-1.635-3.257l.681-3.397Z"/>
+                  <path d="M8.961 16a.93.93 0 0 0 .189-.019l3.4-.679a.961.961 0 0 0 .49-.263l6.118-6.117a2.884 2.884 0 0 0-4.079-4.078l-6.117 6.117a.96.96 0 0 0-.263.491l-.679 3.4A.961.961 0 0 0 8.961 16Zm7.477-9.8a.958.958 0 0 1 .68-.281.961.961 0 0 1 .682 1.644l-.315.315-1.36-1.36.313-.318Zm-5.911 5.911 4.236-4.236 1.359 1.359-4.236 4.237-1.7.339.341-1.699Z"/>
+              </svg>
+              <span class="flex-1 ms-3 whitespace-nowrap">Inscription</span>
+              </a>
+          </li>   
                     
-                </div>
-                </aside>
-              <!--<div id="particles-js"></div>-->
-            <div  class="sm:ml-64 font-[sans-serif] items-center justify-center bg-black">
-                <div class="min-h-screen flex fle-col items-center justify-center py-6 px-4">
+          </ul>
+        </div>
+      </aside> 
+                            <!--<div id="particles-js"></div>-->
+          <main class="main-container">
+            <div>
+                <div class="mt-16 flex fle-col items-center justify-center px-4">
                 <div id ="erreur">
                   <% if(error&&error.length>0){ %>
                     <% for(let i=0;i<error.length;i++){ %>
@@ -81,29 +108,24 @@
                     <%}%>
                   <%}%>
                 </div>
-                    <div class="z-50 bg-green-600/70 border border-gray-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
+                    <div class="bg-white border border-green rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
                       <form action="/connexion" method="POST" class="space-y-4">
                         <div class="mb-8">
-                          <h3 class="text-black text-3xl font-extrabold">Connexion</h3>
-                          <p class="text-black text-sm mt-4 leading-relaxed">Connectez-vous afin d'avoir accès à un plus large éventail de données.</p>
+                          <h3 class="text-green-800 items-center text-3xl font-extrabold"></h3>
+                          <p class="text-black text-lg mt-4 leading-relaxed">Connectez-vous afin d'avoir accès à un plus large éventail de données.</p>
                         </div>
                         <div>
-                          <label class="text-black text-sm mb-2 block">Nom d'utilisateur</label>
-                          <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-sm text-gray-800 border border-gray-300 px-4 py-3 rounded-lg outline-green-800" placeholder="Entrer votre nom d'utilisateur" />
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb" class="w-[18px] h-[18px] absolute right-4" viewBox="0 0 24 24">
-                              <circle cx="10" cy="7" r="6" data-original="#000000"></circle>
-                              <path d="M14 15H6a5 5 0 0 0-5 5 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 5 5 0 0 0-5-5zm8-4h-2.59l.3-.29a1 1 0 0 0-1.42-1.42l-2 2a1 1 0 0 0 0 1.42l2 2a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42l-.3-.29H22a1 1 0 0 0 0-2z" data-original="#000000"></path>
-                            </svg>
+                          <label class="text-green text-sm mb-2 block">Nom d'utilisateur</label>
+                          <div class="flex items-center">
+                            <input name="email" type="text" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green" placeholder="Entrer votre nom d'utilisateur" />
+                            
                           </div>
                         </div>
                         <div>
-                          <label class="text-black text-sm mb-2 block">Mot de pass</label>
-                          <div class="relative flex items-center">
-                            <input name="mp" type="password" required class="w-full text-sm text-gray-800 border border-gray-300 px-4 py-3 rounded-lg outline-green-600" placeholder="Entrer votre mot de pass" />
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb" class="w-[18px] h-[18px] absolute right-4 cursor-pointer" viewBox="0 0 128 128">
-                              <path d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z" data-original="#000000"></path>
-                            </svg>
+                          <label class="text-green text-sm mb-2 block">Mot de pass</label>
+                          <div class="flex items-center">
+                            <input name="mp" type="password" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green" placeholder="Entrer votre mot de pass" />
+                            
                           </div>
                         </div>
           
@@ -116,14 +138,14 @@
                           </div>-->
           
                           <div class="text-sm">
-                            <a href="#" class="text-black hover:underline font-semibold">
+                            <a href="#" class="text-blue hover:underline font-semibold">
                               Mot de pass oublié?
                             </a>
                           </div>
                         </div>
           
                         <div class="!mt-8">
-                          <button type="submit" class="w-full shadow-xl py-3 px-4 text-sm tracking-wide rounded-lg text-green bg-green-600 hover:bg-green-700 focus:outline-none">
+                          <button type="submit" class="w-full shadow-xl py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-green-800 hover:bg-green-600">
                             Connexion
                           </button>
                         </div>
@@ -136,6 +158,24 @@
                 </div>
               </div>
             </div>
-        <script src="js/particules.js"></script>
+          </main> 
+        <script>
+          let sidebarOpen = false;
+const sidebar = document.getElementById('sidebar');
+
+function openSidebar() {
+  if (!sidebarOpen) {
+    sidebar.classList.add('sidebar-responsive');
+    sidebarOpen = true;
+  }
+}
+
+function closeSidebar() {
+  if (sidebarOpen) {
+    sidebar.classList.remove('sidebar-responsive');
+    sidebarOpen = false;
+  }
+}
+        </script>
     </body>
 </html>
