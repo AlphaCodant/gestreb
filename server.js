@@ -190,6 +190,20 @@ app.get('/statistiques',authenticateToken,(req,res)=>{
 app.get('/connexion',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
     res.render('connexion');
 });
+app.get('/admin/inscrit',(req,res)=>{
+    res.render('admin_inscrit');
+});
+app.get('/admin/membre',(req,res)=>{
+    res.render('admin_membre');
+});
+app.get('/admin/connecte',(req,res)=>{
+    res.render('admin_connecte');
+});
+app.get('/admin/demande',(req,res)=>{
+    res.render('admin_demande');
+});
+app.get('/admin',(req,res)=>{
+    res.render('admin');
 app.get('/inscription',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
     res.render('inscription');
 });
