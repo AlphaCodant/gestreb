@@ -204,6 +204,7 @@ app.get('/admin/demande',(req,res)=>{
 });
 app.get('/admin',(req,res)=>{
     res.render('admin');
+});
 app.get('/inscription',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
     res.render('inscription');
 });
