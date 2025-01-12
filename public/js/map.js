@@ -788,16 +788,16 @@ function fen_requete(){
   
     //$( "#fenetre_requete" ).show();
     $("#form2").css({display:"inline-block"});
-    $("#form2").css({left:"3%",width:"20%"});
+    $("#form2").css({left:"3%",width:"18%"});
     $("#form3").css({display:"inline-block"});
-    $("#form3").css({left:"3%",width:"20%"});
+    $("#form3").css({left:"3%",width:"18%"});
     $("#form4").css({display:"inline-block"});
-    $("#form4").css({left:"3%",width:"20%"});
+    $("#form4").css({left:"3%",width:"18%"});
     $("#form5").css({display:"inline-block"});
-    $("#form5").css({left:"3%",width:"20%"});
-    /*$("#form6").css({display:"inline-block"});
-    $("#form6").css({left:"3%"});*/
-    $("#bouton_lancer_rqt").css({display: "inline-block",left:"58%",top:"5%"});
+    $("#form5").css({left:"3%",width:"18%"});
+    $("#form6").css({display:"inline-block"});
+    $("#form6").css({left:"3%",width:"18%"});
+    $("#bouton_lancer_rqt").css({display: "inline-block",left:"78%",top:"5%"});
     $("#bouton_fermer_rqt").css({display: "inline-block",left:"3%",top:"5%"});
 
     function attrs(){
