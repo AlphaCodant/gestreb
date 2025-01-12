@@ -660,10 +660,6 @@ video {
   margin-right: 4rem;
 }
 
-.mr-24 {
-  margin-right: 6rem;
-}
-
 .ms-2 {
   margin-inline-start: 0.5rem;
 }
@@ -936,6 +932,10 @@ video {
   align-self: center;
 }
 
+.overflow-auto {
+  overflow: auto;
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1096,13 +1096,12 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
-.bg-zinc-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(228 228 231 / var(--tw-bg-opacity, 1));
-}
-
 .bg-opacity-75 {
   --tw-bg-opacity: 0.75;
+}
+
+.bg-none {
+  background-image: none;
 }
 
 .p-2 {
@@ -1155,6 +1154,11 @@ video {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .py-6 {
@@ -1238,10 +1242,6 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
-}
-
-.font-bold {
-  font-weight: 700;
 }
 
 .font-extrabold {
@@ -1489,6 +1489,11 @@ video {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-gray-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-green-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
@@ -1509,9 +1514,9 @@ video {
   background-color: rgb(220 38 38 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-zinc-500:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(113 113 122 / var(--tw-bg-opacity, 1));
+.hover\:text-white:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
 .hover\:underline:hover {
@@ -1694,9 +1699,18 @@ video {
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
+
+  .md\:text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
 }
 
 @media (min-width: 1024px) {
+  .lg\:absolute {
+    position: absolute;
+  }
+
   .lg\:inline-block {
     display: inline-block;
   }
@@ -1716,6 +1730,33 @@ video {
 
   .lg\:pl-3 {
     padding-left: 0.75rem;
+  }
+
+  .lg\:text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:inline-block {
+    display: inline-block;
+  }
+
+  .xl\:text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .\32xl\:inline-block {
+    display: inline-block;
+  }
+
+  .\32xl\:text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
   }
 }
 
