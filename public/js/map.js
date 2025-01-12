@@ -777,22 +777,27 @@ function stats_fermer(){
 }
 function fen_requete(){
     $( "#fenetre_requete" ).dialog({
-        height: 500,
-        width: 900,
-        modal:true
+        height: 'auto',
+        width: 'auto',
+        modal:true,
+        position: {my: 'left top', 
+            at: 'left+50 top+50', 
+            of: '.main-container'}, 
+    appendTo: '.main-container'
     });
+  
     //$( "#fenetre_requete" ).show();
     $("#form2").css({display:"inline-block"});
-    $("#form2").css({left:"3%",width:"18%"});
+    $("#form2").css({left:"3%",width:"20%"});
     $("#form3").css({display:"inline-block"});
-    $("#form3").css({left:"3%",width:"18%"});
+    $("#form3").css({left:"3%",width:"20%"});
     $("#form4").css({display:"inline-block"});
-    $("#form4").css({left:"3%",width:"18%"});
+    $("#form4").css({left:"3%",width:"20%"});
     $("#form5").css({display:"inline-block"});
-    $("#form5").css({left:"3%",width:"18%"});
-    $("#form6").css({display:"inline-block"});
-    $("#form6").css({left:"3%",width:"18%"});
-    $("#bouton_lancer_rqt").css({display: "inline-block",left:"78%",top:"5%"});
+    $("#form5").css({left:"3%",width:"20%"});
+    /*$("#form6").css({display:"inline-block"});
+    $("#form6").css({left:"3%"});*/
+    $("#bouton_lancer_rqt").css({display: "inline-block",left:"58%",top:"5%"});
     $("#bouton_fermer_rqt").css({display: "inline-block",left:"3%",top:"5%"});
 
     function attrs(){
@@ -1189,7 +1194,7 @@ function query() {
                 success : (data)=>{
                     if(data["features"]==null){
                         loader.style.display = 'none';
-                        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
+                        document.getElementById("fermer_requete").innerHTML = "REQUETES";
                         fen_requete_fermer();
                         alert("Aucune information trouvée !");
                         clear_all();                    
@@ -1198,7 +1203,7 @@ function query() {
                         
                     }else{    
                         loader.style.display = 'none';   
-                        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";           
+                        document.getElementById("fermer_requete").innerHTML = "REQUETES";           
                         style_init = new ol.style.Style({
                             fill: new ol.style.Fill({
                                 color: 'rgba(37, 150, 190, 0.5)'
@@ -1222,7 +1227,7 @@ function query() {
                                 })
                             })
                         });
-                        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
+                        document.getElementById("fermer_requete").innerHTML = "REQUETES";
                         map.removeLayer(geojson);
                         $(document).ready(()=>{
                             fen_requete_fermer();
@@ -1231,8 +1236,8 @@ function query() {
                             document.getElementById("table_data").style.display='none';
                         })
                         setTimeout(function(){
-                            const lgd = document.getElementById('legendes');
-                            lgd.style.top='30%';
+                            //const lgd = document.getElementById('legendes');
+                            //lgd.style.top='30%';
                             document.getElementById("table_data").style.display='inline-block';
                         $('#table').empty();
                         if (selectedFeature) {
@@ -1423,9 +1428,7 @@ function query() {
     },3000);
     setTimeout(()=>{
         stats()
-    },3500)
-
-    
+    },3500)   
 }
 
 function highlight(evt) {
@@ -1586,14 +1589,14 @@ function wms_layers() {
 }
 
 function info() {
-    if (document.getElementById("info_btn").innerHTML == "☰ ACTIVER INFOS") {
-        document.getElementById("info_btn").innerHTML = "☰ DESACTIVER INFOS";
+    if (document.getElementById("activer_info").innerHTML == "ACTIVER INFOS") {
+        document.getElementById("activer_info").innerHTML = "DESACTIVER INFOS";
         map.on('singleclick', getinfo);
         }
         else {
         map.un('singleclick', getinfo);
-        document.getElementById("info_btn").innerHTML = "☰ ACTIVER INFOS";
-        document.getElementById("info_btn").setAttribute("class","flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group");
+        document.getElementById("activer_info").innerHTML = "ACTIVER INFOS";
+        //document.getElementById("info_btn").setAttribute("class","flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group");
         if (popup) {
             popup.hide();
         }
@@ -1616,10 +1619,10 @@ map.addControl(fullscreen);
 
 function fermer_cadre(){
     document.getElementById("cadre_frame").style.display="none";
-    document.getElementById("map").style.display="none";
-    document.getElementById("map").style.display="inline-block";
-    document.getElementById("map").style.left="16.66%";
-    document.getElementById("map").style.width="83.33%";
+    //document.getElementById("map").style.display="none";
+    //document.getElementById("map").style.display="inline-block";
+    //document.getElementById("map").style.left="16.66%";
+    //document.getElementById("map").style.width="83.33%";
     document.getElementById('clear_btn').setAttribute('class','flex items-center mr-16 p-2  font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group');
     document.getElementById('query_panel_btn').setAttribute('class','flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group');
     document.getElementById('info_btn').setAttribute('class','flex items-center mr-16 p-2 font-bold text-black rounded-lg  bg-zinc-200 hover:bg-zinc-500  group');
@@ -1711,12 +1714,12 @@ function getinfo(evt) {
 
 function clear_all() {
     document.getElementById('map').style.height = '100%';
-    document.getElementById('map').style.width = '83.33%';
-    document.getElementById('map').style.left = '16.66%';
+    //document.getElementById('map').style.width = '83.33%';
+    //document.getElementById('map').style.left = '16.66%';
     document.getElementById('table_data').style.height = '0%';
     document.getElementById('table').style.height = '0%';
-    const lgd = document.getElementById('legendes');
-    lgd.style.top='65%';
+    //const lgd = document.getElementById('legendes');
+    //lgd.style.top='65%';
     style_base = new ol.style.Style({
         fill: new ol.style.Fill({
             color: 'rgba(37, 150, 190, 0.5)'
@@ -1791,14 +1794,14 @@ function posted() {
 
 function show_hide_querypanel() {
     
-    if (document.getElementById("query_panel_btn").innerHTML == "☰ REQUETES") {
-        document.getElementById("query_panel_btn").innerHTML = "☰ FERMER REQUETES";
+    if (document.getElementById("fermer_requete").innerHTML == "REQUETES") {
+        document.getElementById("fermer_requete").innerHTML = "FERMER REQUETES";
         fen_requete()
         }
         else {
         //posted();
         //action_affichage();
-        document.getElementById("query_panel_btn").innerHTML = "☰ REQUETES";
+        document.getElementById("fermer_requete").innerHTML = "REQUETES";
     }
 
 }
