@@ -36,12 +36,13 @@ body{
     background-color: none;
 }
 #table_data {
-    position: absolute;
+    position: relative;
     bottom: 0%;
     overflow: scroll;
-    left: 16.66%;
+    left: 0%;
     right: 0%;
     height: 0%;
+    width:100%;
     border: 1px solid #4CAF50;
     font-family: 'Nunito';
 }
@@ -63,7 +64,7 @@ body{
     color:white;
     background-color: black;
 }
-#map {
+map {
     position: absolute;
     left: 16.66%;
     width: 83.35%;
@@ -71,18 +72,9 @@ body{
     transition: opacity 0.5s ease-in-out;
 }
 
-#map_visiere{
-    position: absolute;
-    left: 2%;
-    width: 90%;
-    height: 30%;
-    border-width: 10px;
-    border-color: white;
-    border-radius: 20px;
-}
+
 #titres{
-    position: absolute;
-    left: 5%;
+    left: 2%;
     width: 90%;
     top: 38%;
 }
