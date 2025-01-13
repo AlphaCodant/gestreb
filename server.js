@@ -1,5 +1,5 @@
 //Port
-const port = 3001;
+const port = 3003;
 
 //Importation de modules NPM
 
@@ -217,7 +217,8 @@ app.get(`/page/:id`,authenticateToken,(req,res)=>{
     result.length=0;
     const {tokenY} = req.user;
     const {ugf} = req.user;
-    res.render('dashboard_conn',{id:tokenY,ugf:ugf});
+    const {admin} = req.user;
+    res.render('dashboard_conn',{id:tokenY,ugf:ugf,admin:admin});
     
 });
 
@@ -482,7 +483,7 @@ app.post("/connexion",async (req,res)=>{
     if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
 
     // Créer un JWT
-    const accessToken = jwt.sign({ tokenY: user.token, email: user.email,ugf: user.ugf }, process.env.SECRET_KEY, { expiresIn: '1h' });
+    const accessToken = jwt.sign({ tokenY: user.token, email: user.email,ugf: user.ugf,admin: user.administrateur }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
     // Stocker le token dans les cookies
     res.cookie('token', accessToken, { httpOnly: true });
