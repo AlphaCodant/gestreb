@@ -106,7 +106,7 @@
                 <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Statistiques</span>
                 </a>
             </li>  
-            <li>
+            <li id="bouton_admin" class="hidden">
               <a href="/admin" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
                 <svg class="w-5 h-5 text-blue-500 transition duration-75  group-hover:text-blue-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                   <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
@@ -303,6 +303,7 @@
     </div>
     
           <div id="postData" post="<%= id %>"></div>
+          <div id="statut_admin" post="<%=admin %>"></div>
           <div id="fenetre_requete" title="Requete">
             <form action="/requete/<%= id %>" method="POST">
               <div id="form2">
@@ -442,10 +443,13 @@ function closeSidebar() {
   }
 }
       let ugf = document.getElementById('aff_ugf').getAttribute('post');
-      //let aff = document.getElementById(ugf).setAttribute('class','inline-block');
       let groupe_label = document.getElementById('labels-forets');
       let groupe_checkbox = document.getElementById('checkbox-forets');
-      //let aff_label = document.getElementById(ugf+'-label').setAttribute('class','inline-block');
+      let st_admin = document.getElementById('statut_admin').getAttribute('post');
+      let bouton_admin = document.getElementById('bouton_admin');
+      if (st_admin=='admin'){
+        bouton_admin.setAttribute('class','block');
+      }
       if (ugf=='dt' || ugf=='cg_gag'){
           groupe_label.setAttribute('class','inline-block gap-10');
           document.getElementById('tene').setAttribute('class','block');
