@@ -1,5 +1,5 @@
 //Port
-const port = 3003;
+const port = 3001;
 
 //Importation de modules NPM
 
@@ -202,8 +202,48 @@ app.get('/admin/connecte',(req,res)=>{
 app.get('/admin/demande',(req,res)=>{
     res.render('admin_demande');
 });
-app.get('/admin',(req,res)=>{
-    res.render('admin');
+app.get('/admin/:id',authenticateToken,(req,res)=>{
+    const {tokenY} = req.user;
+    let inscrits = [];
+    client.query(
+        `SELECT count (*) FROM utilisateur`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                inscrits.push(results.rows[0].count);
+            }
+        });
+        client.query(
+        `SELECT count (*) FROM utilisateur WHERE statut like 'valide'`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                inscrits.push(results.rows[0].count);
+            }
+        });
+        client.query(
+            `SELECT count (*) FROM utilisateur WHERE statut like 'attente'`,
+            (err, results) => {
+                if (err) {
+                console.log(err);
+                }else{
+                    inscrits.push(results.rows[0].count);
+                }
+            });
+            client.query(
+                `SELECT count (*) FROM utilisateurs WHERE etat like 'connecte'`,
+                (err, results) => {
+                    if (err) {
+                    console.log(err);
+                    }else{
+                        inscrits.push(results.rows[0].count);
+                    }
+                });
+    setTimeout(()=>{
+        res.render('admin',{id:tokenY,inscrit:inscrits[0],membre:inscrits[1],connecte:inscrits[3],attente:inscrits[2]});
+    },3000)
 });
 app.get('/inscription',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
     res.render('inscription');
@@ -248,112 +288,132 @@ app.post("/rejet/:tokenGen",(req,res)=>{
     let aleaToken = req.params.tokenGen;
     console.log(aleaToken);
     client.query(
-        `SELECT * FROM utilisateur
+        `UPDATE utilisateur SET statut = 'rejet'
         WHERE token like '${aleaToken}'`,
         (err, results) => {
             if (err) {
             console.log(err);
             }else{
-                //-----------------------------------------
-                var transporteur = nodemailer.createTransport({
-                    service : "gmail",
-                    auth:{
-                        user :"alphacodant@gmail.com",
-                        pass :"khwr jbvk vstt nyhe"
-                    }
-                });
-                var mailOptions={
-                    from :"alphacodant@gmail.com",
-                    to :results.rows[0].email ,
-                    subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
-                    text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive a été rejétée. Veuillez vous rapprocher de la Direction du Centre de Gestion pour plus d'informations.`
-                };
-                transporteur.sendMail(mailOptions,(err,response)=>{
-                    if(err){
-                        console.log("Erreur d'envoi du mail "+err);
-                    }else{
-                        console.log("Mail envoyé avec succès !");
-                        res.redirect('/connexion');
-                    };
-                });
-          };
+                client.query(
+                    `SELECT * FROM utilisateur
+                    WHERE token like '${aleaToken}'`,
+                    (err, results) => {
+                        if (err) {
+                        console.log(err);
+                        }else{
+                            //-----------------------------------------
+                            var transporteur = nodemailer.createTransport({
+                                service : "gmail",
+                                auth:{
+                                    user :"alphacodant@gmail.com",
+                                    pass :"khwr jbvk vstt nyhe"
+                                }
+                            });
+                            var mailOptions={
+                                from :"alphacodant@gmail.com",
+                                to :results.rows[0].email ,
+                                subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
+                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive a été rejétée. Veuillez vous rapprocher de la Direction du Centre de Gestion pour plus d'informations.`
+                            };
+                            transporteur.sendMail(mailOptions,(err,response)=>{
+                                if(err){
+                                    console.log("Erreur d'envoi du mail "+err);
+                                }else{
+                                    console.log("Mail envoyé avec succès !");
+                                    res.redirect('/connexion');
+                                };
+                            });
+                      };
+                    });
+            }
         });
+    
 });
 
 app.post("/validation/:tokenGen",(req,res)=>{
     let aleaToken = req.params.tokenGen;
     console.log(aleaToken);
     client.query(
-        `SELECT * FROM utilisateur
+        `UPDATE utilisateur SET statut = 'valide'
         WHERE token like '${aleaToken}'`,
         (err, results) => {
             if (err) {
             console.log(err);
             }else{
-                console.log(results.rows);
-                let { prenom, nom,email,contact,matricule,ugf, mp,token } = results.rows[0];
                 client.query(
-                    `SELECT * FROM utilisateurs
-                        WHERE email = $1`,
-                    [email],
-                    (err, response) => {
+                    `SELECT * FROM utilisateur
+                    WHERE token like '${aleaToken}'`,
+                    (err, results) => {
                         if (err) {
                         console.log(err);
                         }else{
-                            console.log(response.rows);           
-                            if (response.rows.length > 0) {
-                                res.redirect("/inscription");
-                                console.log("Email existe deja dans la base de données");
-                        
-                            } else {
-                           
+                            console.log(results.rows);
+                            let { prenom, nom,email,contact,matricule,ugf, mp,token } = results.rows[0];
                             client.query(
-                                `INSERT INTO utilisateurs (prenom,nom,email,contact,matricule,ugf,mp,token)
-                                    VALUES ($1, $2, $3,$4,$5,$6,$7,$8)
-                                    RETURNING *`,
-                                [prenom,nom,email,contact,matricule,ugf,mp,token],
-                                (err, result) => {
-                                if (err) {
+                                `SELECT * FROM utilisateurs
+                                    WHERE email = $1`,
+                                [email],
+                                (err, response) => {
+                                    if (err) {
                                     console.log(err);
-                                }else{
-            
-                                //-----------------------------------------
-                                var transporteur = nodemailer.createTransport({
-                                    service : "gmail",
-                                    auth:{
-                                        user :"alphacodant@gmail.com",
-                                        pass :"khwr jbvk vstt nyhe"
-                                    }
-                                });
-                                var mailOptions={
-                                    from :"alphacodant@gmail.com",
-                                    to :results.rows[0].email ,
-                                    subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
-                                    text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : http://localhost:3000/connexion`
-                                };
-                                transporteur.sendMail(mailOptions,(err,response)=>{
-                                    if(err){
-                                        console.log("Erreur d'envoi du mail "+err);
                                     }else{
-                                        console.log("Mail envoyé avec succès !");
-                                        res.redirect('/connexion');
-                                    };
-                                });
-                                
-                                //-----------------------------------------
-                                 
-                                console.log(results.rows);
-                                console.log("Succès Vous êtes inscris, vous pouvez vous connecter");
-                                res.redirect("/connexion");
+                                        console.log(response.rows);           
+                                        if (response.rows.length > 0) {
+                                            res.redirect("/inscription");
+                                            console.log("Email existe deja dans la base de données");
+                                    
+                                        } else {
+                                       
+                                        client.query(
+                                            `INSERT INTO utilisateurs (prenom,nom,email,contact,matricule,ugf,mp,token)
+                                                VALUES ($1, $2, $3,$4,$5,$6,$7,$8)
+                                                RETURNING *`,
+                                            [prenom,nom,email,contact,matricule,ugf,mp,token],
+                                            (err, result) => {
+                                            if (err) {
+                                                console.log(err);
+                                            }else{
+                        
+                                            //-----------------------------------------
+                                            var transporteur = nodemailer.createTransport({
+                                                service : "gmail",
+                                                auth:{
+                                                    user :"alphacodant@gmail.com",
+                                                    pass :"khwr jbvk vstt nyhe"
+                                                }
+                                            });
+                                            var mailOptions={
+                                                from :"alphacodant@gmail.com",
+                                                to :results.rows[0].email ,
+                                                subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
+                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : http://localhost:3000/connexion`
+                                            };
+                                            transporteur.sendMail(mailOptions,(err,response)=>{
+                                                if(err){
+                                                    console.log("Erreur d'envoi du mail "+err);
+                                                }else{
+                                                    console.log("Mail envoyé avec succès !");
+                                                    res.redirect('/connexion');
+                                                };
+                                            });
+                                            
+                                            //-----------------------------------------
+                                             
+                                            console.log(results.rows);
+                                            console.log("Succès Vous êtes inscris, vous pouvez vous connecter");
+                                            res.redirect("/connexion");
+                                            }
+                                            }
+                                        );
+                                        }
+                                    }   
                                 }
-                                }
-                            );
-                            }
-                        }   
-                    }
-                    );
+                                );
+                        }
+                    });
             }
-        });
+})
+    
     //---------------------!°°°!------------------------------
     
     //---------------------!°°°!------------------------------
@@ -415,8 +475,8 @@ app.post("/inscription",(req,res)=>{
                 } else {
                 var tokenGen = token(16);
                 client.query(
-                    `INSERT INTO utilisateur (prenom,nom,email,contact,matricule,ugf,mp,token)
-                        VALUES ($1, $2, $3,$4,$5,$6,$7,$8)
+                    `INSERT INTO utilisateur (prenom,nom,email,contact,matricule,ugf,mp,token,statut)
+                        VALUES ($1, $2, $3,$4,$5,$6,$7,$8,'attente')
                         RETURNING *`,
                     [prenom,nom,email,contact,mat,ugf,hash,tokenGen],
                     (err, results) => {
@@ -436,7 +496,7 @@ app.post("/inscription",(req,res)=>{
                             from :"alphacodant@gmail.com",
                             to :"alphacodant@gmail.com" ,
                             subject : `Demande d'autorisation d'accès à la l'Application WebSig de ${nom} ${prenom}`,
-                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://ci-sodefor-gagnoa-1.onrender.com/valid/`+tokenGen
+                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://localhost:3003/valid/`+tokenGen
                         };
                         transporteur.sendMail(mailOptions,(err,response)=>{
                             if(err){
@@ -487,6 +547,35 @@ app.post("/connexion",async (req,res)=>{
 
     // Stocker le token dans les cookies
     res.cookie('token', accessToken, { httpOnly: true });
+    
+
+    client.query(`SELECT etat FROM utilisateurs WHERE email like '${user.email}'`,(error,response)=>{
+        if (error){
+            console.log(error+" Aucune données")
+        }else{
+            if(response.rows.length>0){
+                console.log("Données existentes");
+                client.query(`UPDATE utilisateurs SET etat = 'connecte' WHERE email like '${user.email}'`,(err)=>{
+                    if(!err){
+                        console.log("Etat mise à jour avec succès, connecté");
+                    }else{
+                        console.log(err+ " Impossible de mettre à jour");
+                    }
+                })
+            }else{
+                console.log("Données vides");
+                client.query(`INSERT INTO utilisateurs (etat) VALUES ('connecté')`,(err)=>{
+                    if(!err){
+                        console.log("Données insérées avec succès");
+                    }else{
+                        console.log(err+ " Impossible d'insérer les données");
+                    }
+                })
+            }
+            
+        }
+    });
+
     client.query(`CREATE TABLE IF NOT EXISTS parcelles_${user.token} as (select * from parcelles)`,(err,response)=>{
         if(!err){
             client.query(`CREATE TABLE IF NOT EXISTS foret_${user.token} as (select * from foret)`,(err,response)=>{
@@ -511,6 +600,33 @@ app.post("/connexion",async (req,res)=>{
 
  app.get("/log/deconnecter",authenticateToken,(req,res)=>{
     const { tokenY } = req.user;
+    const { email } = req.user;
+    client.query(`SELECT etat FROM utilisateurs WHERE email like '${email}'`,(error,response)=>{
+        if (error){
+            console.log(error+" Aucune données")
+        }else{
+            if(response.rows.length>0){
+                console.log("Données existentes");
+                client.query(`UPDATE utilisateurs SET etat = 'deconnecte' WHERE email like '${email}'`,(err)=>{
+                    if(!err){
+                        console.log("Etat mise à jour avec succès, deconnecté");
+                    }else{
+                        console.log(err+ " Impossible de mettre à jour");
+                    }
+                })
+            }else{
+                console.log("Données vides");
+                client.query(`INSERT INTO utilisateurs (etat) VALUES ('deconnecté')`,(err)=>{
+                    if(!err){
+                        console.log("Données insérées avec succès");
+                    }else{
+                        console.log(err+ " Impossible d'insérer les données");
+                    }
+                })
+            }
+            
+        }
+    });
     client.query(`DROP TABLE parcelles_${tokenY},foret_${tokenY}`,(err)=>{
         if(!err){
             console.log("Données de l'utilisateur effacées avec succès");
