@@ -9,9 +9,9 @@ body,
 }
 .receipt-main {
 	background: #ffffff none repeat scroll 0 0;
-	border-bottom: 12px solid #006fb3;
-	border-top: 12px solid #006fb3;
-	margin-top: 10px;
+	border-bottom: 0px solid #006fb3;
+	border-top: 0px solid #006fb3;
+	margin: 5%;
 	margin-bottom: 10px;
 	padding: 20px 10px !important;
 	position: relative;
