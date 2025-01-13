@@ -15,7 +15,7 @@
     </head>
     <body style="font-family: sans-serif;">
       <div class="grid-container">
-        <header class="header" style="background-color:white">
+        <header class="header" style="color:black; background-color: white; font-weight: bolder;">
           <div class="menu-icon" onclick="openSidebar()">
             <span class="material-icons-outlined">menu</span>
           </div>
@@ -33,7 +33,7 @@
         <aside id="sidebar" >
           <div class="sidebar-title">
             <div class="sidebar-brand">
-              <a href="#" class="flex ms-2 md:me-24">
+              <a href="#" class="flex mt-2 ms-2 md:me-24">
                 <img src="/img/logo2.jpg" class="h-8 me-2" alt="Logo Sodefor" />
                 <span class="self-center text-blue text-md font-semibold md:text-xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
                 </a>
@@ -78,55 +78,53 @@
         </aside> 
         
         <main class="main-container">
-        <div>
-        <div class="flex flex-col justify-center gap-y-4 items-center font-[sans-serif] border-green">
-            <div class="grid lg:grid-cols-2 items-center gap-y-8 border lg:bg-blue border-green max-w-7xl w-5/6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md overflow-hidden">
+       
+        <div class="w-1/2 flex justify-center mt-3 gap-y-4 items-center font-[sans-serif] border-green" style="margin-left:25%;">
+            <!--<div class="grid lg:grid-cols-2 items-center gap-y-8 border lg:bg-blue border-green max-w-7xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md overflow-hidden">
               <div class="hidden max-lg:order-1 lg:flex flex-col  justify-center sm:p-8 p-4  w-full h-full">
                 <div class="hidden lg:inline-block max-w-md space-y-12 mx-auto">
-                  <% if(error&&error.length>0){ %>
+                    <% if(error&&error.length>0){ %>
                     <% for(let i=0;i<error.length;i++){ %>
                   <div>
                         <p class="text-[18px] text-white mt-2"><%= i+1 + " - "+ error[i].message%></p>
                   </div>
                     <%}%>
                   <%} else { %>
-
                     <div>
                       <p class="text-[18px] text-white mt-2"><%= success %></p>
                     </div>
-
                   <%}%>
                 </div>
-              </div>
+              </div>-->
       
-              <form action="/inscription" method="POST" class="sm:p-8 p-4 w-full bg-white">
+              <form action="/inscription" method="POST" class="sm:p-8 p-4 w-full border border-white rounded-lg">
                 <div class="mb-12">
-                  <h3 class="text-blue text-3xl font-extrabold max-lg:text-center">Inscription</h3>
+                  <h3 class="text-blue text-3xl font-extrabold max-lg:text-center"></h3>
                 </div>
       
                 <div class="grid lg:grid-cols-2 gap-8">
                   <div>
-                    <label class="text-black text-sm mb-2 block">Prénom (s)</label>
+                    <label class="text-white text-sm mb-2 block">Prénom (s)</label>
                     <input name="prenom" type="text" class="bg-white w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre (vos) prénom (s)" />
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Nom</label>
+                    <label class="text-white text-sm mb-2 block">Nom</label>
                     <input name="nom" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre nom" />
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Email</label>
+                    <label class="text-white text-sm mb-2 block">Email</label>
                     <input name="email" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre e-mail" />
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Contact</label>
+                    <label class="text-white text-sm mb-2 block">Contact</label>
                     <input name="contact" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre contact" />
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Matricule</label>
+                    <label class="text-white text-sm mb-2 block">Matricule</label>
                     <input name="mat" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre e-mail" />
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Lieu de travail</label>
+                    <label class="text-white text-sm mb-2 block">Lieu de travail</label>
                     <select name="ugf" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre contact">
                       <option>Sélectionne lieu</option>
                       <option value="dt">D.T Abidjan</option>
@@ -137,17 +135,17 @@
                     <!--<input name="ugf" type="text" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md outline-green-500" placeholder="Entrer votre contact" />-->
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Mot de pass</label>
+                    <label class="text-white text-sm mb-2 block">Mot de pass</label>
                     <input name="mp" type="password" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Entrer votre mot de pass" />
                   </div>
                   <div>
-                    <label class="text-black text-sm mb-2 block">Confirmer mot de pass</label>
+                    <label class="text-white text-sm mb-2 block">Confirmer mot de pass</label>
                     <input name="rp_mp" type="password" class="bg-gray-100 w-full text-black text-sm px-4 py-3 rounded-md border border-green outline-green" placeholder="Confirmer votre mot de pass" />
                   </div>
                 
       
                 <div class="flex items-center mt-6">
-                  <label for="remember-me" class="ml-3 block text-sm text-black">
+                  <label for="remember-me" class="ml-3 block text-sm text-white">
                     Avez-vous un compte ?
                   </label>
                 </div>
@@ -165,9 +163,6 @@
                 </div>
               </form>
             </div>
-          </div>
-    </div>
-    </div>
   </main>
              <script>
           let sidebarOpen = false;
