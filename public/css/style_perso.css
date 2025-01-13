@@ -93,7 +93,6 @@ map {
     top: 3%;
     left: 2%;
     color: rgb(0, 0, 0);
-    background-color: #4CAF50;
     border: none;
     border-radius: 10px;
 }
@@ -101,9 +100,8 @@ map {
     position: absolute;
     z-index: 500;
     top: 3%;
-    right:7%;
+    right:4%;
     color: rgb(0, 0, 0);
-    background-color: rgb(174, 10, 10);
     border:none;
     border-radius: 10px;
 }
