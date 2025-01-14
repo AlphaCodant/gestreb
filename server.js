@@ -155,9 +155,9 @@ app.get('/data',authenticateToken,(req,res)=>{
     console.log();
 });
 
-app.get('/dashboard',(req,res)=>{
+/*app.get('/dashboard',(req,res)=>{
     res.render('page_accueil');
-});
+});*/
 app.get('/stats',authenticateToken,(req,res)=>{
     res.render('stats');
 });
