@@ -105,7 +105,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -141,7 +141,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -203,7 +203,7 @@ function expo(evt){
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -258,7 +258,7 @@ function choix(evt){
             image: new ol.style.Circle({
                 radius: 7,
                 fill: new ol.style.Fill({
-                    color: 'cyan'
+                    color: 'rgba(12, 69, 117, 0.8)'
                 })
             }),
             text: new ol.style.Text({
@@ -291,7 +291,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -328,7 +328,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -363,7 +363,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -398,7 +398,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -440,7 +440,7 @@ $(document).ready(()=>{
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
@@ -488,7 +488,7 @@ function choix2(){
             image: new ol.style.Circle({
                 radius: 7,
                 fill: new ol.style.Fill({
-                    color: 'cyan'
+                    color: 'rgba(12, 69, 117, 0.8)'
                 })
             }),
             text: new ol.style.Text({
@@ -1152,7 +1152,7 @@ map.getView().on('change:resolution', scale);
 
 var highlightStyle = new ol.style.Style({
     fill: new ol.style.Fill({
-        color: 'cyan',
+        color: 'rgba(12, 69, 117, 0.8)',
     }),
     stroke: new ol.style.Stroke({
         color: 'white',
@@ -1217,7 +1217,7 @@ function query() {
                             image: new ol.style.Circle({
                                 radius: 7,
                                 fill: new ol.style.Fill({
-                                    color: 'cyan'
+                                    color: 'rgba(12, 69, 117, 0.8)'
                                 })
                             }),
                             text: new ol.style.Text({
@@ -1270,7 +1270,7 @@ function query() {
                             image: new ol.style.Circle({
                                 radius: 7,
                                 fill: new ol.style.Fill({
-                                    color: 'cyan'
+                                    color: 'rgba(12, 69, 117, 0.8)'
                                 })
                             }),
                             text: new ol.style.Text({
@@ -1481,7 +1481,7 @@ function highlight(evt) {
                 $("#table td:nth-child(" + col_no + ")").each(function() {
     
                     if ($(this).text() == feature.getProperties()["id"]) {
-                        $(this).parent("tr").css("background-color", "cyan");
+                        $(this).parent("tr").css("background-color", "rgba(12, 69, 117, 0.8)");
     
                     }
                 });
@@ -1535,7 +1535,7 @@ function addRowHandlers() {
                 $(document).ready(function() {
                     $("#table td:nth-child(" + col_no + ")").each(function() {
                         if ($(this).text() == id) {
-                            $(this).parent("tr").css("background-color", "cyan");
+                            $(this).parent("tr").css("background-color", "rgba(12, 69, 117, 0.8)");
                         }
                     });
                 })
@@ -1733,7 +1733,7 @@ function clear_all() {
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-                color: 'cyan'
+                color: 'rgba(12, 69, 117, 0.8)'
             })
         }),
         text: new ol.style.Text({
