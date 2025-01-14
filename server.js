@@ -146,7 +146,7 @@ app.set('view engine','ejs');
 
 
 app.get('/',(req,res)=>{
-    res.redirect('/dashboard');
+    res.redirect('/connexion');
 });
 
 app.get('/data',authenticateToken,(req,res)=>{
