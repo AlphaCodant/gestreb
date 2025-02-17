@@ -1,5 +1,6 @@
 # Ignore les fichiers de configuration de l'IDE (exemples pour VSCode)
 .vscode/
+.desktop.ini
 
 # Ignore les fichiers du système d'exploitation
 .DS_Store

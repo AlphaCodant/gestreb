@@ -31,6 +31,7 @@ function stats(){
                //document.getElementById("sup_moyenne").innerHTML=(Math.round(sup/data.features.length * 100)/100).toFixed(2)+ ' ha';
                 document.getElementById("sup_min").innerHTML=(Math.round(Math.min(...donnees_stats) * 100)/100).toFixed(2)+ ' ha';       
                 document.getElementById("sup_max").innerHTML=(Math.round((Math.max(...donnees_stats)) * 100)/100).toFixed(2)+ ' ha';  
+                document.getElementById("nb_parcelles").innerHTML=(Math.round(data.features.length * 100)/100);
                 console.log(donnees_stats.sort())  
                 function uniqueFilter(value, index, self) {
                     return self.indexOf(value) === index;
@@ -55,10 +56,10 @@ function stats(){
                     li.appendChild(document.createTextNode(`${operateur[operateurs]} ${(Math.round(sup_operateur[operateurs] * 100)/100).toFixed(2)} ha`));
                     ul.appendChild(li);
                 }*/
-                document.getElementById("nom_operateurs").innerHTML=operateur[sup_operateur.indexOf(Math.max(...sup_operateur))];
-                document.getElementById("sup_operateurs").innerHTML=(Math.round(Math.max(...sup_operateur)* 100)/100).toFixed(2)+' ha';
+                //document.getElementById("nom_operateurs").innerHTML=operateur[sup_operateur.indexOf(Math.max(...sup_operateur))];
+                //document.getElementById("sup_operateurs").innerHTML=(Math.round(Math.max(...sup_operateur)* 100)/100).toFixed(2)+' ha';
                 //document.getElementById("nb_operateur").innerHTML=(Math.round(operateur.length * 100)/100);
-                document.getElementById("nb_parcelles").innerHTML=(Math.round(data.features.length * 100)/100);
+                
 
                 console.log(sup_operateur);
 
