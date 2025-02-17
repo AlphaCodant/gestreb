@@ -334,6 +334,17 @@ app.post("/validation/:tokenGen",(req,res)=>{
     let aleaToken = req.params.tokenGen;
     console.log(aleaToken);
     client.query(
+        `CREATE TABLE IF NOT EXISTS utilisateurs(prenom varchar (50),nom varchar(50),email varchar(50),
+        contact varchar(50),matricule varchar(50),ugf varchar(50),mp varchar(1000),token varchar(50),statut varchar(50) etat varchar(50));
+        `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+            console.log('Base de données créés avec succès');
+            }
+        });
+    client.query(
         `UPDATE utilisateur SET statut = 'valide'
         WHERE token like '${aleaToken}'`,
         (err, results) => {
@@ -386,7 +397,7 @@ app.post("/validation/:tokenGen",(req,res)=>{
                                                 from :"alphacodant@gmail.com",
                                                 to :results.rows[0].email ,
                                                 subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
-                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : http://localhost:3000/connexion`
+                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : http://localhost:3001/connexion`
                                             };
                                             transporteur.sendMail(mailOptions,(err,response)=>{
                                                 if(err){
@@ -431,7 +442,19 @@ app.post("/inscription",(req,res)=>{
     console.log({
         prenom, nom,email,contact, mp, rp_mp
     });
-    
+
+    client.query(
+        `CREATE TABLE IF NOT EXISTS utilisateur(prenom varchar (50),nom varchar(50),email varchar(50),
+        contact varchar(50),matricule varchar(50),ugf varchar(50),mp varchar(1000),token varchar(50),statut varchar(50));
+        `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+            console.log('Base de données créés avec succès');
+            }
+        });
+
     if (!nom ||!prenom || !email ||!contact || !mp || !rp_mp) {
         errors.push({ message: "Veillez entrer une valeur" });
     }
@@ -496,7 +519,7 @@ app.post("/inscription",(req,res)=>{
                             from :"alphacodant@gmail.com",
                             to :"alphacodant@gmail.com" ,
                             subject : `Demande d'autorisation d'accès à la l'Application WebSig de ${nom} ${prenom}`,
-                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://localhost:3003/valid/`+tokenGen
+                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n http://localhost:3001/valid/`+tokenGen
                         };
                         transporteur.sendMail(mailOptions,(err,response)=>{
                             if(err){
@@ -531,6 +554,8 @@ app.post("/connexion",async (req,res)=>{
     //donnee_connect.length=0;
 
     const { email, mp } = req.body;
+
+    
 
   try {
     const result = await client.query('SELECT * FROM utilisateurs WHERE email = $1', [email]);
@@ -575,6 +600,15 @@ app.post("/connexion",async (req,res)=>{
             
         }
     });
+    /*client.query(
+        `CREATE TABLE IF NOT EXISTS stock (email varchar(100) data varchar(100);)`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+            console.log('Base de données créés avec succès');
+            }
+        });*/
 
     client.query(`CREATE TABLE IF NOT EXISTS parcelles_${user.token} as (select * from parcelles)`,(err,response)=>{
         if(!err){
@@ -910,6 +944,7 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
 
 app.post('/dashboard/00000/:id',authenticateToken,(req,res)=>{
     //result.length=0;
+    //ALTER TABLE parcelles ALTER COLUMN foret TYPE integer USING foret::integer;
     const { email } = req.user;
     const {tokenY} = req.user;
     liste_token.length=0
