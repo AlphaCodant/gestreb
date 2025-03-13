@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/tailStyle.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="/css/style_dash.css" />
+  </head>
+  <body>
+    <div class="grid-container">
+
+      <!-- Header -->
+      <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left">
+          <div class="main-title">
+            <h2>TABLEAU DE BORD</h2>
+          </div>
+        </div>
+        <div class="header-right">
+        </div>
+      </header>
+      <!-- End Header -->
+
+      
+
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <a href="#" class="flex ms-2 md:me-24">
+              <img src="/img/logo2.jpg" class="h-8 me-2" alt="Logo Sodefor" />
+              <span class="self-center text-blue text-md font-semibold md:text-xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
+            </a>
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+        <div class="px-2 pb-4 bg-green  shadow-zinc-600">
+          <ul class="space-y-2 font-medium">
+            <li>
+              <a href="/api/cugf/<%=foret%>" class="flex items-center py-3 px-1 mt-16 text-black border-y border-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined">dashboard</span>
+                <span class="ms-3">Tableau de bord</span>
+              </a>
+            </li>   
+            <li>
+              <a href="/api/cugf/mise_en_place/<%=foret%>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
+                <span style="color: black;" class="material-icons-outlined">description</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Mise en place</span>
+              </a>
+            </li>  
+            <li>
+              <a href="/api/cugf/entretien_recap/<%=foret%>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
+                <span style="color: black;" class="material-icons-outlined">description</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Entretien</span>
+              </a>
+            </li> 
+            <li>
+              <a href="#" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
+                <span style="color: black;" class="material-icons-outlined">description</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Sylviculture</span>
+              </a>
+            </li>                       
+          </ul>
+        </div>
+      </aside>
+      <!-- End Sidebar -->
+
+      <!-- Main -->
+      <main class="main-container">
+        <!-- Barre de sélection -->
+      <div class="selection-bar" >
+        <form action="#" method="GET">
+          <div class="forêts-selection">
+            <label>Forêts :</label>
+            <label for="téné">Téné</label>
+            <input type="checkbox" id="téné" name="foret" value="1">  
+            <label for="sangoue">Sangoué</label>         
+            <input type="checkbox" id="sangoue" name="foret" value="2">
+          </div>
+          <div class="annees-selection">
+            <label>Années :</label>
+            <select id="years" name="years[]" multiple>
+              <!-- Les options d'années seront générées via JavaScript -->
+            </select>
+          </div>
+          <div class="submit-btn">
+            <button type="submit" class="btn-text">Actualiser</button>
+          </div>
+        </form>
+      </div>
+      <!-- End Barre de sélection -->
+      <div id="wrapper">
+        <div class="content-area">
+          <div class="container-fluid"> 
+            <div class="main">
+              <div class="row sparkboxes mt-4">
+                <div class="col-md-3">
+                  <div class="box box1">
+                    <h4>MISE EN PLACE</h4>
+                    <p id="p1"></p>
+                    <p id="p2"></p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="box box2">
+                    <h4>ENTRETIEN</h4>
+                    <p id="p3"></p>
+                    <p id="p4"></p>
+                  </div>
+                </div>
+                <!--<div class="col-md-3">
+                  <div class="box box2">
+                    <h4>SYLVICULTURE</h4>
+                    <p id="p5"></p>
+                    <p id="p6"></p>
+                  </div>
+                </div>-->
+                <div class="text-right mt-3 mb-3 d-fixed">
+                  <a
+                    href="https://github.com/apexcharts/apexcharts.js/tree/master/samples/vanilla-js/dashboards/dark"
+                    target="_blank"
+                    class="btn btn-outline-warning mr-2"
+                  >
+                    <span class="btn-text">Télécharger rapport</span>
+                  </a>
+                </div>               
+              </div>
+  
+              <div class="row mt-4">
+                <div class="col-md-5">
+                  <div class="box shadow mt-4">
+                    <div id="radialBarBottom"></div>
+                  </div>
+                </div>
+                <div class="col-md-7">
+                  <div class="box shadow mt-4">
+                    <div id="line-adwords" class=""></div>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="row mt-4">
+                <div class="col-md-5">
+                  <div class="box shadow mt-4">
+                    <div id="barchart"></div>
+                  </div>
+                </div>
+                <div class="col-md-7">
+                  <div class="box shadow mt-4">
+                    <div id="areachart"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
+      
+    <script>
+      // Générer les années de 1966 à 2025 dans le select
+      document.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById('years');
+        for (let year = 1966; year <= 2025; year++) {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          select.appendChild(option);
+        }
+      });
+  // Variables globales
+
+
+// Quand le formulaire est soumis
+document.querySelector('form').addEventListener('submit', async (event) => {
+  event.preventDefault(); // Empêcher le rechargement de la page
+  const foret = [];
+
+  // Récupérer les forêts sélectionnées
+  if (document.getElementById('téné').checked) foret.push(1);
+  if (document.getElementById('sangoue').checked) foret.push(2);
+
+  // Récupérer les années sélectionnées
+  const annees = Array.from(document.getElementById('years').selectedOptions).map(option => option.value);
+
+  // Mettre à jour les variables globales
+  const annee=annees.map(annee => `${annee}`).join(',');
+  const forets=foret.map(foret => `${foret}`).join(',');
+
+  // Afficher dans la console pour vérifier
+
+
+  // Vérifier qu'il y a des forêts et des années sélectionnées
+  if (foret.length === 0 || annees.length === 0) {
+    alert("Veuillez sélectionner au moins une forêt et une année.");
+    return;
+  }
+
+  // 1. Requête POST pour envoyer les données au serveur
+  try {
+    const responsePost = await fetch('/api/donnees', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ foret, annees }),
+    });
+
+    if (!responsePost.ok) {
+      alert('Erreur lors de l\'envoi des données');
+      return;
+    }
+
+    const data = await responsePost.json();
+    console.log(data); // Afficher la réponse du serveur dans la console
+
+    // 2. Utiliser la réponse du POST pour la suite du traitement
+    document.getElementById('p1').innerHTML = `Objectif : ${(Math.round(data[0].objectif_1 * 100) / 100).toFixed(2)} ha`;
+    document.getElementById('p2').innerHTML = `Taux : ${(Math.round(((data[0].realise_1 / data[0].objectif_1) * 100) * 100) / 100).toFixed(2)} %`;
+    document.getElementById('p3').innerHTML = `Objectif : ${(Math.round(data[0].objectif_2 * 100) / 100).toFixed(2)} ha`;
+    document.getElementById('p4').innerHTML = `Taux : ${(Math.round(((data[0].realise_2 / data[0].objectif_2) * 100) * 100) / 100).toFixed(2)} %`;
+
+    // 3. Après la requête POST, envoie la requête GET pour récupérer d'autres données
+    const responseGet = await fetch(`/api/donnees?foret=${forets}&annees=${annee}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const dataGet = await responseGet.json();
+    console.log(dataGet); // Afficher la réponse de la requête GET dans la console
+
+    // Traiter la réponse de la requête GET ici
+    // Par exemple, afficher dans la page ce que tu veux récupérer
+    let series=[];
+    const labels = [];
+          
+          dataGet.forEach(trv => {
+            series.push(trv.mise_en_place);
+            series.push(trv.entretien_0);
+            series.push(trv.entretien_1);
+            series.push(trv.entretien_2);
+            series.push(trv.entretien_3);
+          
+            //series.push(t);
+
+            console.log(series);
+          });  
+          
+        
+
+      window.Apex = {
+          chart: {
+            foreColor: '#ccc',
+            toolbar: {
+              show: false
+            },
+          },
+          stroke: {
+            width: 3
+          },
+          dataLabels: {
+            enabled: false
+          },
+          tooltip: {
+            theme: 'dark'
+          },
+          grid: {
+            borderColor: "#535A6C",
+            xaxis: {
+              lines: {
+                show: true
+              }
+            }
+          }
+        }; 
+        
+        
+        
+        var optionsLine = {
+          chart: {
+            height: 328,
+            type: 'line',
+            zoom: {
+              enabled: false
+            },
+            dropShadow: {
+              enabled: true,
+              top: 3,
+              left: 2,
+              blur: 4,
+              opacity: 1,
+            }
+          },
+          stroke: {
+            curve: 'smooth',
+            width: 2
+          },
+          //colors: ["#3F51B5", '#2196F3'],
+          series: series,
+          title: {
+            text: 'Media',
+            align: 'left',
+            offsetY: 1000,
+            offsetX: 20
+          },
+          subtitle: {
+            text: 'Statistics',
+            offsetY: 55,
+            offsetX: 20
+          },
+          markers: {
+            size: 6,
+            strokeWidth: 0,
+            hover: {
+              size: 9
+            }
+          },
+          grid: {
+            show: true,
+            padding: {
+              bottom: 0
+            }
+          },
+          labels: ['Mise en Place', 'Entretien 0', 'Entretien 1', 'Entretien 2', 'Entretien 3'],
+          xaxis: {
+            tooltip: {
+              enabled: false
+            }
+          },
+          legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            offsetY: -20
+          }
+        }
+        
+        var chartLine = new ApexCharts(document.querySelector('#line-adwords'), optionsLine);
+        chartLine.render();
+        
+        var optionsCircle4 = {
+          chart: {
+            type: 'radialBar',
+            height: 350,
+            width: 380,
+          },
+          plotOptions: {
+            radialBar: {
+              size: undefined,
+              inverseOrder: true,
+              hollow: {
+                margin: 5,
+                size: '48%',
+                background: 'transparent',
+        
+              },
+              track: {
+                show: false,
+              },
+              startAngle: -180,
+              endAngle: 180
+        
+            },
+          },
+          stroke: {
+            lineCap: 'round'
+          },
+          series: series,
+          labels: ['Mise en place', 'Entretien annee 0', 'Entretien annee 1', 'Entretien annee 2', 'Entretien annee 3'],
+          legend: {
+            show: true,
+            floating: true,
+            position: 'right',
+            offsetX: 10000,
+            offsetY: 230
+          },
+        }
+        
+        var chartCircle4 = new ApexCharts(document.querySelector('#radialBarBottom'), optionsCircle4);
+        chartCircle4.render();
+        
+        
+        var optionsBar = {
+          chart: {
+            height: 380,
+            type: 'bar',
+            stacked: true,
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: '30%',
+              horizontal: false,
+            },
+          },
+          series: [{
+            name: 'PRODUCT A',
+            data: [14, 25, 21, 17, 12, 13, 11, 19]
+          }, {
+            name: 'PRODUCT B',
+            data: [13, 23, 20, 8, 13, 27, 33, 12]
+          }, {
+            name: 'PRODUCT C',
+            data: [11, 17, 15, 15, 21, 14, 15, 13]
+          }],
+          xaxis: {
+            categories: ['2011 Q1', '2011 Q2', '2011 Q3', '2011 Q4', '2012 Q1', '2012 Q2', '2012 Q3', '2012 Q4'],
+          },
+          fill: {
+            opacity: 1
+          },
+        
+        }
+        
+        var chartBar = new ApexCharts(
+          document.querySelector("#barchart"),
+          optionsBar
+        );
+        
+        chartBar.render();
+        
+        var optionsArea = {
+          chart: {
+            height: 380,
+            type: 'area',
+            stacked: false,
+          },
+          stroke: {
+            curve: 'straight'
+          },
+          series: [{
+              name: "Music",
+              data: [11, 15, 26, 20, 33, 27]
+            },
+            {
+              name: "Photos",
+              data: [32, 33, 21, 42, 19, 32]
+            },
+            {
+              name: "Files",
+              data: [20, 39, 52, 11, 29, 43]
+            }
+          ],
+          xaxis: {
+            categories: ['2011 Q1', '2011 Q2', '2011 Q3', '2011 Q4', '2012 Q1', '2012 Q2'],
+          },
+          tooltip: {
+            followCursor: true
+          },
+          fill: {
+            opacity: 1,
+          },
+        
+        }
+        
+        var chartArea = new ApexCharts(
+          document.querySelector("#areachart"),
+          optionsArea
+        );
+        
+        chartArea.render();
+
+      } catch (error) {
+          console.error('Erreur lors de la récupération des parcelles:', error);
+        }
+      });
+      //--------------------------------------------------------------------------------
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const response = await fetch('/get/parcelles/mise_en_place/<%=foret%>');
+          const travail = await response.json();
+          const liste_travaux = [];
+          const taux_total = [];
+          console.log(typeof(taux_total));
+          travail.forEach(trv => {
+            const t = {travail:trv.travail, objectif:trv.objectif, realise:trv.realise, taux:trv.realise/trv.objectif*100, reliquat:trv.objectif-trv.realise};
+            taux_total.push(t.taux);
+            console.log(t.taux); 
+            liste_travaux.push(t.objectif);
+          });
+          console.log(taux_total);
+          console.log(liste_travaux);
+          document.getElementById(`p1`).textContent = `Objectif : ${(Math.round(liste_travaux[6] * 100)/100).toFixed(2)} ha`;
+          document.getElementById(`p2`).textContent = `Taux : ${(Math.round((taux_total[0]+taux_total[1]+taux_total[2]+taux_total[3]+taux_total[4]
+          +taux_total[5]+taux_total[6])/7 * 100)/100).toFixed(2)} %`;
+          console.log(liste_travaux);
+          console.log(taux_total);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des parcelles:', error);
+        }
+      });
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const response = await fetch('/get/parcelles/entretien/<%=foret%>');
+          const entretien = await response.json();
+          entretien.forEach(trv => {
+            const t = {objectif:trv.objectif, realise:trv.realise, taux:trv.realise/trv.objectif*100, reliquat:trv.objectif-trv.realise};
+            document.getElementById(`p3`).textContent = `Objectif : ${(Math.round(t.objectif * 100)/100).toFixed(2)} ha`;
+            document.getElementById(`p4`).textContent = `Taux : ${(Math.round((t.realise/t.objectif)*100 * 100)/100).toFixed(2)} %`;
+          });  
+          
+        } catch (error) {
+          console.error('Erreur lors de la récupération des parcelles:', error);
+        }
+      });
+    </script>
+  </body>
+</html>

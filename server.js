@@ -1,5 +1,5 @@
 //Port
-const port = 3001;
+const port = 3003;
 
 //Importation de modules NPM
 
@@ -22,6 +22,8 @@ const LocalStrategy = require("passport-local").Strategy;
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
+const { Console } = require('console');
+const axios = require('axios');
 
 //const initializePassport = require("./passportConfig");
 
@@ -32,6 +34,7 @@ dotenv.config();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(express.static('public'));
+app.use(express.json());
 app.set('view engine','ejs')
 app.use(cors({
     origin:'*'
@@ -187,7 +190,7 @@ app.get('/statistiques',authenticateToken,(req,res)=>{
     res.redirect(`/statistiques/${tokenY}`);
 });
 
-app.get('/connexion',securedConnect.ensureLoggedOut({redirectTo:'/page'}),(req,res)=>{
+app.get('/connexion',(req,res)=>{
     res.render('connexion');
 });
 app.get('/admin/inscrit',(req,res)=>{
@@ -255,13 +258,667 @@ let donnee_connect=[]
 
 app.get(`/page/:id`,authenticateToken,(req,res)=>{
     result.length=0;
+    const fonction = {'sangoue':2,'tene':1,'cg_gag':3,'csotc':4,'agent_sotc':5,'agent_tene':6,'agent_sangoue':7,'autre_sodefor':8};
+    const {email} = req.user;
     const {tokenY} = req.user;
     const {ugf} = req.user;
     const {admin} = req.user;
-    res.render('dashboard_conn',{id:tokenY,ugf:ugf,admin:admin});
-    
+    client.query(`SELECT ugf FROM utilisateurs WHERE email='${email}'`,
+        (err,result)=>{
+            if (err){
+                console.log(err);
+            }else{
+                console.log(fonction[result.rows[0].ugf]);
+                res.render('dashboard_conn',{id:tokenY,ugf:ugf,admin:admin,poste:fonction[result.rows[0].ugf]});
+            }
+        }
+    )
+});
+setInterval(()=>{
+app.get('/api/parcelles/:id', async (req, res) => {
+    client.query(`SELECT * FROM parcelles WHERE id='${req.params.id}'`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('admin_inscrit_id',{numero : results.rows[0].numero,ess : results.rows[0].essence });
+            }
+        }
+    );
+  });
+},1000);
+  app.post('/api/parcelles/:id', async (req, res) => {
+    try {
+      const result = await client.query('SELECT * FROM parcelles ORDER BY annee ASC');
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
+
+  app.get(`/get/parcelles/mise_en_place/:foret`, async (req, res) => {
+    const annee_actuelle = new Date().getFullYear();
+    try {
+      const result = await client.query(`SELECT a.fk_cout_fixe AS travail,SUM(b.superficie) AS objectif, SUM(a.superficie_traitee) 
+                                        AS realise FROM appliquer AS a, parcelles AS b
+                                        WHERE a.fk_parcelles=b.id AND fk_cout_fixe between 1 AND 7 AND b.foret=${req.params.foret} 
+                                        and annee=${annee_actuelle}
+                                        GROUP BY a.fk_cout_fixe ORDER BY a.fk_cout_fixe ASC`);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
+  
+  app.get(`/get/parcelles/mise_en_place/:foret/:travail`, async (req, res) => {
+    const annee_actuelle = new Date().getFullYear();
+    try {
+      const result = await client.query(`SELECT a.id,a.numero,a.annee,a.essence,a.superficie,b.superficie_traitee,
+        TO_CHAR(b.date_init, 'dd/mm/yyyy') as date_init,TO_CHAR(b.date_fin, 'dd/mm/yyyy') as date_fin
+         FROM parcelles AS a, appliquer AS b WHERE a.id=b.fk_parcelles AND a.foret=${req.params.foret} AND a.annee=${annee_actuelle} AND b.fk_cout_fixe = ${req.params.travail} ORDER BY id ASC`);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
+  app.post(`/get/parcelles/mise_en_place/:foret/:travail`, async (req, res) => {
+    const {realise} = req.body;
+    const {date_debut} = req.body;
+    console.log(realise);
+    console.log(date_debut);
+    /* Vérifier si "updates" est un tableau
+    if (!realise || !Array.isArray(realise) || !date_debut || !Array.isArray(date_debut)) {
+        return res.status(400).send('Paramètres manquants ou mal formés');
+    }*/
+
+    const { foret, travail } = req.params;
+    // Vérifier que les paramètres "foret" et "travail" sont présents
+    if (!foret || !travail) {
+        return res.status(400).send('Les paramètres "foret" et "travail" sont requis');
+    }
+
+    try {
+        if(date_debut){
+            for (const debut of date_debut) {
+                // Vérifier que chaque "update" contient un id et une value
+                if (!debut.id) {
+                    return res.status(400).send('Chaque mise à jour doit contenir un "id" et une "value"');
+                }
+
+                // Si la valeur de "update.value" est nulle ou vide, ne rien faire pour cette entrée
+                if (debut.value === null || debut.value === '') {
+                    console.log(`La valeur pour l'ID ${debut.id} est nulle ou vide, aucune mise à jour effectuée.`);
+                    continue;  // Passer à la prochaine mise à jour sans rien faire
+                }
+
+                // Assurer que l'id est un nombre valide
+                const id = parseInt(debut.id);
+                if (isNaN(id)) {
+                    return res.status(400).send('L\'ID est invalide');
+                }
+
+                // Exécuter la mise à jour dans la base de données
+                const query = 'UPDATE appliquer SET date_init = $1 WHERE fk_parcelles = $2 AND fk_cout_fixe = $3';
+                await client.query(query, [debut.value, id, travail]);
+            }
+        }
+
+        if(realise){
+            for (const update of realise) {
+                // Vérifier que chaque "update" contient un id et une value
+                if (!update.id) {
+                    return res.status(400).send('Chaque mise à jour doit contenir un "id" et une "value"');
+                }
+
+                // Si la valeur de "update.value" est nulle ou vide, ne rien faire pour cette entrée
+                if (update.value === null || update.value === '') {
+                    console.log(`La valeur pour l'ID ${update.id} est nulle ou vide, aucune mise à jour effectuée.`);
+                    continue;  // Passer à la prochaine mise à jour sans rien faire
+                }
+
+                // Assurer que l'id est un nombre valide
+                const id = parseInt(update.id);
+                if (isNaN(id)) {
+                    return res.status(400).send('L\'ID est invalide');
+                }
+
+                // Exécuter la mise à jour dans la base de données
+                const query = 'UPDATE appliquer SET superficie_traitee = $1 WHERE fk_parcelles = $2 AND fk_cout_fixe = $3';
+                await client.query(query, [parseFloat(update.value), id, travail]);
+            }
+        }
+        res.status(200).send('Mise à jour réussie');
+    } catch (err) {
+        console.error('Erreur lors de la mise à jour:', err);
+        res.status(500).send('Erreur serveur');
+    }
 });
 
+//-------------------------------------Mise à jour mise en place --------------------------------------------------------
+
+app.post(`/get/parcelles/mise_en_place/:foret`, async (req, res) => {
+   const annee = new Date().getFullYear();
+    try {           // Exécuter la mise à jour dans la base de données
+            const query = `UPDATE resultats SET (objectif,realise) =((SELECT SUM(superficie) from parcelles where foret=${req.params.foret}
+                            AND annee=${annee}),
+                            (SELECT SUM(a.superficie_traitee/7) FROM appliquer AS a, parcelles AS b 
+                        WHERE a.fk_parcelles=b.id AND a.fk_cout_fixe in 
+                        (SELECT id FROM cout_fixe WHERE fk_resultat=1) AND b.foret=${req.params.foret} AND b.annee=${annee})) WHERE id = 1`;
+            await client.query(query);
+    
+    } catch (err) {
+        console.error('Erreur lors de la mise à jour:', err);
+        res.status(500).send('Erreur serveur');
+    }
+});
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------Entretien Annee 0 ------------------------------------------------------------------------
+
+app.post(`/get/parcelles/entretien0/:foret`, async (req, res) => {
+    const annee = new Date().getFullYear();
+     try {           // Exécuter la mise à jour dans la base de données
+             const query = `UPDATE resultats SET (objectif,realise) =((SELECT SUM(superficie) from parcelles where foret=${req.params.foret}
+                            AND annee=${annee})*2,
+                            (SELECT passage_1+passage_2 FROM (SELECT DISTINCT((SELECT sum(a.superficie_traitee)/3.2 
+                            FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 8 and 11 AND b.annee=${annee} AND b.foret=${req.params.foret})) AS passage_1, 
+                            (SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 12 and 13 AND b.annee=${annee} AND b.foret=${req.params.foret}) AS passage_2 
+                            FROM appliquer))) 
+                            WHERE fk_activite = 2 AND annee = ${annee}`;
+             await client.query(query);
+             console.log(annee);
+     
+     } catch (err) {
+         console.error('Erreur lors de la mise à jour:', err);
+         res.status(500).send('Erreur serveur');
+     }
+ });
+ 
+ //-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------Entretien Annee 1 ------------------------------------------------------------------------
+
+app.post(`/get/parcelles/entretien1/:foret`, async (req, res) => {
+    const annee = new Date().getFullYear();
+     try {           // Exécuter la mise à jour dans la base de données
+             const query =`UPDATE resultats SET (objectif,realise) =((SELECT SUM(superficie) from parcelles where foret=${req.params.foret}
+                            AND annee=${annee-1})*3,
+                            (SELECT passage_1+passage_2+passage_3 FROM (SELECT DISTINCT((SELECT sum(a.superficie_traitee)/2.2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 14 and 16 AND b.annee=${annee-1} AND b.foret=${req.params.foret})) AS passage_1, 
+                            (SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 17 and 18 AND b.annee=${annee-1} AND b.foret=${req.params.foret}) AS passage_2,
+                            (SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 19 and 20 AND b.annee=${annee-1} AND b.foret=${req.params.foret}) AS passage_3
+                            FROM appliquer)))
+                            WHERE fk_activite = 3 AND annee = ${annee-1}`;
+             await client.query(query);
+     
+     } catch (err) {
+         console.error('Erreur lors de la mise à jour:', err);
+         res.status(500).send('Erreur serveur');
+     }
+ });
+ 
+ //-------------------------------------------------------------------------------------------------------------------------------
+
+ //-------------------------------------Entretien Annee 2 ------------------------------------------------------------------------
+
+app.post(`/get/parcelles/entretien2/:foret`, async (req, res) => {
+    const annee = new Date().getFullYear();
+     try {           // Exécuter la mise à jour dans la base de données
+             const query =`UPDATE resultats SET (objectif,realise) =((SELECT SUM(superficie) from parcelles where foret=${req.params.foret}
+                            AND annee=${annee-2})*3,
+                            (SELECT passage_1+passage_2+passage_3 FROM (SELECT DISTINCT((SELECT sum(a.superficie_traitee)/2.2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 14 and 16 AND b.annee=${annee-2} AND b.foret=${req.params.foret})) AS passage_1, 
+                            (SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 17 and 18 AND b.annee=${annee-2} AND b.foret=${req.params.foret}) AS passage_2,
+                            (SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 19 and 20 AND b.annee=${annee-2} AND b.foret=${req.params.foret}) AS passage_3
+                            FROM appliquer)))
+                            WHERE fk_activite = 4 AND annee = ${annee-2}`;
+             await client.query(query);
+     
+     } catch (err) {
+         console.error('Erreur lors de la mise à jour:', err);
+         res.status(500).send('Erreur serveur');
+     }
+ });
+ 
+ //-------------------------------------------------------------------------------------------------------------------------------
+
+ //-------------------------------------Entretien Annee 3 ------------------------------------------------------------------------
+
+app.post(`/get/parcelles/entretien3/:foret`, async (req, res) => {
+    const annee = new Date().getFullYear();
+     try {           // Exécuter la mise à jour dans la base de données
+             const query =`UPDATE resultats SET (objectif,realise) =((SELECT SUM(superficie) from parcelles where foret=${req.params.foret}
+                            AND annee=${annee-3})*2,
+                            (SELECT passage_1+passage_2 FROM (SELECT DISTINCT((SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 28 and 29 AND b.annee=${annee-3} AND b.foret=${req.params.foret})) AS passage_1, (SELECT sum(a.superficie_traitee)/2 FROM public.appliquer as a, public.parcelles as b 
+                            WHERE a.fk_parcelles=b.id 
+                            AND fk_cout_fixe between 30 and 31 AND b.annee=${annee-3} AND b.foret=${req.params.foret}) AS passage_2 FROM appliquer))) 
+                            WHERE fk_activite = 5 AND annee = ${annee-3}`;
+             await client.query(query);
+     
+     } catch (err) {
+         console.error('Erreur lors de la mise à jour:', err);
+         res.status(500).send('Erreur serveur');
+     }
+ });
+ 
+ //-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------Mise à jour mise en place --------------------------------------------------------
+
+app.get(`/get/parcelles/mise_en_place/:foret`, async (req, res) => {
+    const annee = new Date().getFullYear();
+     try {           // Exécuter la mise à jour dans la base de données
+             const  query = `SELECT * FROM resultats WHERE fk_activite = 1 AND annee = ${annee} AND fk_foret = ${req.params.foret}`;
+             const result = await client.query(query);
+             res.json(result.rows);
+     
+     } catch (err) {
+         console.error('Erreur lors de la mise à jour:', err);
+         res.status(500).send('Erreur serveur');
+     }
+ });
+ 
+ //-------------------------------------------------------------------------------------------------------------------------------
+ //-------------------------------------Entretien Annee 0 ------------------------------------------------------------------------
+ 
+ app.get(`/get/parcelles/entretien0/:foret`, async (req, res) => {
+     const annee = new Date().getFullYear();
+      try {           // Exécuter la mise à jour dans la base de données
+              const query = `SELECT * FROM resultats WHERE fk_activite = 2 AND annee = ${annee} AND fk_foret = ${req.params.foret}`;
+            const result = await client.query(query);
+            res.json(result.rows);
+      
+      } catch (err) {
+          console.error('Erreur lors de la mise à jour:', err);
+          res.status(500).send('Erreur serveur');
+      }
+  });
+  
+  //-------------------------------------------------------------------------------------------------------------------------------
+ 
+ //-------------------------------------Entretien Annee 1 ------------------------------------------------------------------------
+ 
+ app.get(`/get/parcelles/entretien1/:foret`, async (req, res) => {
+     const annee = new Date().getFullYear();
+      try {           // Exécuter la mise à jour dans la base de données
+              const query = `SELECT * FROM resultats WHERE fk_activite = 3 AND annee = ${annee-1} AND fk_foret = ${req.params.foret}`;
+            const result = await client.query(query);
+            res.json(result.rows);
+      
+      } catch (err) {
+          console.error('Erreur lors de la mise à jour:', err);
+          res.status(500).send('Erreur serveur');
+      }
+  });
+  
+  //-------------------------------------------------------------------------------------------------------------------------------
+ 
+  //-------------------------------------Entretien Annee 2 ------------------------------------------------------------------------
+ 
+ app.get(`/get/parcelles/entretien2/:foret`, async (req, res) => {
+     const annee = new Date().getFullYear();
+      try {           // Exécuter la mise à jour dans la base de données
+              const query = `SELECT * FROM resultats WHERE fk_activite = 4 AND annee = ${annee-2} AND fk_foret = ${req.params.foret}`;
+            const result = await client.query(query);
+            res.json(result.rows);
+      
+      } catch (err) {
+          console.error('Erreur lors de la mise à jour:', err);
+          res.status(500).send('Erreur serveur');
+      }
+  });
+  
+  //-------------------------------------------------------------------------------------------------------------------------------
+ 
+  //-------------------------------------Entretien Annee 3 ------------------------------------------------------------------------
+ 
+ app.get(`/get/parcelles/entretien3/:foret`, async (req, res) => {
+     const annee = new Date().getFullYear();
+      try {           // Exécuter la mise à jour dans la base de données
+              const query = `SELECT * FROM resultats WHERE fk_activite = 5 AND annee = ${annee-3} AND fk_foret = ${req.params.foret}`;
+            const result = await client.query(query);
+            res.json(result.rows);
+      
+      } catch (err) {
+          console.error('Erreur lors de la mise à jour:', err);
+          res.status(500).send('Erreur serveur');
+      }
+  });
+  
+  //-------------------------------------------------------------------------------------------------------------------------------
+
+  app.get('/api/cugf/mise_en_place/:foret/:travail/:nom',authenticateToken, async (req, res) => {
+    client.query(`SELECT * FROM parcelles WHERE foret=${req.params.foret}`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('mise_en_place_parc',{travail:req.params.travail,foret:req.params.foret,nom:req.params.nom.toUpperCase()});
+            }
+        }
+    );
+  });
+  app.get('/api/cugf/entretien/:annee/:foret',authenticateToken, async (req, res) => {
+    
+    client.query(`SELECT * FROM parcelles WHERE id=${req.params.foret} `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('entretien',{foret:req.params.foret,annee:req.params.annee});
+            }
+        }
+    );
+  });
+  app.get('/api/cugf/entretien_1/:annee/:foret',authenticateToken, async (req, res) => {
+        res.render('entretien_1',{foret:req.params.foret,annee:req.params.annee});
+  });
+  app.get('/api/cugf/entretien_2/:annee/:foret',authenticateToken, async (req, res) => {
+    
+    client.query(`SELECT * FROM parcelles WHERE id=${req.params.foret} `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('entretien_2',{foret:req.params.foret,annee:req.params.annee});
+            }
+        }
+    );
+  });
+  app.get('/api/cugf/entretien_3/:annee/:foret',authenticateToken, async (req, res) => {
+    
+    client.query(`SELECT * FROM parcelles WHERE id=${req.params.foret} `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('entretien_3',{foret:req.params.foret,annee:req.params.annee});
+            }
+        }
+    );
+  });
+  app.get('/api/cugf/entretien_recap/:foret',authenticateToken, async (req, res) => {
+    
+    client.query(`SELECT * FROM parcelles WHERE id=${req.params.foret} `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('entretien_recap',{foret:req.params.foret});
+            }
+        }
+    );
+  });
+  app.get('/api/cugf/entretien/:annee/:foret/:travail',authenticateToken, async (req, res) => {
+    res.render('entretien_parc',{foret:req.params.foret,annee:req.params.annee,travail:req.params.travail});
+  });
+  app.get('/api/cugf/entretien_1/:annee/:foret/:travail',authenticateToken, async (req, res) => {
+    res.render('entretien_parc',{foret:req.params.foret,annee:req.params.annee,travail:req.params.travail});
+  });
+  app.get('/api/cugf/entretien_2/:annee/:foret/:travail',authenticateToken, async (req, res) => {
+    res.render('entretien_parc',{foret:req.params.foret,annee:req.params.annee,travail:req.params.travail});
+  });
+  app.get('/api/cugf/entretien_3/:annee/:foret/:travail',authenticateToken, async (req, res) => {
+    res.render('entretien_parc',{foret:req.params.foret,annee:req.params.annee,travail:req.params.travail});
+  });
+  
+  app.get(`/get/parcelles/entretien/:annee/:foret/:travail`, async (req, res) => {
+    const annee_actuelle = new Date().getFullYear();
+    const annee=req.params.annee;
+    try {
+        if (annee!=0){
+            const result = await client.query(`SELECT a.id,a.numero,a.annee,a.essence,a.superficie,b.superficie_traitee
+                FROM parcelles AS a, appliquer AS b WHERE a.id=b.fk_parcelles AND a.foret=${req.params.foret} 
+                AND a.annee=${annee_actuelle-annee} AND b.fk_cout_fixe = ${req.params.travail} ORDER BY id ASC`);
+             res.json(result.rows);
+        }else{
+            const result = await client.query(`SELECT a.id,a.numero,a.annee,a.essence,a.superficie,b.superficie_traitee
+                FROM parcelles AS a, appliquer AS b WHERE a.id=b.fk_parcelles AND a.foret=${req.params.foret} 
+                AND a.annee=${annee_actuelle} AND b.fk_cout_fixe = ${req.params.travail} ORDER BY id ASC`);
+             res.json(result.rows);
+        }
+      
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
+  app.get(`/get/parcelles/entretien/:annee/:foret`, async (req, res) => {
+    const annee_actuelle = new Date().getFullYear();
+    const annee=req.params.annee;
+    try {
+        if (annee!=0){
+            const result = await client.query(`SELECT b.fk_cout_fixe,sum(a.superficie) as superficie,sum(b.superficie_traitee)
+        as superficie_traitee
+         FROM parcelles AS a, appliquer AS b WHERE a.id=b.fk_parcelles AND a.foret=${req.params.foret} 
+         AND a.annee=${annee_actuelle-annee} group by fk_cout_fixe ORDER BY fk_cout_fixe ASC`);
+      res.json(result.rows);
+        }else{
+            const result = await client.query(`SELECT b.fk_cout_fixe,sum(a.superficie) as superficie,sum(b.superficie_traitee)
+        as superficie_traitee
+         FROM parcelles AS a, appliquer AS b WHERE a.id=b.fk_parcelles AND a.foret=${req.params.foret} 
+         AND a.annee=${annee_actuelle} group by fk_cout_fixe ORDER BY fk_cout_fixe ASC`);
+      res.json(result.rows);
+        }
+      
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
+  app.post(`/get/parcelles/entretien/:annee/:foret/:travail`, async (req, res) => {
+    const { updates } = req.body;
+    console.log(updates);
+
+    // Vérifier si "updates" est un tableau
+    if (!updates || !Array.isArray(updates)) {
+        return res.status(400).send('Paramètre "updates" manquant ou mal formé');
+    }
+
+    const { foret, travail } = req.params;
+    // Vérifier que les paramètres "foret" et "travail" sont présents
+    if (!foret || !travail) {
+        return res.status(400).send('Les paramètres "foret" et "travail" sont requis');
+    }
+
+    try {
+        for (const update of updates) {
+            // Vérifier que chaque "update" contient un id et une value
+            if (!update.id) {
+                return res.status(400).send('Chaque mise à jour doit contenir un "id" et une "value"');
+            }
+
+            // Si la valeur de "update.value" est nulle ou vide, ne rien faire pour cette entrée
+            if (update.value === null || update.value === '') {
+                console.log(`La valeur pour l'ID ${update.id} est nulle ou vide, aucune mise à jour effectuée.`);
+                continue;  // Passer à la prochaine mise à jour sans rien faire
+            }
+
+            // Assurer que l'id est un nombre valide
+            const id = parseInt(update.id);
+            if (isNaN(id)) {
+                return res.status(400).send('L\'ID est invalide');
+            }
+
+            // Exécuter la mise à jour dans la base de données
+            const query = 'UPDATE appliquer SET superficie_traitee = $1 WHERE fk_parcelles = $2 AND fk_cout_fixe = $3';
+            await client.query(query, [parseFloat(update.value), id, travail]);
+        }
+        res.status(200).send('Mise à jour réussie');
+    } catch (err) {
+        console.error('Erreur lors de la mise à jour:', err);
+        res.status(500).send('Erreur serveur');
+    }
+});
+app.get('/get/parcelles/entretien/:foret', async (req, res) => {
+    
+    const annee_actuelle = new Date().getFullYear();
+    const annee=req.params.annee;
+    try {       
+        const result = await client.query(`SELECT SUM(objectif) AS Objectif ,SUM(realise) AS Realise FROM resultats 
+                                           WHERE fk_activite BETWEEN 2 AND 5 AND fk_foret=${req.params.foret}`);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
+  
+  app.get('/api/cugf/mise_en_place/:foret',authenticateToken, async (req, res) => {
+    
+    client.query(`SELECT * FROM parcelles WHERE id=${req.params.foret} `,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                res.render('mise_en_place',{foret:req.params.foret});
+            }
+        }
+    );
+  });
+
+  app.get('/api/cugf/:foret',authenticateToken,(req, res) => {
+    
+    res.render('interface_cugf',{foret:req.params.foret});
+
+  });
+//-----------------------Dashboard supervision-----------------------------------------
+  app.get('/api/gest/:administrateur',(req, res) => {
+    
+    res.render('dashboard_gest',{foret:req.params.foret});
+
+  });
+
+//----------------------------------Recuperer----------------------------------------------------
+
+// API POST pour récupérer les données en fonction des forêts et des années
+app.post('/api/donnees', async (req, res) => {
+    const { foret, annees } = req.body; // Récupérer les données envoyées par le client
+  
+    // Vérifier si les données sont présentes
+    if (!foret || !annees || annees.length === 0) {
+      return res.status(400).json({ message: 'Forêt et années sont requis.' });
+    }
+  
+    // Créer une chaîne de valeurs pour les années
+    const anneesList = annees.map(annee => `${annee}`).join(',');
+  
+    try {
+      // Construire la requête SQL pour récupérer les données des forêts et des années
+      const query = `
+        SELECT (SELECT SUM(objectif) AS objectif_1
+        FROM resultats
+        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
+        AND annee IN (${anneesList})
+        AND fk_activite=1),
+        (SELECT SUM(objectif) AS objectif_2
+        FROM resultats
+        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
+        AND annee IN (${anneesList})
+        AND fk_activite BETWEEN 2 AND 5),
+        (SELECT SUM(realise) AS realise_1
+        FROM resultats
+        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
+        AND annee IN (${anneesList})
+        AND fk_activite=1),
+        (SELECT SUM(realise) AS realise_2
+        FROM resultats
+        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
+        AND annee IN (${anneesList})
+        AND fk_activite BETWEEN 2 AND 5)
+        FROM resultats LIMIT 1;
+      `;
+      // Prépare la requête GET à envoyer
+    const url = `http://localhost:${port}/api/donnees?foret=${foret}&annees=${annees}`;
+    
+    // Effectue une requête GET pour renvoyer les mêmes données
+    const response = await axios.get(url);  // Envoie la requête GET avec les paramètres
+  
+      // Exécuter la requête SQL
+      const result = await client.query(query);
+  
+      // Si des données sont trouvées, envoyer la réponse
+      if (result.rows.length > 0) {
+        return res.status(200).json(result.rows);
+        
+        //---------------------------Requete graphiques ------------------------------------
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée trouvée.' });
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'exécution de la requête PostgreSQL:', error);
+      return res.status(500).json({ message: 'Erreur du serveur interne' });
+    }
+  });
+
+//----------------------------------------------------------------------------------------------
+
+//-------------------------------Requete pour les graphiques------------------------------------
+
+app.get('/api/donnees', async(req, res) => {
+    // Récupérer les paramètres de la requête GET
+    const forets = req.query.foret;  // Récupère le paramètre forêt
+    const annees = req.query.annees;  // Récupère le paramètre années
+    console.log(forets);
+    console.log(annees);
+  
+    // Vérifier si les paramètres existent
+    if (!forets || !annees) {
+      return res.status(400).json({ message: 'Les paramètres forêts et années sont requis.' });
+    }
+    try{
+        const query = `
+        SELECT (SELECT SUM(realise) FROM resultats WHERE fk_activite=1) as mise_en_place,
+        (SELECT SUM(realise) FROM resultats WHERE fk_activite=2) as entretien_0,
+        (SELECT SUM(realise) FROM resultats WHERE fk_activite=3) as entretien_1,
+        (SELECT SUM(realise) FROM resultats WHERE fk_activite=4) as entretien_2,
+        (SELECT SUM(realise) FROM resultats WHERE fk_activite=5) as entretien_3 
+        FROM resultats WHERE annee IN (${annees}) AND fk_foret IN (${forets})
+        LIMIT 1
+        `;
+        const response = await client.query(query);
+
+        if (response.rows.length > 0) {
+            return res.status(200).json(response.rows);
+          } else {
+            return res.status(404).json({ message: 'Aucune donnée trouvée.' });
+          }
+    } catch (error) {
+        console.error('Erreur lors de l\'exécution de la requête PostgreSQL:', error); 
+        return res.status(500).json({ message: 'Erreur du serveur interne' });
+    }
+  });
+
+//---------------------------------------------------------------------------------------------
+
+app.get('/api/parcelles', async (req, res) => {
+    try {
+      const result = await client.query('SELECT * FROM parcelles ORDER BY annee ASC');
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
 
 app.get('/valid/:tokenGen',(req,res)=>{
     client.query(
@@ -397,7 +1054,7 @@ app.post("/validation/:tokenGen",(req,res)=>{
                                                 from :"alphacodant@gmail.com",
                                                 to :results.rows[0].email ,
                                                 subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
-                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : http://localhost:3001/connexion`
+                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : https://ci-sodefor-gagnoa-1.onrender.com/connexion`
                                             };
                                             transporteur.sendMail(mailOptions,(err,response)=>{
                                                 if(err){
@@ -519,7 +1176,7 @@ app.post("/inscription",(req,res)=>{
                             from :"alphacodant@gmail.com",
                             to :"alphacodant@gmail.com" ,
                             subject : `Demande d'autorisation d'accès à la l'Application WebSig de ${nom} ${prenom}`,
-                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n http://localhost:3001/valid/`+tokenGen
+                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://ci-sodefor-gagnoa-1.onrender.com/valid/`+tokenGen
                         };
                         transporteur.sendMail(mailOptions,(err,response)=>{
                             if(err){
@@ -922,7 +1579,7 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             value=value;
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        FROM (SELECT a.id,b.foret as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
         a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value}) AS t`,
@@ -945,6 +1602,20 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
 app.post('/dashboard/00000/:id',authenticateToken,(req,res)=>{
     //result.length=0;
     //ALTER TABLE parcelles ALTER COLUMN foret TYPE integer USING foret::integer;
+
+    /*
+    do
+$$
+declare
+     r integer;
+begin
+   for r in SELECT id FROM public.parcelles loop	
+	INSERT INTO public.appliquer (fk_parcelles) VALUES (r);
+   end loop;
+end;
+$$;
+
+    */
     const { email } = req.user;
     const {tokenY} = req.user;
     liste_token.length=0
@@ -1031,7 +1702,7 @@ app.post('/dashboard/00000/:id',authenticateToken,(req,res)=>{
 
     console.log(ddf);
     client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        FROM (SELECT a.id,b.foret as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
         a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}) AS t`,
                 (err,results)=>{

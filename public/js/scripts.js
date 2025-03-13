@@ -1,5 +1,4 @@
 // SIDEBAR TOGGLE
-
 let sidebarOpen = false;
 const sidebar = document.getElementById('sidebar');
 

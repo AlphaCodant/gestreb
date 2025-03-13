@@ -37,7 +37,7 @@ body{
 }
 #table_data {
     position: relative;
-    bottom: 0%;
+    top: 0%;
     overflow: scroll;
     left: 0%;
     right: 0%;
@@ -197,4 +197,5 @@ map {
 #legendes{
     z-index: 1000;
 }
+
 

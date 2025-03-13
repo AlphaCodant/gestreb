@@ -36,22 +36,22 @@
   <body style="font-family: sans-serif; color: black;">
     <div class="grid-container">
      <!-- Header -->
-     <header class="header">
+     <header class="header" style="background-color:#1d2634 ;">
       <div class="menu-icon" onclick="openSidebar()">
         <span class="material-icons-outlined">menu</span>
       </div>
       <div>
-        <button onclick="wms_layers()" type="button" id="wms_layers_btn" class="flex items-center mr-4  text-black rounded-lg bg-none hover:text-green-600 group"><span style="color: rgb(5, 198, 5);" class="material-icons-outlined">dataset</span><p class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">BASE DE DONNEES</p></button>
+        <button onclick="wms_layers()" type="button" id="wms_layers_btn" class="flex items-center mr-4  text-white rounded-lg bg-none hover:text-green-600 group"><span style="color: rgb(5, 198, 5);" class="material-icons-outlined">dataset</span><p class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">BASE DE DONNEES</p></button>
     </div>
     <div>
-        <button onclick="info()" type="button" id="info_btn" class="flex items-center mr-4 text-black rounded-lg bg-none hover:text-orange-600  group"><span style="color: rgb(231, 190, 9);" class="material-icons-outlined">info</span><p id="activer_info" class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">ACTIVER INFOS</p> </button>
+        <button onclick="info()" type="button" id="info_btn" class="flex items-center mr-4 text-white rounded-lg bg-none hover:text-orange-600  group"><span style="color: rgb(231, 190, 9);" class="material-icons-outlined">info</span><p id="activer_info" class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">ACTIVER INFOS</p> </button>
     </div>
     <div>
-        <button onclick="show_hide_querypanel()" type="button" id="query_panel_btn" class="flex items-center mr-4   text-black rounded-lg bg-none hover:text-blue-600  group"><span style="color: rgb(5, 118, 247);" class="material-icons-outlined">question_mark</span><p id="fermer_requete" class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">REQUETES</p></button>
+        <button onclick="show_hide_querypanel()" type="button" id="query_panel_btn" class="flex items-center mr-4   text-white rounded-lg bg-none hover:text-blue-600  group"><span style="color: rgb(5, 118, 247);" class="material-icons-outlined">question_mark</span><p id="fermer_requete" class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">REQUETES</p></button>
     </div>
     <div>
       <!--<form action="/reinit" method="POST">-->
-        <button onclick="effacer_tout()"  id="clear_btn" class="flex items-center mr-4  text-black rounded-lg bg-none hover:text-purple-600  group"><span style="color: rgba(181, 5, 178, 0.766);" class="material-icons-outlined">restart_alt</span><p class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">REINITIALISER</p></button>
+        <button onclick="effacer_tout()"  id="clear_btn" class="flex items-center mr-4  text-white rounded-lg bg-none hover:text-purple-600  group"><span style="color: rgba(181, 5, 178, 0.766);" class="material-icons-outlined">restart_alt</span><p class="hidden text-xs lg:inline-block xl:inline-block 2xl:inline-block">REINITIALISER</p></button>
       <!--</form>-->
     </div>
     <div>
@@ -107,7 +107,7 @@
                 </a>
             </li>  
             <li id="bouton_admin" class="hidden">
-              <a href="/admin/<%=id%>" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
+              <a href="/api/cugf/<%=poste%>" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
                 <svg class="w-5 h-5 text-blue-500 transition duration-75  group-hover:text-blue-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                   <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
                   <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
@@ -195,9 +195,9 @@
         <button id="fermer" style="display: inline-block;" onclick="fermer_cadre()"><span style="color: red;" class="material-icons-outlined">close</span></button>
         <iframe name="display-frame" id="framedis"
         style="width:100%;height:92%;border:none; z-index: 80;position: relative; top: 2%; display: inline-block;">
-        </iframe>      
+        </iframe> 
+            
     </div> 
-  
     <div id="cadre_frame2" style="left:3% ;width:70%;height:100%; display:none;position: absolute; top: 0%; background-color: #ffffff; ">
         <button id="imprimer2" style="display: inline-block;" onclick="imprimer_fiche_pr2()"><span style="color: green;" class="material-icons-outlined">print</span></button>
         <button id="fermer2" style="display: inline-block;" onclick="fermer_cadre2()"><span style="color: red;" class="material-icons-outlined">close</span></button>
@@ -395,8 +395,8 @@
             </form>
           </div>
           <div id="table_data" style="font-size:15px;"></div> 
-
   </main>
+   
 </div>
     
     <script src="/js/map.js"></script>
@@ -431,7 +431,7 @@ function closeSidebar() {
       if (st_admin=='admin'){
         bouton_admin.setAttribute('class','block');
       }
-      if (ugf=='dt' || ugf=='cg_gag'){
+      if (ugf=='csotc' || ugf=='cg_gag'){
           groupe_label.setAttribute('class','inline-block gap-10');
           document.getElementById('tene').setAttribute('class','block');
           groupe_checkbox.setAttribute('class','inline-block ml-10 items-center gap-10 pl-8');
