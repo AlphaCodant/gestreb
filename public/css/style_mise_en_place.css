@@ -295,6 +295,8 @@ body {
   
     .card {
         border-radius: 10px;
+        flex-direction: column;
+        
         background-color: #d5cdcd;
         color: black;
         margin-bottom: 15px;
@@ -302,8 +304,16 @@ body {
       
       .card-inner {
         display: flex;
+        flex-direction: row; /* En colonne sur petits écrans */
+        justify-content: start;
+        justify-items: start;
+     
+      }
+      #res_mise_en_p{
+        display: flex;
         flex-direction: column; /* En colonne sur petits écrans */
-        width: 100%;
+        justify-items: center;
+        justify-content: center;
       }
       
       .card-inner h3 {
@@ -320,18 +330,14 @@ body {
     #annee_th{
       display:none;
     }
-    #reliquat_th{
-      display:none;
-    }
+  
     #fiche_th{
       display:none;
     }
     #annee_td{
       display:none;
     }
-    #reliquat_td{
-      display:none;
-    }
+    
     #fiche_td{
       display:none;
     }
