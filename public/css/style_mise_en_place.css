@@ -335,6 +335,23 @@ body {
     #fiche_th{
       display:none;
     }
+    #date_debut_th{
+        display:none;
+      }
+    
+      #date_fin_th{
+        display:none;
+      }
+      #essence_th{
+        display:none;
+      }
+      #taux_th{
+          display:none;
+        }
+      
+        #reliquat_th{
+          display:none;
+        }
     #annee_td{
       display:none;
     }
@@ -342,6 +359,23 @@ body {
     #fiche_td{
       display:none;
     }
+    #date_debut_td{
+        display:none;
+      }
+      
+      #date_fin_td{
+        display:none;
+      }
+      #essence_td{
+        display:none;
+      }
+      #taux_td{
+          display:none;
+        }
+        
+        #reliquat_td{
+          display:none;
+        }
   }
   
   

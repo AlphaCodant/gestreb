@@ -102,29 +102,27 @@
                       <th scope="col" class="px-6 py-3 editable-cell" id="annee_th">
                           Année
                       </th>
-                      <th scope="col" class="px-6 py-3 editable-cell">
+                      <th scope="col" class="px-6 py-3 editable-cell" id="essence_th">
                           Essence
                       </th>
                       <th scope="col" class="px-6 py-3 editable-cell">
                         Objectif (ha)
                       </th>
-                      <th scope="col" class="px-6 py-2 editable-cell">
+                      <th scope="col" class="px-6 py-2 editable-cell" id="date_debut_th">
                         Date debut
                       </th>
                       <th scope="col" class="px-6 py-2 editable-cell">
                           Réalisé (ha)
                       </th>
-                      <th scope="col" class="hidden px-6 py-2 editable-cell">
-                          Editer
-                      </th>
-                        <th scope="col" class="px-6 py-2 editable-cell">
+                      
+                        <th scope="col" class="px-6 py-2 editable-cell" id="taux_th">
                           Taux(%)
                       </th>
                       <th scope="col" class="px-6 py-2 editable-cell" id="reliquat_th">
                         Réliquat
                       </th>
                       
-                      <th scope="col" class="px-6 py-2 editable-cell">
+                      <th scope="col" class="px-6 py-2 editable-cell" id="date_fin_th">
                         Date fin
                       </th>
                       <th scope="col" class="px-6 py-2 editable-cell" id="fiche_th">
@@ -186,9 +184,9 @@
       row.innerHTML = `
         <td class="px-4 py-1 editable-cell" >${parcelle.numero}</td>
         <td class="px-4 py-1 editable-cell" id="annee_td">${parcelle.annee}</td>
-        <td class="px-4 py-1 editable-cell">${parcelle.essence}</td>
-        <td class="px-4 py-1 editable-cell">${(Math.round(parcelle.superficie * 100) / 100).toFixed(2)}</td>
-        <td class="px-4 py-1 editable-cell" data-id="${parcelle.id}" data-field="date_debut">
+        <td class="px-4 py-1 editable-cell" id="essence_td">${parcelle.essence}</td>
+        <td class="px-4 py-1 editable-cell" >${(Math.round(parcelle.superficie * 100) / 100).toFixed(2)}</td>
+        <td class="px-4 py-1 editable-cell" data-id="${parcelle.id}" data-field="date_debut" id="date_debut_td">
           <button class="open-dialog">
             <span class="material-icons-outlined icon" style="color: brown; font-size: 16px; margin-right: 8px;">
               border_color
@@ -204,9 +202,9 @@
           </button>
           ${(Math.round(parcelle.superficie_traitee * 100) / 100).toFixed(2)}
         </td>
-        <td class="px-4 py-1 editable-cell">${(Math.round((parcelle.superficie_traitee / parcelle.superficie * 100) * 100) / 100).toFixed(2)}</td>
+        <td class="px-4 py-1 editable-cell" id="taux_td">${(Math.round((parcelle.superficie_traitee / parcelle.superficie * 100) * 100) / 100).toFixed(2)}</td>
         <td class="px-4 py-1 editable-cell" id="reliquat_td">${(Math.round((parcelle.superficie - parcelle.superficie_traitee) * 100) / 100).toFixed(2)}</td>
-        <td class="px-4 py-1 editable-cell" data-id="${parcelle.id}" data-field="date_fin">
+        <td class="px-4 py-1 editable-cell" data-id="${parcelle.id}" data-field="date_fin" id="date_fin_td">
           <button class="close-dialog">
             <span class="material-icons-outlined icon" style="color: brown; font-size: 16px; margin-right: 8px;">
               border_color
