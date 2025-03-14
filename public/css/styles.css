@@ -292,6 +292,10 @@ body {
 
 @media screen and (max-width: 768px) {
   .main-cards {
+    display:flex;
+    flex-direction : column;
+    justify-content: space-between;
+    border-radius: 0%;
     grid-template-columns: 1fr;
     gap: 10px;
     margin-bottom: 0;
