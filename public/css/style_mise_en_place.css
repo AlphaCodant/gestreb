@@ -296,13 +296,13 @@ body {
     .card {
         border-radius: 10px;
         flex-direction: column;
-        
         background-color: #d5cdcd;
         color: black;
         margin-bottom: 15px;
       }
       
       .card-inner {
+        width: 100%;
         display: flex;
         flex-direction: row; /* En colonne sur petits écrans */
         justify-content: start;
@@ -310,6 +310,7 @@ body {
      
       }
       #res_mise_en_p{
+        width: 100%;
         display: flex;
         flex-direction: column; /* En colonne sur petits écrans */
         justify-items: center;

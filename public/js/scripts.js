@@ -22,8 +22,8 @@ function closeSidebar() {
 const barChartOptions = {
   series: [
     {
-      data: [10, 8, 6, 4, 2],
-      name: 'Products',
+      data: [0, 0, 0, 0, 0,0,0],
+      name: 'Travaux',
     },
   ],
   chart: {
@@ -34,7 +34,7 @@ const barChartOptions = {
       show: false,
     },
   },
-  colors: ['#2962ff', '#d50000', '#2e7d32', '#ff6d00', '#583cb3'],
+  colors: ['#2962ff', '#d50000', '#2e7d32', '#ff6d00', '#583cb3','#d50000', '#2e7d32', '#ff6d00'],
   plotOptions: {
     bar: {
       distributed: true,
@@ -80,7 +80,7 @@ const barChartOptions = {
     theme: 'dark',
   },
   xaxis: {
-    categories: ['Laptop', 'Phone', 'Monitor', 'Headphones', 'Camera'],
+    categories: ['Rabattage', 'Abattage et Tr.', 'Brûlage', 'Piquetage', 'Ouverture de lignes','Trouaison','Planting'],
     title: {
       style: {
         color: '#f5f7ff',
