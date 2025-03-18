@@ -240,7 +240,7 @@ document.addEventListener('click', (event) => {
   // Si c'est un bouton 'open-dialog', afficher un champ de type date
   if (event.target.closest('.open-dialog')) {
     const parcelleId = cell.getAttribute('data-id');
-    const currentDate = '01/01/1900';
+    const currentDate = '01/01/2025';
 
     // Formater la date pour être compatible avec input type="date"
     const formattedDate = formatToDateInput(currentDate);
@@ -265,6 +265,40 @@ document.addEventListener('click', (event) => {
         const displayDate = formatToDisplay(newDate);
         cell.textContent = displayDate;
         saveDate(parcelleId, newDate);  // Enregistrer la date au format 'yyyy-mm-dd'
+      } else {
+        // Si l'input est vide, conserver la valeur initiale
+        cell.textContent = currentDate;
+      }
+    });
+
+  }
+  if (event.target.closest('.close-dialog')) {
+    const parcelleId = cell.getAttribute('data-id');
+    const currentDate = '01/01/2025';
+
+    // Formater la date pour être compatible avec input type="date"
+    const formattedDate = formatToDateInput(currentDate);
+
+    // Créer un champ de saisie de type 'date'
+    const inputDate = document.createElement('input');
+    inputDate.type = 'date';
+    inputDate.value = formattedDate;  // Prendre la valeur formatée comme valeur par défaut
+    inputDate.style.fontSize = '14px'; // Optionnel : ajuster la taille du champ
+
+    // Remplacer la cellule par l'input
+    cell.innerHTML = ''; // Vider la cellule
+    cell.appendChild(inputDate);
+    inputDate.focus();
+
+    inputDate.addEventListener('blur', () => {
+      const newDate = inputDate.value;
+
+      // Vérifier si la nouvelle date est vide ou différente de l'ancienne
+      if (newDate !== formattedDate) {
+        // Convertir la date de 'yyyy-mm-dd' en 'jj/mm/aaaa'
+        const displayDate = formatToDisplay(newDate);
+        cell.textContent = displayDate;
+        saveDate2(parcelleId, newDate);  // Enregistrer la date au format 'yyyy-mm-dd'
       } else {
         // Si l'input est vide, conserver la valeur initiale
         cell.textContent = currentDate;
@@ -346,6 +380,30 @@ async function saveText(parcelleId, newText) {
       console.log('Valeur textuelle mise à jour avec succès');
     } else {
       console.error('Erreur lors de la mise à jour de la valeur textuelle');
+    }
+  } catch (error) {
+    console.error('Erreur de communication avec le serveur:', error);
+  }
+}
+
+async function saveDate2(parcelleId, newDate) {
+  const id=parcelleId;
+  const value = newDate;
+  const date_debut=[];
+  date_debut.push({id,value});
+  try {
+    const response = await fetch('/get/parcelles/mise_en_place/<%=foret%>/<%=travail%>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ date_debut }),
+    });
+
+    if (response.ok) {
+      console.log('Date mise à jour avec succès');
+    } else {
+      console.error('Erreur lors de la mise à jour de la date');
     }
   } catch (error) {
     console.error('Erreur de communication avec le serveur:', error);

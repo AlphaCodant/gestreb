@@ -327,6 +327,7 @@ app.get('/api/parcelles/:id', async (req, res) => {
   app.post(`/get/parcelles/mise_en_place/:foret/:travail`, async (req, res) => {
     const {realise} = req.body;
     const {date_debut} = req.body;
+    const {date_fin} = req.body;
     console.log(realise);
     console.log(date_debut);
     /* Vérifier si "updates" est un tableau
