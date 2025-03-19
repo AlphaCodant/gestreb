@@ -330,6 +330,7 @@ app.get('/api/parcelles/:id', async (req, res) => {
     const {date_fin} = req.body;
     console.log(realise);
     console.log(date_debut);
+    console.log(date_fin);
     /* Vérifier si "updates" est un tableau
     if (!realise || !Array.isArray(realise) || !date_debut || !Array.isArray(date_debut)) {
         return res.status(400).send('Paramètres manquants ou mal formés');
@@ -391,6 +392,32 @@ app.get('/api/parcelles/:id', async (req, res) => {
                 await client.query(query, [parseFloat(update.value), id, travail]);
             }
         }
+
+        if(date_fin){
+            for (const fin of date_fin) {
+                // Vérifier que chaque "update" contient un id et une value
+                if (!fin.id) {
+                    return res.status(400).send('Chaque mise à jour doit contenir un "id" et une "value"');
+                }
+
+                // Si la valeur de "update.value" est nulle ou vide, ne rien faire pour cette entrée
+                if (fin.value === null || fin.value === '') {
+                    console.log(`La valeur pour l'ID ${fin.id} est nulle ou vide, aucune mise à jour effectuée.`);
+                    continue;  // Passer à la prochaine mise à jour sans rien faire
+                }
+
+                // Assurer que l'id est un nombre valide
+                const id = parseInt(fin.id);
+                if (isNaN(id)) {
+                    return res.status(400).send('L\'ID est invalide');
+                }
+
+                // Exécuter la mise à jour dans la base de données
+                const query = 'UPDATE appliquer SET date_fin = $1 WHERE fk_parcelles = $2 AND fk_cout_fixe = $3';
+                await client.query(query, [fin.value, id, travail]);
+            }
+        }
+
         res.status(200).send('Mise à jour réussie');
     } catch (err) {
         console.error('Erreur lors de la mise à jour:', err);
@@ -783,6 +810,35 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
       res.status(500).send('Erreur serveur');
     }
   });
+
+  app.get('/get/parcelles/cu/graph1/:foret/:annee', async (req, res) => {
+    
+    //const annee_actuelle = new Date().getFullYear();
+    const annee=req.params.annee;
+    const foret=req.params.foret;
+    try {       
+        const result = await client.query(`
+            SELECT (SELECT sum(a.superficie_traitee) as raba FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =1 AND b.annee=${annee}),
+            (SELECT sum(superficie_traitee) as aba FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =2 AND b.annee=${annee}),
+            (SELECT sum(superficie_traitee) as bru FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =3 AND b.annee=${annee}),
+            (SELECT sum(superficie_traitee) as piq FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =4 AND b.annee=${annee}),
+            (SELECT sum(superficie_traitee) as ouv FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =5 AND b.annee=${annee}),
+            (SELECT sum(superficie_traitee) as trou FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =6 AND b.annee=${annee}),
+            (SELECT sum(superficie_traitee) as plan FROM appliquer a,parcelles b WHERE a.fk_parcelles=b.id AND b.foret=${foret} AND 
+            fk_cout_fixe =7 AND b.annee=${annee}) 
+            FROM appliquer LIMIT 1`);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
   
   app.get('/api/cugf/mise_en_place/:foret',authenticateToken, async (req, res) => {
     
@@ -798,8 +854,8 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
   });
 
   app.get('/api/cugf/:foret',authenticateToken,(req, res) => {
-    
-    res.render('interface_cugf',{foret:req.params.foret});
+    const {tokenY} = req.user;
+    res.render('interface_cugf',{foret:req.params.foret,id:tokenY});
 
   });
 //-----------------------Dashboard supervision-----------------------------------------

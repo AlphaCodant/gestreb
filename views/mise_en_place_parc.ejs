@@ -389,15 +389,15 @@ async function saveText(parcelleId, newText) {
 async function saveDate2(parcelleId, newDate) {
   const id=parcelleId;
   const value = newDate;
-  const date_debut=[];
-  date_debut.push({id,value});
+  const date_fin=[];
+  date_fin.push({id,value});
   try {
     const response = await fetch('/get/parcelles/mise_en_place/<%=foret%>/<%=travail%>', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ date_debut }),
+      body: JSON.stringify({ date_fin }),
     });
 
     if (response.ok) {

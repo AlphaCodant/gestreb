@@ -34,7 +34,7 @@ const barChartOptions = {
       show: false,
     },
   },
-  colors: ['#2962ff', '#d50000', '#2e7d32', '#ff6d00', '#583cb3','#d50000', '#2e7d32', '#ff6d00'],
+  colors: ['#2962ff', '#d50000', '#2e7d32', '#ff6d00', '#583cb3','#d50000', '#2e7d32'],
   plotOptions: {
     bar: {
       distributed: true,
