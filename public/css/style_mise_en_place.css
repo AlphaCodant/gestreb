@@ -225,7 +225,8 @@ body {
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    width: 200px;
+    width: auto;
+    height: auto;
   }
   
   .dialog-box button {
@@ -250,9 +251,22 @@ body {
   
   /* Optionnel : personnaliser la cellule si elle contient un champ de saisie */
   .editable-cell input[type="date"] {
-    width: 100%; /* Fais en sorte que le champ de date occupe toute la largeur de la cellule */
+    width: auto; /* Fais en sorte que le champ de date occupe toute la largeur de la cellule */
     padding: 5px;
     font-size: 14px;
+  }
+  .editable-cell2 {
+    border: 1px solid #ddd; /* Ajoute une bordure légère */
+    padding: 2px; /* Ajoute du padding pour espacer le contenu */
+    font-size: 10px; /* Définie une taille de police uniforme */
+    text-align: center; /* Aligne le texte au centre */
+  }
+  
+  /* Optionnel : personnaliser la cellule si elle contient un champ de saisie */
+  .editable-cell2 input[type="date"] {
+    width: auto; /* Fais en sorte que le champ de date occupe toute la largeur de la cellule */
+    padding: 1px;
+    font-size: 9px;
   }
   /* Style de base pour les grandes résolutions */
   .card-inner {
@@ -261,7 +275,93 @@ body {
     justify-content: space-between;
     padding: 20px;
   }
-  
+  .open-dialog-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.open-dialog-button:hover {
+    background-color: #45a049;
+}
+
+/* Overlay */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Boîte de dialogue */
+.dialog-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: auto;
+    /*max-width: 500px;  Limite la largeur de la boîte de dialogue */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.dialog-box h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.dialog-box p {
+    font-size: 16px;
+}
+
+.close-dialog-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close-dialog-button:hover {
+    background-color: #d32f2f;
+}
+
+.closer-dialog {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+.closer-dialog:hover {
+    color: #f44336;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
   /* Adaptation pour les petits écrans */
   @media screen and (max-width: 768px) {
     
@@ -328,9 +428,13 @@ body {
       display:none;
     }
   
-    #fiche_th{
+    /*#fiche_th{
       display:none;
     }
+     #fiche_td{
+      display:none;
+    }
+    */
     #date_debut_th{
         display:none;
       }
@@ -352,9 +456,7 @@ body {
       display:none;
     }
     
-    #fiche_td{
-      display:none;
-    }
+   
     #date_debut_td{
         display:none;
       }

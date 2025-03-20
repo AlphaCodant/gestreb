@@ -13,6 +13,8 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
+  
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/tailStyle.css">
     <link rel="stylesheet" href="/css/style_mise_en_place.css">
@@ -139,8 +141,73 @@
         
       </div>
       <!-- Dialog Box -->
-      
-
+      <div class="dialog-overlay" id="dialogOverlay">
+        <div class="dialog-box" style="color: black;">
+            <span class="closer-dialog" id="closeDialog">&#10006;</span>
+            <div class="sidebar-brand">
+              <a href="#" class="flex ms-2 md:me-24">
+                <img src="/img/Logo_gestreb.jpg" class="ml-4 h-8" alt="Logo GestReb" />
+                </a>
+                
+            </div>
+            <div class="telecharger" >
+              <span class="material-icons-outlined" style="color: yellowgreen;">print</span>
+              <a
+                href="#"
+                target="_blank"
+                class="btn btn-outline-warning mr-2"
+              >
+                <span class="btn-text" style="color:rgb(224, 56, 0);font-size: 10px;">Télécharger fiche</span>
+              </a>
+            </div>
+            <br>
+            <div style="background-image: linear-gradient(to right,rgb(165, 60, 246),rgb(0, 140, 255),rgb(0, 238, 255) );
+             border-radius: 5%;"><h1 style="color: black;text-align: center;">FICHE PARCELLAIRE</h1></div>
+            <div style="text-align: left; gap: 0px; margin-top: 0%;">
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Numero</p><p>Type de rbt</p></div>
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Superficie</p><p>Type de plants</p></div>
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Essence</p><p>Provenance</p></div>
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Financement</p><p>Densité</p></div>
+            </div>
+            <div>
+              <table class="w-full bottom-0 text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-auto">
+                  <thead class="relative text-xs text-white uppercas" 
+                   style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) ); 
+                  ">
+                      <tr>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                          Date
+                        </th>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                            Travail
+                        </th>
+                        
+                          <th scope="col" class="px-6 py-2 editable-cell2">
+                            Cout (F CFA)
+                        </th>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                          Réalisé (ha)
+                        </th>
+                        
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                          Montant
+                        </th>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                          Mode
+                        </th>
+                      </tr>
+                  </thead>
+                  <tbody id="tbody2" style="font-size: 7px;"
+                  class="bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">  
+                  </tbody>
+              </table>
+            </div>
+            <br>
+            <div style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) );
+             border-radius: 5%;"><h3 style="color: black;text-align: left;font-weight: bold;left:2%">COUT DE REVIENS  
+             <span style="color: brown; font-weight: bolder; text-align: right;" id="cout_reviens">     XXXX</span> </h3></div>
+          </div>
+    </div>
       <!--
       <div class="sticky-buttons" style=" margin-top: 10px;margin-bottom: 20px;display: flex; justify-content:space-between; font-size:medium;">
         <div style="margin-top:15px; color : black; background-color: rgba(253, 73, 37, 0.785); padding: 0px; border-radius: 7%;">
@@ -168,8 +235,6 @@
     <!-- Scripts -->
     <!-- ApexCharts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
-
-    <script src="/js/scripts.js"></script>
     <script>
      document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -212,7 +277,7 @@
           </button>
           ${parcelle.date_fin}
         </td>
-        <td class="px-4 py-1 editable-cell" id="fiche_td"><a href=#><p style="text-decoration : underline">ici</p></a></td>
+        <td class="px-4 py-1 editable-cell" id="fiche_td" data-id="${parcelle.id}"><a href=#><p style="text-decoration : underline">ici</p></a></td>
       `;
       tableBody.appendChild(row);
     });
@@ -335,7 +400,73 @@ document.addEventListener('click', (event) => {
       }
     });
   }
+  
+  const closeDialog = document.querySelector('#closeDialog');
+  closeDialog.addEventListener('click', () => {
+        dialogOverlay.style.display = 'none'; // Masquer la boîte de dialogue
+    }); 
 });
+
+document.addEventListener('click',async(event)=>{
+  let cout_reviens=0;
+  const cell = event.target.closest('td');
+  const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting']
+  if (event.target.closest('#fiche_td')) {
+    const parcelleId = cell.getAttribute('data-id');   
+    console.log(parcelleId);
+  try {
+    // Récupérer les données des parcelles depuis le serveur
+    const response = await fetch(`/get/fiches/cu/graph1/${parcelleId}`);
+    
+    const parcelles = await response.json();
+    console.log(parcelles);
+    const tableBody = document.querySelector('#tbody2');
+    tableBody.innerHTML = '';
+    tableBody.style.fontSize='7px';
+    const row = document.createElement('tr');
+      row.setAttribute('class', 'text-xs ');
+    //tableBody.style.fontSize='8px';
+    let i=0;
+    parcelles.forEach(parcelle => {
+      const row = document.createElement('tr');
+      row.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
+      
+      row.innerHTML = `
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.cout}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${parcelle.realise*parcelle.cout}
+        </td>
+        <td class="px-4 py-1 editable-cell">Régie</td>
+   `;
+        cout_reviens+=(parcelle.realise*parcelle.cout);
+        i++
+      tableBody.appendChild(row);
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des parcelles:', error);
+  }
+  const cout_revient = document.getElementById('cout_reviens');
+  cout_revient.innerHTML=cout_reviens;
+  console.log(cout_reviens);
+  const dial = document.getElementById('dialogOverlay');
+    dial.style.display='flex';
+
+    // Sélection des éléments
+    const openDialogButton = document.querySelector('.open-dialog-button');
+    const closeDialogButton = document.querySelector('#closeDialogButton');
+    
+    const dialogOverlay = document.querySelector('#dialogOverlay');
+
+    // Fonction pour ouvrir la boîte de dialogue
+    
+    // Fonction pour fermer la boîte de dialogue lorsque l'utilisateur clique sur la croix
+       
+  };
+})
+
 // Fonction pour enregistrer la nouvelle date dans la base de données
 async function saveDate(parcelleId, newDate) {
   const id=parcelleId;

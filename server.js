@@ -839,6 +839,22 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
       res.status(500).send('Erreur serveur');
     }
   });
+
+  app.get('/get/fiches/cu/graph1/:id', async (req, res) => {
+    
+    try {       
+        const result = await client.query(`
+            select a.fk_cout_fixe as id_travail, TO_CHAR(a.date_init, 'dd/mm/yyyy') as date_debut, TO_CHAR(a.date_fin, 'dd/mm/yyyy') as date_fin,a.superficie_traitee as realise, b.montant as cout 
+            from appliquer as a,cout_fixe as b , parcelles as c
+            where a.fk_cout_fixe=b.id and a.fk_parcelles=c.id and a.fk_parcelles = ${req.params.id} and a.fk_cout_fixe between 1 and 7
+            order by a.fk_cout_fixe asc
+            `);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur serveur');
+    }
+  });
   
   app.get('/api/cugf/mise_en_place/:foret',authenticateToken, async (req, res) => {
     
@@ -852,6 +868,7 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
         }
     );
   });
+  
 
   app.get('/api/cugf/:foret',authenticateToken,(req, res) => {
     const {tokenY} = req.user;
