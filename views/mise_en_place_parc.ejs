@@ -182,17 +182,17 @@
                             Travail
                         </th>
                         
-                          <th scope="col" class="px-6 py-2 editable-cell2">
+                          <th scope="col" class="px-6 py-2 editable-cell2" id="taux_td">
                             Cout (F CFA)
                         </th>
                         <th scope="col" class="px-6 py-2 editable-cell2">
                           Réalisé (ha)
                         </th>
                         
-                        <th scope="col" class="px-6 py-2 editable-cell2">
+                        <th scope="col" class="px-6 py-2 editable-cell2" >
                           Montant
                         </th>
-                        <th scope="col" class="px-6 py-2 editable-cell2">
+                        <th scope="col" class="px-6 py-2 editable-cell2" id="taux_td">
                           Mode
                         </th>
                       </tr>
@@ -434,12 +434,12 @@ document.addEventListener('click',async(event)=>{
       row.innerHTML = `
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.cout}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${parcelle.cout}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
         <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
           ${parcelle.realise*parcelle.cout}
         </td>
-        <td class="px-4 py-1 editable-cell">Régie</td>
+        <td class="px-4 py-1 editable-cell" id="taux_td">Régie</td>
    `;
         cout_reviens+=(parcelle.realise*parcelle.cout);
         i++

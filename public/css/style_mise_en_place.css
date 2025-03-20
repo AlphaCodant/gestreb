@@ -474,17 +474,15 @@ body {
         #reliquat_td{
           display:none;
         }
-        .dialog-overlay {
-            position: fixed;
-            top: 10%;
-            left: 10%;
-            width: 80%;
-            height: 80%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: none; /* Initially hidden */
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+        .dialog-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: auto;
+            /*max-width: 500px;  Limite la largeur de la boîte de dialogue */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
         }
   }
   
