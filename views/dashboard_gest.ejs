@@ -479,7 +479,20 @@ document.querySelector('form').addEventListener('submit', async (event) => {
       const numberFormat2 = new Intl.NumberFormat( options2);
 
       //-------------------------------------------------------------
-      row.innerHTML = `
+      if(i==1){
+        row.innerHTML = `
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+          
+        </td>
+        <td class="px-4 py-1 editable-cell" id="taux_td">Sous-traitance</td>
+   `;
+      }else{
+        row.innerHTML = `
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
         <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
@@ -490,6 +503,8 @@ document.querySelector('form').addEventListener('submit', async (event) => {
         </td>
         <td class="px-4 py-1 editable-cell" id="taux_td">Régie</td>
    `;
+      }
+      
         cout_reviens+=(parcelle.realise*parcelle.cout);
         i++
       tableBody.appendChild(row);

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Statistiques</title>
     <link rel="icon" 
-     type="image/jpg" 
-     href="/img/logo2.jpg">
+     type="image/png" 
+     href="/img/Logo_gestreb.jpg">
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -46,9 +46,8 @@
       <aside id="sidebar">
         <div class="sidebar-title">
           <div class="sidebar-brand">
-            <a href="#" class="flex ms-2 md:me-24">
-              <img src="/img/logo2.jpg" class="h-8 me-2" alt="Logo Sodefor" />
-              <span class="self-center text-blue text-md font-semibold md:text-xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
+            <a href="#" class="flex mt-2 ms-2 md:me-24">
+              <img src="/img/Logo_gestreb.jpg" class="ml-4" alt="Logo GestReb" />
               </a>
           </div>
           <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
@@ -61,7 +60,14 @@
                 <span class="ms-3">Statistiques</span>
               </span>
             </li>   
-                    
+            <li>
+              <button onclick="effacer_tout()">
+              <a href="/page/<%= id %>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:orange">map</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Carte interactive</span>
+              </a>
+            </button>
+            </li>        
           </ul>
         </div>
       </aside>

@@ -79,14 +79,7 @@
                 <span class="flex-1 ms-3 whitespace-nowrap">Sylviculture</span>
               </a>
             </li> 
-            <li>
-              <button onclick="effacer_tout()">
-              <a href="/page/<%= id %>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
-                <span class="material-icons-outlined" style="color:orange">map</span>
-                <span class="flex-1 ms-3 whitespace-nowrap">Carte interactive</span>
-              </a>
-            </button>
-            </li> 
+            
                        
           </ul>
         </div>
@@ -445,16 +438,31 @@ document.addEventListener('click',async(event)=>{
       const row = document.createElement('tr');
       row.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
       
-      row.innerHTML = `
+      if(i==1){
+        row.innerHTML = `
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${parcelle.cout}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
         <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${parcelle.realise*parcelle.cout}
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+          
+        </td>
+        <td class="px-4 py-1 editable-cell" id="taux_td">Sous-traitance</td>
+   `;
+      }else{
+        row.innerHTML = `
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+          
         </td>
         <td class="px-4 py-1 editable-cell" id="taux_td">Régie</td>
    `;
+      }
         cout_reviens+=(parcelle.realise*parcelle.cout);
         i++
       tableBody.appendChild(row);
