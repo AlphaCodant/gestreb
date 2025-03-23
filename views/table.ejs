@@ -31,8 +31,8 @@
 								<img
 									class="img-responsive"
 									alt="iamgurdeeposahan"
-									src="img/logo2.jpg"
-									style="width: 70px; border-radius: 3px"
+									src="/img/Logo_gestreb.jpg"
+									style="width: 70px; border-radius: 8px"
 								/>
 							</div>
 						</div>
@@ -59,7 +59,7 @@
 							<div class="receipt-right">
 								<p id="cg">Centre de gestion :</p>
 								<!--<p id="division"><b>Division :</b>  </p>--->
-								<p id="secteur">UGF :</p>
+								<p id="ugf">UGF :</p>
                 <p id="foret">Forêt :</p>
 								<p id="bloc">Bloc :</p>
 								<p id="parcelle">Parcelle :</p>
@@ -79,8 +79,8 @@
                 <p id="met">Méthode :</p>
 								<p id="ecr">Ecartement :</p>
 								<p id="dens">Densité :</p>
-                <p id="prov">Provenence :</p>
-								<p id="cul_ass">Culture associée :</p>
+                <!--<p id="prov">Provenence :</p>
+								<p id="cul_ass">Culture associée :</p>-->
 								<p id="dte">Date de plantation :</p>
 							</div>
 						</div>
@@ -117,28 +117,7 @@
                                     <th>Coût (3)</th>
                                 </tr>
                             </thead>
-                            <tbody id="table10">
-                              <tr id="ligne_table0"></tr>
-                              <tr id="ligne_table1"></tr>
-                              <tr id="ligne_table2"></tr>
-                              <tr id="ligne_table3"></tr>
-                              <tr id="ligne_table4"></tr>
-                              <tr id="ligne_table5"></tr>
-                              <tr id="ligne_table6"></tr>
-                              <tr id="ligne_table7"></tr>
-                              <tr id="ligne_table8"></tr>
-                              <tr id="ligne_table9"></tr>
-                              <tr id="ligne_table10"></tr>
-                              <tr id="ligne_table11"></tr>
-                              <tr id="ligne_table12"></tr>
-                              <tr id="ligne_table13"></tr>
-                              <tr id="ligne_table14"></tr>
-                              <tr id="ligne_table15"></tr>
-                              <tr id="ligne_table16"></tr>
-                              <tr id="ligne_table17"></tr>
-                              <tr id="ligne_table18"></tr>
-                              <tr id="ligne_table19"></tr>
-                              <tr id="ligne_table20"></tr>
+                            <tbody id="tbody2">
                             </tbody>
                         </table>
 					</div>
@@ -148,6 +127,9 @@
 							<div class="receipt-right">
 								<h5 style="font-size: 15px;"
 									>Méthode de mise en oeuvre : Sous-traitance. Régie. Taungya. Opérateur du bois. Régénération après coupe.</h5
+								>
+                <h5 id="date_enreg" style="font-size: 12px; color: brown;"
+									></h5
 								>
 							</div>
 						</div>
@@ -159,30 +141,9 @@
   
 	</body>
 	<script>
+    const fr_ugf = ['Tene','Sangoue'];
 let donnee_get =[];
-
-let jsonCugf =[];
-$(document).ready(function() {  
-    $.ajax({
-        url: `/data`,
-        dataType: "json",
-        success: function(json) {
-            jsonCugf.push(json);
-            console.log(json[2]);
-
-            setTimeout(function (){
-              let entetes = ["donnees_tableau/date_activite","donnees_tableau/travail","donnees_tableau/sous_traitance/cout1",
-"donnees_tableau/sous_traitance/surface1","donnees_tableau/sous_traitance/montant","donnees_tableau/regie/surface2",
-"donnees_tableau/regie/homme_jour/qte1","donnees_tableau/regie/homme_jour/cout1_001","donnees_tableau/regie/homme_engins/qte1_001",
-"donnees_tableau/regie/homme_engins/cout1_002","donnees_tableau/total/surface3","donnees_tableau/total/cout3","donnees_tableau/obs"]
-			let c_g = document.getElementById("cg");
-			let for_et = document.getElementById("foret");
-			let parce = document.getElementById("parcelle");
-			let ess_ence = document.getElementById("essence");
-			
-			
-			
-			let mot = "ide=";
+let mot = "ide=";
     let tab = document.cookie.split(";");
     let id_id;
     for (let i=0;i<tab.length;i++){
@@ -194,109 +155,178 @@ $(document).ready(function() {
             id_id = c.substring(mot.length,c.length);
         }                        
     }
+let jsonCugf =[];
+$(document).ready(function() {  
+    $.ajax({
+        url: `/get/fiches/cu/graph1/${id_id}`,
+        dataType: "json",
+        success: function(json) {
+            jsonCugf.push(json);
+            console.log(json);
+
+            setTimeout(function (){
+             
+			let c_g = document.getElementById("cg");
+			let for_et = document.getElementById("foret");
+			let parce = document.getElementById("parcelle");
+			let ess_ence = document.getElementById("essence");
+      let bloc = document.getElementById("bloc");
+      let ugf = document.getElementById("ugf");
+    let finance = document.getElementById("finance");
+    let sup = document.getElementById("sup");
+    let ty_re = document.getElementById("ty_re");
+    let ty_pl = document.getElementById("ty_pl");
+    let ty_p = document.getElementById("ty_p");
+    let met = document.getElementById("met");
+    let ecr = document.getElementById("ecr");
+    let dens = document.getElementById("dens");
+    //let prov = document.getElementById("prov");
+    //let cul_ass = document.getElementById("cul_ass");
+    let dte = document.getElementById("dte");
+			
+			
+			
+			
     
-    let donnees_cibles = [];
+    let elements;
     //let donnees_uniques = [];
     for (let z=0; z<json.length;z++){
-      let elements=json[z];
-      if (elements['donnees_identification/parcelle']==id_id){
-        donnees_cibles.push(elements);
-        donnee_get.push(id_id);
-    }
-  }
-
-    for (let l=0;l<donnees_cibles.length;l++){
-          let element = donnees_cibles[l];
-
-          if (element['donnees_identification/centre_de_gestion']==undefined){
-              c_g.innerHTML='Centre de gestion: ';
-          }else{
-            c_g.innerHTML='Centre de gestion: '+element["donnees_identification/centre_de_gestion"];
-          }
-          if (element["donnees_identification/parcelle"]==undefined){
-            parce.innerHTML='Parcelle : ';
-          }else{
-            parce.innerHTML='Parcelle : '+element["donnees_identification/parcelle"];
-          }
-          if (element["donnees_identification/ugf"]==undefined){
-            secteur.innerHTML='Secteur : ';
-          }else{
-              secteur.innerHTML='Secteur : '+element["donnees_identification/ugf"];
-          }
-          if (element['donnees_identification/essence']==undefined){
-            ess_ence.innerHTML='Essence : ';
-          }else{
-            ess_ence.innerHTML='Essence : '+element["donnees_identification/essence"];
-          }
-          if (element["donnees_identification/financement"]==undefined){
-            finance.innerHTML='Finance : ';
-          }else{
-            finance.innerHTML='Finance : '+element["donnees_identification/financement"];
-          }
-          if (element["donnees_identification/foret"]==undefined){
-            for_et.innerHTML='Forêt : ';
-          }else{
-            for_et.innerHTML='Forêt : '+element["donnees_identification/foret"];
-          }
-          if (element["donnees_identification/superficie"]==undefined){
-            sup.innerHTML='Superficie : ';
-          }else{
-            sup.innerHTML='Superficie : '+element["donnees_identification/superficie"];
-          }
-          if (element["donnees_identification/bloc"]==undefined){
-            bloc.innerHTML='Bloc : ';
-          }else{
-            bloc.innerHTML='Bloc : '+element["donnees_identification/bloc"];
-          }
-          if (element["donnees_identification/type_reboisement"]==undefined){
-            ty_re.innerHTML='Type de reboisement : ';
-          }else{
-            ty_re.innerHTML='Type de reboisement : '+element["donnees_identification/type_reboisement"];
-          }
-          if (element["donnees_identification/type_plantation"]==undefined){
-            ty_pl.innerHTML='Type de plantation : ';
-          }else{
-            ty_pl.innerHTML='Type de plantation : '+element["donnees_identification/type_plantation"];
-          }
-          if (element["donnees_identification/plant"]==undefined){
+      elements=json[z];
+      
+     
+      
+          
+              c_g.innerHTML='Centre de gestion: Gagnoa';
+          
+          
+            parce.innerHTML='Parcelle : '+elements.numero;
+          
+         
+            ugf.innerHTML='UGF : '+fr_ugf[elements.ugf-1];
+          
+          
+            ess_ence.innerHTML='Essence : '+elements.essence;
+       
+          
+         
+            finance.innerHTML='Financement : '+elements.partenaire;
+         
+          
+         
+            for_et.innerHTML='Forêt : '+fr_ugf[elements.foret-1];
+         
+          
+            sup.innerHTML='Superficie : '+elements.superficie + ' ha';
+          
+          
+            bloc.innerHTML='Bloc : '+elements.annee;
+          
+          
+            ty_re.innerHTML='Type de reboisement : Industriel';
+         
+         
+            ty_pl.innerHTML='Type de plantation : Manuel';
+          
+         
             ty_p.innerHTML='Type de plants : ';
-          }else{
-            ty_p.innerHTML='Type de plants : '+element["donnees_identification/plant"];
-          }
-          if (element["donnees_identification/methode_mise"]==undefined){
-            met.innerHTML='Méthode : ';
-          }else{
-            met.innerHTML='Méthode : '+element["donnees_identification/methode_mise"];
-          }
-          if (element["donnees_identification/ecartement"]==undefined){
+         
+          
+            met.innerHTML='Méthode : Taungya';
+          
+          
             ecr.innerHTML='Ecartement : ';
-          }else{
-            ecr.innerHTML='Ecartement : '+element["donnees_identification/ecartement"];
-          }
-          if (element["donnees_identification/densite"]==undefined){
-            dens.innerHTML='Densité : ';
-          }else{
-            dens.innerHTML='Densité : '+element["donnees_identification/densite"];
-          }
-          if (element["donnees_identification/culture_associe"]==undefined){
-            cul_ass.innerHTML='Culture associée : ';
-          }else{
-            cul_ass.innerHTML='Culture associée : '+element["donnees_identification/culture_associe"];
-          }
-          if (element["donnees_identification/provenance"]==undefined){
-            prov.innerHTML='Provenence : ';
-          }else{
-            prov.innerHTML='Provenence : '+element["donnees_identification/provenance"];
-          }
-          if (element["donnees_identification/date_plantation"]==undefined){
-            dte.innerHTML='Date de plantation : ';
-          }else{
-            dte.innerHTML='Date de plantation : '+element["donnees_identification/date_plantation"];
-          }
+         
+          
+         
+            dens.innerHTML='Densité : '+elements.densite;
+         
+         
+           // cul_ass.innerHTML='Culture associée : ';
+    
+            //prov.innerHTML='Provenence : ';
+          
+         
+            
+            const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting',
+  'Entretien 1 ligne','Entretien 1 interligne','Remplacement plants morts','Entretien en puits','Entretien 2 ligne','Entretien 2 interligne'];
 
-          let tableau = document.getElementById(`ligne_table${l}`);
+    const parcelles = json;
+    console.log(parcelles);
+    const tableBody = document.querySelector('#tbody2');
+    tableBody.innerHTML = '';
+    tableBody.style.fontSize='12px';
+    const row = document.createElement('tr');
+      row.setAttribute('class', 'text-xs ');
+    //tableBody.style.fontSize='8px';
+    
+    let i=0;
+    parcelles.forEach(parcelle => {
+      const row = document.createElement('tr');
+      
+        //-------------------------------------------------------------
+
+      const montant2 = (Math.round(parcelle.cout * 100)/100);
+      const options2 = { style: 'currency' };
+      const numberFormat2 = new Intl.NumberFormat(options2);
+      if (i==6){
+        dte.innerHTML='Date de plantation : '+parcelle.date_debut;
+      }
+      if (i==1){
+        row.innerHTML = `
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+        </td>   
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td"></td>
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" ></td>  
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+        </td>   
+   `;
+      }else{
+        row.innerHTML = `
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td"></td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+        </td>   
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" ></td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+        </td>   
+   `;
+      }
+
+      //-------------------------------------------------------------
+      
+      tableBody.appendChild(row);
+      i++;
+    });
+    var today = new Date(); 
+    var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
+
+today = dd + '/' + mm + '/' + yyyy;
+    document.getElementById('date_enreg').innerHTML='Date : '+today;
+          /*let tableau = document.getElementById(`ligne_table${l}`);
           for (let k = 0; k<13;k++){
-            if (element[entetes[k]]==undefined || element[entetes[k]]==""){
+            if (elements[]==null){
               tableau.innerHTML += `<td></td>`
             }else{
               if (entetes[k]=="donnees_tableau/sous_traitance/montant" || entetes[k]=="donnees_tableau/sous_traitance/cout1" 
@@ -309,24 +339,24 @@ $(document).ready(function() {
 
               }else{
                 tableau.innerHTML += `<td>${element[entetes[k]]}</td>`
-              }
+              }*/
               
-            }
+            
             
           }
 
-				}
+				})
       
-            })
+            }
 
-      }
+      })
     })
     
-    });
+    ;
     //console.log(jsonCugf);
     const { jsPDF } = window.jspdf;
     
-    document.getElementById('generatePdfButton').addEventListener('click', function () {
+    //document.getElementById('generatePdfButton').addEventListener('click', function () {
       // Créer une nouvelle instance jsPDF
 
       const doc = new jsPDF('p', 'mm', 'a4');  // Format A4
@@ -527,7 +557,7 @@ $(document).ready(function() {
 
       // Sauvegarder le PDF généré
       doc.save('fiche-'+donnee_get[0]+'.pdf');
-    });
+    
 	</script>
 	
 </html>

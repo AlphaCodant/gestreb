@@ -106,15 +106,24 @@
                 <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Statistiques</span>
                 </a>
             </li>  
-            <li id="bouton_admin" class="hidden">
+            <li id="bouton_ugf" class="hidden">
               <a href="/api/cugf/<%=poste%>" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
                 <svg class="w-5 h-5 text-blue-500 transition duration-75  group-hover:text-blue-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                   <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
                   <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
               </svg>
-              <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Admin</span>
+              <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Admin UGF</span>
               </a>
           </li> 
+          <li id="bouton_cg" class="hidden">
+            <a href="/api/gest/<%=poste%>" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
+              <svg class="w-5 h-5 text-blue-500 transition duration-75  group-hover:text-blue-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
+                <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
+            </svg>
+            <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Admin CG</span>
+            </a>
+        </li> 
               <li>
                 <a href="/log/deconnecter" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-red-500 group">
                   <svg height="30" viewBox="0 0 24 24" width="30" class="w-5 h-5 text-red-500 transition duration-75  group-hover:text-orange-600 " fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -285,6 +294,7 @@
     
           <div id="postData" post="<%= id %>"></div>
           <div id="statut_admin" post="<%=admin %>"></div>
+          <div id="statut_poste" post="<%=poste %>"></div>
           <div id="fenetre_requete" title="Requete">
             <form action="/requete/<%= id %>" method="POST">
               <div id="form2">
@@ -427,11 +437,19 @@ function closeSidebar() {
       let groupe_label = document.getElementById('labels-forets');
       let groupe_checkbox = document.getElementById('checkbox-forets');
       let st_admin = document.getElementById('statut_admin').getAttribute('post');
-      let bouton_admin = document.getElementById('bouton_admin');
-      if (st_admin=='admin'){
-        bouton_admin.setAttribute('class','block');
+      let st_poste = document.getElementById('statut_poste').getAttribute('post');
+      let bouton_ugf = document.getElementById('bouton_ugf');
+      let bouton_cg = document.getElementById('bouton_cg');
+      if (st_admin=='admin' && st_poste==1){
+        bouton_ugf.setAttribute('class','block');
       }
-      if (ugf=='csotc' || ugf=='cg_gag'){
+      if (st_admin=='admin' && st_poste==2){
+        bouton_ugf.setAttribute('class','block');
+      }
+      if (st_admin=='admin' && st_poste==3){
+        bouton_cg.setAttribute('class','block');
+      }
+      if (ugf=='cg'){
           groupe_label.setAttribute('class','inline-block gap-10');
           document.getElementById('tene').setAttribute('class','block');
           groupe_checkbox.setAttribute('class','inline-block ml-10 items-center gap-10 pl-8');

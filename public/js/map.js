@@ -1695,7 +1695,7 @@ function getinfo(evt) {
     console.log(content);
     popup.show(evt.coordinate, content);
 
-    document.cookie = `ide =${feature.get('numero')};expires = Fri, 10 oct 2025 12:30 UTC; path=/`;
+    document.cookie = `ide =${feature.get('id')};expires = Fri, 10 oct 2025 12:30 UTC; path=/`;
     let mot = "ide=";
     let tab = document.cookie.split(";");
     let id_id;

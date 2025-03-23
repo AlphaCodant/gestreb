@@ -258,7 +258,7 @@ let donnee_connect=[]
 
 app.get(`/page/:id`,authenticateToken,(req,res)=>{
     result.length=0;
-    const fonction = {'sangoue':2,'tene':1,'cg_gag':3,'csotc':4,'agent_sotc':5,'agent_tene':6,'agent_sangoue':7,'autre_sodefor':8};
+    const fonction = {'sangoue':2,'tene':1,'cg':3,'csotc':4,'agent_sotc':5,'agent_tene':6,'agent_sangoue':7,'autre_sodefor':8};
     const {email} = req.user;
     const {tokenY} = req.user;
     const {ugf} = req.user;
@@ -844,7 +844,7 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
     
     try {       
         const result = await client.query(`
-            select c.numero as numero, c.essence as essence, c.superficie as superficie, c.partenaire as financement,
+            select c.numero as numero, c.essence as essence,c.annee as annee,c.partenaire as partenaire,c.densite as densite,c.ugf as ugf, c.foret as foret, c.superficie as superficie, c.partenaire as financement,
             a.fk_cout_fixe as id_travail, TO_CHAR(a.date_init, 'dd/mm/yyyy') as date_debut, TO_CHAR(a.date_fin, 'dd/mm/yyyy') as date_fin,a.superficie_traitee as realise, b.montant as cout 
             from appliquer as a,cout_fixe as b , parcelles as c
             where a.fk_cout_fixe=b.id and a.fk_parcelles=c.id and a.fk_parcelles = ${req.params.id} and a.fk_cout_fixe between 1 and 13
@@ -923,7 +923,7 @@ app.post('/api/donnees', async (req, res) => {
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 5 THEN b.superficie_traitee ELSE 0 END), 0) AS piquetage,
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 6 THEN b.superficie_traitee ELSE 0 END), 0) AS trouaison,
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 7 THEN b.superficie_traitee ELSE 0 END), 0) AS planting,
-            COALESCE((((SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  THEN b.superficie_traitee ELSE 0 END))/(a.superficie*7))*100), 0) AS taux
+            COALESCE((((SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}]) AND b.fk_cout_fixe BETWEEN 1 AND 7 THEN b.superficie_traitee ELSE 0 END))/(a.superficie*7))*100), 0) AS taux
         FROM parcelles a
         LEFT JOIN appliquer b ON a.id = b.fk_parcelles
         WHERE a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
@@ -978,6 +978,7 @@ app.get('/api/donnees', async(req, res) => {
             a.densite,
             a.annee,
             a.foret,
+            b.superficie_traitee as realise,
             a.numero,
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) AND b.fk_cout_fixe = 1 THEN b.superficie_traitee ELSE 0 END), 0) AS rabattage,
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) AND b.fk_cout_fixe = 2 THEN b.superficie_traitee ELSE 0 END), 0) AS abattage,
@@ -986,11 +987,11 @@ app.get('/api/donnees', async(req, res) => {
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 5 THEN b.superficie_traitee ELSE 0 END), 0) AS piquetage,
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 6 THEN b.superficie_traitee ELSE 0 END), 0) AS trouaison,
             COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 7 THEN b.superficie_traitee ELSE 0 END), 0) AS planting,
-            COALESCE((((SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) THEN b.superficie_traitee ELSE 0 END))/(a.superficie*7))*100), 0) AS taux
+            COALESCE((((SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) AND b.fk_cout_fixe BETWEEN 1 AND 7 THEN b.superficie_traitee ELSE 0 END))/(a.superficie*7))*100), 0) AS taux
         FROM parcelles a
         LEFT JOIN appliquer b ON a.id = b.fk_parcelles
         WHERE a.annee IN (${anneesList}) AND a.foret IN (${foret})
-        GROUP BY a.id
+        GROUP BY a.id, b.superficie_traitee
         ORDER BY a.id ASC;
       `;
         const response = await client.query(query);
@@ -1133,8 +1134,8 @@ app.post("/validation/:tokenGen",(req,res)=>{
                                         } else {
                                        
                                         client.query(
-                                            `INSERT INTO utilisateurs (prenom,nom,email,contact,matricule,ugf,mp,token)
-                                                VALUES ($1, $2, $3,$4,$5,$6,$7,$8)
+                                            `INSERT INTO utilisateurs (prenom,nom,email,contact,matricule,ugf,mp,token,administrateur)
+                                                VALUES ($1, $2, $3,$4,$5,$6,$7,$8,'admin')
                                                 RETURNING *`,
                                             [prenom,nom,email,contact,matricule,ugf,mp,token],
                                             (err, result) => {

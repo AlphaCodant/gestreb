@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link rel="icon" 
+     type="image/png" 
+     href="/img/Logo_gestreb.jpg">
 
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -54,38 +57,52 @@
         <div class="sidebar-title">
           <div class="sidebar-brand">
             <a href="#" class="flex ms-2 md:me-24">
-              <img src="/img/logo2.jpg" class="h-8 me-2" alt="Logo Sodefor" />
-              <span class="self-center text-blue text-md font-semibold md:text-xl whitespace-nowrap text-blue-500">CG Gagnoa</span>
-            </a>
+              <img src="/img/Logo_gestreb.jpg" class="ml-4" alt="Logo GestReb" />
+              </a>
           </div>
           <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
         </div>
         <div class="px-2 pb-4 bg-green  shadow-zinc-600">
           <ul class="space-y-2 font-medium">
             <li>
-              <a href="/api/cugf/<%=foret%>" class="flex items-center py-3 px-1 mt-16 text-black border-y border-black  hover:border-y hover:border-gray-500 group">
+              <a href="#" class="flex items-center py-3 px-1 mt-16 text-black border-y border-black  hover:border-y hover:border-gray-500 group">
                 <span class="material-icons-outlined">dashboard</span>
                 <span class="ms-3">Tableau de bord</span>
               </a>
             </li>   
             <li>
-              <a href="/api/cugf/mise_en_place/<%=foret%>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
-                <span style="color: black;" class="material-icons-outlined">description</span>
+              <a href="#" class="flex items-center mt-16 p-2 text-purple text-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:brown">nature</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Prod. de plants</span>
+              </a>
+            </li>  
+            <li>
+              <a href="#" class="flex items-center mt-16 p-2 text-purple text-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:blueviolet">agriculture</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Mise en place</span>
               </a>
             </li>  
             <li>
-              <a href="/api/cugf/entretien_recap/<%=foret%>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
-                <span style="color: black;" class="material-icons-outlined">description</span>
+              <a href="# "class="flex items-center mt-16 p-2 text-green text-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:greenyellow">nature_people</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Entretien</span>
               </a>
             </li> 
             <li>
-              <a href="#" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
-                <span style="color: black;" class="material-icons-outlined">description</span>
+              <a href="#" class="flex items-center mt-16 p-2 dark:text-black text-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:palevioletred">carpenter</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Sylviculture</span>
               </a>
-            </li>                       
+            </li> 
+            <li>
+              <button onclick="effacer_tout()">
+              <a href="/page/<%= id %>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:orange">map</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Carte interactive</span>
+              </a>
+            </button>
+            </li> 
+                       
           </ul>
         </div>
       </aside>
@@ -128,10 +145,11 @@
                   </div>
                 </div>
                 <div class="col-md-3">
-                  <a href="/api/gest/admin/mise_en_place">
+                  <a href="#">
                   <div class="box box2" style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) );
                   color: white;">
                     <h4>MISE EN PLACE</h4>
+                    <p id="p0"></p>
                     <p id="p1"></p>
                     <p id="p2"></p>
                   </div>
@@ -167,6 +185,12 @@
       </div>
       <div class="bg-white" style="height: 60%;overflow-y: auto; font-size: 8px;"> <!-- Assurez-vous que le parent permet le défilement -->
         <div class="items-center md:space-y-0 pb-1 dark:bg-gray-900">
+          <div style="background-image: linear-gradient(to right,rgb(13, 83, 140),rgb(27, 47, 49) );
+             border-radius: 5%; display: flex; flex-direction: row; justify-content: space-around;" >
+             <div><h3 style="color: black;text-align: left;font-weight: bold;left:2%">COUT DE REVIENS </h3></div>
+             <div><h3 style="color: rgb(255, 255, 255); font-weight: bolder; text-align: right;" id="cout_reviens_global"></h3></div>
+            </div>
+          </div>
             <table class="w-full bottom-0 text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg" style="font-size: 6px;">
                 <thead class="sticky top-0 text-white uppercase"
                     style="background-image: linear-gradient(to right, rgb(165, 60, 246), rgb(0, 140, 255), rgb(0, 238, 255)); 
@@ -207,23 +231,15 @@
             <div style="display: flex; flex-direction: row;justify-content: space-around;">
             <div class="telecharger" >
               <span class="material-icons-outlined" style="color: yellowgreen;">print</span>
-              <a
-                href="#"
-                target="_blank"
-                class="btn btn-outline-warning mr-2"
-              >
+              
                 <span class="btn-text" style="color:rgb(224, 56, 0);font-size: 10px;">Télécharger fiche parcellaire</span>
-              </a>
+              
             </div>
             <div class="telecharger" >
               <span class="material-icons-outlined" style="color: yellowgreen;">map</span>
-              <a
-                href="/page/<%=id%>"
-                target="_blank"
-                class="btn btn-outline-warning mr-2"
-              >
+             
                 <span class="btn-text" style="color:rgb(0, 0, 0);font-size: 10px;">Aller à la carte </span>
-              </a>
+         
             </div>
             </div>
             <br>
@@ -267,14 +283,15 @@
               </table>
             </div>
             <br>
-            <div style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) );
-             border-radius: 5%;"><h3 style="color: black;text-align: left;font-weight: bold;left:2%">COUT DE REVIENS  
-             <span style="color: brown; font-weight: bolder; text-align: right;" id="cout_reviens">     XXXX</span> </h3></div>
-          </div>
+            <div style="background-image: linear-gradient(to right,rgb(13, 83, 140),rgb(27, 47, 49) );
+             border-radius: 5%; display: flex; flex-direction: row; justify-content: space-around;" >
+             <div><h3 style="color: black;text-align: left;font-weight: bold;left:2%">COUT DE REVIENS </h3></div>
+             <div><h3 style="color: rgb(255, 255, 255); font-weight: bolder; text-align: right;" id="cout_reviens"></h3></div>
+            </div>
     </div>
         
       </main>
-  
+      
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
       
@@ -347,6 +364,7 @@ document.querySelector('form').addEventListener('submit', async (event) => {
     console.log(objs); // Afficher la réponse du serveur dans la console
 
     // 2. Utiliser la réponse du POST pour la suite du traitement
+    document.getElementById('p0').innerHTML = `Nombre : ${data.length } parcelles`;
     document.getElementById('p1').innerHTML = `Objectif : ${(Math.round(objs[0] * 100) / 100).toFixed(2)} ha`;
     document.getElementById('p2').innerHTML = `Taux : ${(Math.round(objs[1] * 100) / 100).toFixed(2)} %`;
 
@@ -358,9 +376,13 @@ document.querySelector('form').addEventListener('submit', async (event) => {
             'Content-Type': 'application/json',
       },
     });
+    let cout_reviens2=0
+    let cout_revient_global = 0;
     const parcelles = await responseReq.json();
     const tableBody = document.querySelector('tbody');
+    const cout_ensemble = document.querySelector('#cout_reviens_global');
     tableBody.innerHTML = '';
+    
       parcelles.forEach(parcelle => {
       const row = document.createElement('tr');
       row.setAttribute('class', 'bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
@@ -394,7 +416,20 @@ document.querySelector('form').addEventListener('submit', async (event) => {
         <td class="px-4 py-1 editable-cell" id="fiche_td" data-id="${parcelle.id}"><a href=#><p style="text-decoration : underline">ici</p></a></td>
       `;
       tableBody.appendChild(row);
+      cout_reviens2+=(parcelle.realise*253000);
+      //cout_revient_global+=cout_reviens2;
+        
     });
+  //-------------------------------------------------------------
+
+  const montant = (Math.round(cout_reviens2 * 100)/100);
+  const options1 = { style: 'currency', currency: 'XOF' };
+  const numberFormat1 = new Intl.NumberFormat('XOF', options1);
+
+  const cout_revient = document.getElementById('cout_reviens_global');
+  cout_revient.innerHTML=numberFormat1.format(montant);
+
+  //-------------------------------------------------------------
 
 
       } catch (error) {
@@ -408,7 +443,7 @@ document.querySelector('form').addEventListener('submit', async (event) => {
     }); 
 
 
-      document.addEventListener('click',async(event)=>{
+  document.addEventListener('click',async(event)=>{
   let cout_reviens=0;
   const cell = event.target.closest('td');
   const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting',
@@ -432,18 +467,26 @@ document.querySelector('form').addEventListener('submit', async (event) => {
       const fp_fin = document.getElementById('fp_fin');
       const fp_ess = document.getElementById('fp_ess');
     //tableBody.style.fontSize='8px';
+    
     let i=0;
     parcelles.forEach(parcelle => {
       const row = document.createElement('tr');
       row.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
-      
+        //-------------------------------------------------------------
+
+      const montant2 = (Math.round(parcelle.cout * 100)/100);
+      const options2 = { style: 'currency' };
+      const numberFormat2 = new Intl.NumberFormat( options2);
+
+      //-------------------------------------------------------------
       row.innerHTML = `
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${parcelle.cout}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
         <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${parcelle.realise*parcelle.cout}
+          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
+          
         </td>
         <td class="px-4 py-1 editable-cell" id="taux_td">Régie</td>
    `;
@@ -458,8 +501,17 @@ document.querySelector('form').addEventListener('submit', async (event) => {
   } catch (error) {
     console.error('Erreur lors de la récupération des parcelles:', error);
   }
+  
+  //-------------------------------------------------------------
+
+  const montant3 = (Math.round(cout_reviens * 100)/100);
+  const options3 = { style: 'currency', currency: 'XOF' };
+  const numberFormat3 = new Intl.NumberFormat('XOF', options3);
+
   const cout_revient = document.getElementById('cout_reviens');
-  cout_revient.innerHTML=cout_reviens;
+  cout_revient.innerHTML=numberFormat3.format(montant3);
+
+  //-------------------------------------------------------------
   console.log(cout_reviens);
   const dial = document.getElementById('dialogOverlay');
     dial.style.display='flex';
