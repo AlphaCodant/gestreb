@@ -53,6 +53,12 @@
             </li>   
             <li>
               <a href="/api/cugf/mise_en_place/<%=foret%>" class="flex items-center mt-16 p-2 text-purple  hover:border-y hover:border-gray-500 group">
+                <span class="material-icons-outlined" style="color:brown">nature</span>
+                <span class="flex-1 ms-3 whitespace-nowrap">Prod. de plants</span>
+              </a>
+            </li>  
+            <li>
+              <a href="/api/cugf/mise_en_place/<%=foret%>" class="flex items-center mt-16 p-2 text-purple  hover:border-y hover:border-gray-500 group">
                 <span class="material-icons-outlined" style="color:blueviolet">agriculture</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Mise en place</span>
               </a>
@@ -70,10 +76,12 @@
               </a>
             </li> 
             <li>
+              <button onclick="effacer_tout()">
               <a href="/page/<%= id %>" class="flex items-center mt-16 p-2 dark:text-black  hover:border-y hover:border-gray-500 group">
                 <span class="material-icons-outlined" style="color:orange">map</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Carte interactive</span>
               </a>
+            </button>
             </li> 
                        
           </ul>
@@ -85,8 +93,23 @@
      <main class="main-container">
 
       <div class="main-cards">
+
+        <div style="border-radius: 5%; background-color: #171c2b;;color: white;"  class="card" class="flex">
+          <a href="#">
+          <div class="card-inner">
+            <h3 style="color: white;">Production de plants</h3>
+            <span class="material-icons-outlined">nature</span>
+          </div>
+          <h1></h1>
+          <br>
+          <div>
+            <p id="p"></p><br>
+            <p id="p"></p>
+          </div>
+          </a>
+        </div>
         
-        <div style="background-image: linear-gradient(to right,rgb(165, 60, 246),rgb(0, 140, 255),rgb(0, 238, 255) );
+        <div style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) );
          color: white;" class="card" class="flex flex-col">
           <a href="/api/cugf/mise_en_place/<%=foret%>">
           <div class="card-inner">
@@ -105,7 +128,7 @@
         <div style="border-radius: 5%; background-color: #171c2b;;color: white;"  class="card" class="flex">
           <a href="#">
           <div class="card-inner">
-            <h3 style="color: brown;">ENTRETIEN</h3>
+            <h3 style="color: white;">ENTRETIEN</h3>
             <span class="material-icons-outlined">nature_people</span>
           </div>
           <h1></h1>
@@ -120,7 +143,7 @@
         <div style="border-radius: 5%;background-color: #171c2b;;color: white;"  class="card" class="flex">
           <a href="#">
           <div class="card-inner">
-            <h3 style="color: blueviolet;">SYLVICULTURE</h3>
+            <h3 style="color: white;">SYLVICULTURE</h3>
             <span class="material-icons-outlined">carpenter</span>
           </div>
           <h1></h1>
@@ -155,6 +178,7 @@
     <!-- Scripts -->
     <!-- ApexCharts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
+    <script src="/js/map.js"></script>
     <!-- <script src="/js/scripts.js"></script> -->
     
     <script>

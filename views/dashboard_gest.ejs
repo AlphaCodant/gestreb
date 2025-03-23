@@ -94,14 +94,14 @@
       <!-- Main -->
       <main class="main-container">
         <!-- Barre de sélection -->
-      <div class="selection-bar" >
-        <form action="#" method="GET">
-          <div class="forêts-selection">
-            <label>Forêts :</label>
-            <label for="téné">Téné</label>
-            <input type="checkbox" id="téné" name="foret" value="1">  
-            <label for="sangoue">Sangoué</label>         
-            <input type="checkbox" id="sangoue" name="foret" value="2">
+      <div class="selection-bar" style="height: 10%;position: sticky;overflow: auto;">
+        <form style="display: flex; flex-direction: row; justify-content: space-between; padding: 5px;" action="#" method="GET">
+          <div class="forêts-selection" style="display: flex; flex-direction: row; justify-content: space-between; padding: 5px;">
+            <div><label>Forêts :</label></div>
+            <div><label for="téné">Téné</label></div>
+            <div><input type="checkbox" id="téné" name="foret" value="1"> </div> 
+            <div><label for="sangoue">Sangoué</label>     </div>    
+            <div><input type="checkbox" id="sangoue" name="foret" value="2"></div>
           </div>
           <div class="annees-selection">
             <label>Années :</label>
@@ -115,23 +115,40 @@
         </form>
       </div>
       <!-- End Barre de sélection -->
-      <div id="wrapper">
+      <div id="wrapper" style="height: 30%;position: sticky;overflow: auto;">
         <div class="content-area">
           <div class="container-fluid"> 
             <div class="main">
               <div class="row sparkboxes mt-4">
+                <div class="col-md-3" style="border-radius: 5%;background-color: #263043;">
+                  <div class="box box1" >
+                    <h4>PROD. DE PLANTS</h4>
+                    <p id="p"></p>
+                    <p id="p"></p>
+                  </div>
+                </div>
                 <div class="col-md-3">
-                  <div class="box box1">
+                  <a href="/api/gest/admin/mise_en_place">
+                  <div class="box box2" style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) );
+                  color: white;">
                     <h4>MISE EN PLACE</h4>
                     <p id="p1"></p>
                     <p id="p2"></p>
                   </div>
+                </a>
+                </div>
+                <div class="col-md-3" >
+                  <div class="box box3">
+                    <h4>ENTRETIEN</h4>
+                    <p id="p"></p>
+                    <p id="p"></p>
+                  </div>
                 </div>
                 <div class="col-md-3">
-                  <div class="box box2">
-                    <h4>ENTRETIEN</h4>
-                    <p id="p3"></p>
-                    <p id="p4"></p>
+                  <div class="box box4">
+                    <h4>SYLVICULTURE</h4>
+                    <p id="p"></p>
+                    <p id="p"></p>
                   </div>
                 </div>
                 <!--<div class="col-md-3">
@@ -141,46 +158,122 @@
                     <p id="p6"></p>
                   </div>
                 </div>-->
-                <div class="text-right mt-3 mb-3 d-fixed">
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    class="btn btn-outline-warning mr-2"
-                  >
-                    <span class="btn-text">Télécharger rapport</span>
-                  </a>
-                </div>               
+                             
               </div>
-  
-              <div class="row mt-4">
-                <div class="col-md-5">
-                  <div class="box shadow mt-4">
-                    <div id="radialBarBottom"></div>
-                  </div>
-                </div>
-                <div class="col-md-7">
-                  <div class="box shadow mt-4">
-                    <div id="line-adwords" class=""></div>
-                  </div>
-                </div>
-              </div>
-  
-              <div class="row mt-4">
-                <div class="col-md-5">
-                  <div class="box shadow mt-4">
-                    <div id="barchart"></div>
-                  </div>
-                </div>
-                <div class="col-md-7">
-                  <div class="box shadow mt-4">
-                    <div id="areachart"></div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
       </div>
+      <div class="bg-white" style="height: 60%;overflow-y: auto; font-size: 8px;"> <!-- Assurez-vous que le parent permet le défilement -->
+        <div class="items-center md:space-y-0 pb-1 dark:bg-gray-900">
+            <table class="w-full bottom-0 text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg" style="font-size: 6px;">
+                <thead class="sticky top-0 text-white uppercase"
+                    style="background-image: linear-gradient(to right, rgb(165, 60, 246), rgb(0, 140, 255), rgb(0, 238, 255)); 
+                    z-index: 2; position: sticky; top: 0; background-color: #fff;font-size: 6px;">
+                    <tr>
+                        <th  scope="col" class="px-6 py-3 editable-cell">N° Parcelle</th>
+                        <th  scope="col" class="px-6 py-3 editable-cell" id="annee_th">Année</th>
+                        <th  scope="col" class="px-6 py-3 editable-cell" id="essence_th">Foret</th>
+                        <th  scope="col" class="px-6 py-3 editable-cell">Essence</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="date_debut_th">Rabattage</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell">Abattage</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="taux_th">Brulage</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="reliquat_th">Ouv. ligne</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="date_fin_th">Piquetage</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="date_fin_th">Trouaison</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="date_fin_th">Planting</th>
+                        <th  scope="col" class="px-6 py-2 editable-cell" id="fiche_th">Fiche</th>
+                    </tr>
+                    
+                </thead>
+                <tbody class="overflow-auto" style="height: auto; overflow:auto;font-size: 6px;">
+                    
+                    <!-- Vous pouvez ajouter plus de lignes -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="dialog-overlay" id="dialogOverlay">
+        <div class="dialog-box" style="color: black;">
+            <span class="closer-dialog" id="closeDialog">&#10006;</span>
+            <div class="sidebar-brand">
+              <a href="#" class="flex ms-2 md:me-24">
+                <img src="/img/Logo_gestreb.jpg" class="ml-4 h-8" alt="Logo GestReb" />
+                </a>
+                
+            </div>
+            <div style="display: flex; flex-direction: row;justify-content: space-around;">
+            <div class="telecharger" >
+              <span class="material-icons-outlined" style="color: yellowgreen;">print</span>
+              <a
+                href="#"
+                target="_blank"
+                class="btn btn-outline-warning mr-2"
+              >
+                <span class="btn-text" style="color:rgb(224, 56, 0);font-size: 10px;">Télécharger fiche parcellaire</span>
+              </a>
+            </div>
+            <div class="telecharger" >
+              <span class="material-icons-outlined" style="color: yellowgreen;">map</span>
+              <a
+                href="/page/<%=id%>"
+                target="_blank"
+                class="btn btn-outline-warning mr-2"
+              >
+                <span class="btn-text" style="color:rgb(0, 0, 0);font-size: 10px;">Aller à la carte </span>
+              </a>
+            </div>
+            </div>
+            <br>
+            <div style="background-image: linear-gradient(to right,rgb(165, 60, 246),rgb(0, 140, 255),rgb(0, 238, 255) );
+             border-radius: 3%;"><h2 style="color: black;text-align: center;">FICHE PARCELLAIRE</h2></div>
+            <div style="text-align: left; gap: 0px; margin-top: 0%;">
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p id="fp_num">Numero</p><p id="fp_ess">Essence</p></div>
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p id="fp_sup">Superficie</p><p id="fp_fin">Financement</p></div>
+            </div>
+            <div>
+              <table class="w-full bottom-0 text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-auto">
+                  <thead class="relative text-xs text-white uppercas" 
+                   style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) ); 
+                  ">
+                      <tr>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                          Date
+                        </th>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                            Travail
+                        </th>
+                        
+                          <th scope="col" class="px-6 py-2 editable-cell2" id="taux_td">
+                            Cout (F CFA)
+                        </th>
+                        <th scope="col" class="px-6 py-2 editable-cell2">
+                          Réalisé (ha)
+                        </th>
+                        
+                        <th scope="col" class="px-6 py-2 editable-cell2" >
+                          Montant
+                        </th>
+                        <th scope="col" class="px-6 py-2 editable-cell2" id="taux_td">
+                          Mode
+                        </th>
+                      </tr>
+                  </thead>
+                  <tbody id="tbody2" style="font-size: 7px;"
+                  class="bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">  
+                  </tbody>
+              </table>
+            </div>
+            <br>
+            <div style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) );
+             border-radius: 5%;"><h3 style="color: black;text-align: left;font-weight: bold;left:2%">COUT DE REVIENS  
+             <span style="color: brown; font-weight: bolder; text-align: right;" id="cout_reviens">     XXXX</span> </h3></div>
+          </div>
+    </div>
+        
+      </main>
   
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
@@ -189,7 +282,7 @@
       // Générer les années de 1966 à 2025 dans le select
       document.addEventListener('DOMContentLoaded', () => {
         const select = document.getElementById('years');
-        for (let year = 1966; year <= 2025; year++) {
+        for (let year = 2020; year <= 2025; year++) {
           const option = document.createElement('option');
           option.value = year;
           option.textContent = year;
@@ -200,6 +293,7 @@
 
 
 // Quand le formulaire est soumis
+
 document.querySelector('form').addEventListener('submit', async (event) => {
   event.preventDefault(); // Empêcher le rechargement de la page
   const foret = [];
@@ -223,7 +317,9 @@ document.querySelector('form').addEventListener('submit', async (event) => {
     alert("Veuillez sélectionner au moins une forêt et une année.");
     return;
   }
-
+  const objs = [];
+    let obj=0;
+    let t_obj=0;
   // 1. Requête POST pour envoyer les données au serveur
   try {
     const responsePost = await fetch('/api/donnees', {
@@ -240,297 +336,148 @@ document.querySelector('form').addEventListener('submit', async (event) => {
     }
 
     const data = await responsePost.json();
-    console.log(data); // Afficher la réponse du serveur dans la console
+    
+    for (let i=0; i<data.length; i++){
+      obj+=data[i].superficie;
+      t_obj+=data[i].taux/data.length;
+    }
+    console.log(data)
+    objs.push(obj);
+    objs.push(t_obj)
+    console.log(objs); // Afficher la réponse du serveur dans la console
 
     // 2. Utiliser la réponse du POST pour la suite du traitement
-    document.getElementById('p1').innerHTML = `Objectif : ${(Math.round(data[0].objectif_1 * 100) / 100).toFixed(2)} ha`;
-    document.getElementById('p2').innerHTML = `Taux : ${(Math.round(((data[0].realise_1 / data[0].objectif_1) * 100) * 100) / 100).toFixed(2)} %`;
-    document.getElementById('p3').innerHTML = `Objectif : ${(Math.round(data[0].objectif_2 * 100) / 100).toFixed(2)} ha`;
-    document.getElementById('p4').innerHTML = `Taux : ${(Math.round(((data[0].realise_2 / data[0].objectif_2) * 100) * 100) / 100).toFixed(2)} %`;
+    document.getElementById('p1').innerHTML = `Objectif : ${(Math.round(objs[0] * 100) / 100).toFixed(2)} ha`;
+    document.getElementById('p2').innerHTML = `Taux : ${(Math.round(objs[1] * 100) / 100).toFixed(2)} %`;
 
-    // 3. Après la requête POST, envoie la requête GET pour récupérer d'autres données
-    const responseGet = await fetch(`/api/donnees?foret=${forets}&annees=${annee}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    // Récupérer les données des parcelles depuis le serveur
+    const foret_liste = ['foret','Téné','Sangoué'];
+    const responseReq = await fetch(`/api/donnees?foret=${forets}&annees=${annee}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
       },
     });
+    const parcelles = await responseReq.json();
+    const tableBody = document.querySelector('tbody');
+    tableBody.innerHTML = '';
+      parcelles.forEach(parcelle => {
+      const row = document.createElement('tr');
+      row.setAttribute('class', 'bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
+      row.innerHTML = `
+        <td class="px-4 py-1 editable-cell" >${parcelle.numero}</td>
+        <td class="px-4 py-1 editable-cell" id="annee_td">${parcelle.annee}</td>
+        <td class="px-4 py-1 editable-cell" id="essence_td">${foret_liste[parcelle.foret]}</td>
+        <td class="px-4 py-1 editable-cell" >${parcelle.essence}</td>
 
-    const dataGet = await responseGet.json();
-    console.log(dataGet); // Afficher la réponse de la requête GET dans la console
-
-    // Traiter la réponse de la requête GET ici
-    // Par exemple, afficher dans la page ce que tu veux récupérer
-    let series=[];
-    const labels = [];
+        <td class="px-4 py-1 editable-cell" data-id="" data-field="date_debut" id="date_debut_td">
           
-          dataGet.forEach(trv => {
-            series.push(trv.mise_en_place);
-            series.push(trv.entretien_0);
-            series.push(trv.entretien_1);
-            series.push(trv.entretien_2);
-            series.push(trv.entretien_3);
-          
-            //series.push(t);
+          ${parcelle.rabattage}
+        </td>
 
-            console.log(series);
-          });  
-          
-        
+        <td class="px-4 py-1 editable-cell" data-id="" data-field="realise">
+         
+        ${parcelle.abattage}
+        </td>
 
-      window.Apex = {
-          chart: {
-            foreColor: '#ccc',
-            toolbar: {
-              show: false
-            },
-          },
-          stroke: {
-            width: 3
-          },
-          dataLabels: {
-            enabled: false
-          },
-          tooltip: {
-            theme: 'dark'
-          },
-          grid: {
-            borderColor: "#535A6C",
-            xaxis: {
-              lines: {
-                show: true
-              }
-            }
-          }
-        }; 
+        <td class="px-4 py-1 editable-cell" id="taux_td">${parcelle.brulage}</td>
+
+        <td class="px-4 py-1 editable-cell" id="taux_td">${parcelle.ouverture}</td>
+
+        <td class="px-4 py-1 editable-cell" id="taux_td">${parcelle.piquetage}</td>
+
+        <td class="px-4 py-1 editable-cell" id="reliquat_td">${parcelle.trouaison}</td>
         
-        
-        
-        var optionsLine = {
-          chart: {
-            height: 328,
-            type: 'line',
-            zoom: {
-              enabled: false
-            },
-            dropShadow: {
-              enabled: true,
-              top: 3,
-              left: 2,
-              blur: 4,
-              opacity: 1,
-            }
-          },
-          stroke: {
-            curve: 'smooth',
-            width: 2
-          },
-          //colors: ["#3F51B5", '#2196F3'],
-          series: series,
-          title: {
-            text: 'Media',
-            align: 'left',
-            offsetY: 1000,
-            offsetX: 20
-          },
-          subtitle: {
-            text: 'Statistics',
-            offsetY: 55,
-            offsetX: 20
-          },
-          markers: {
-            size: 6,
-            strokeWidth: 0,
-            hover: {
-              size: 9
-            }
-          },
-          grid: {
-            show: true,
-            padding: {
-              bottom: 0
-            }
-          },
-          labels: ['Mise en Place', 'Entretien 0', 'Entretien 1', 'Entretien 2', 'Entretien 3'],
-          xaxis: {
-            tooltip: {
-              enabled: false
-            }
-          },
-          legend: {
-            position: 'top',
-            horizontalAlign: 'right',
-            offsetY: -20
-          }
-        }
-        
-        var chartLine = new ApexCharts(document.querySelector('#line-adwords'), optionsLine);
-        chartLine.render();
-        
-        var optionsCircle4 = {
-          chart: {
-            type: 'radialBar',
-            height: 350,
-            width: 380,
-          },
-          plotOptions: {
-            radialBar: {
-              size: undefined,
-              inverseOrder: true,
-              hollow: {
-                margin: 5,
-                size: '48%',
-                background: 'transparent',
-        
-              },
-              track: {
-                show: false,
-              },
-              startAngle: -180,
-              endAngle: 180
-        
-            },
-          },
-          stroke: {
-            lineCap: 'round'
-          },
-          series: series,
-          labels: ['Mise en place', 'Entretien annee 0', 'Entretien annee 1', 'Entretien annee 2', 'Entretien annee 3'],
-          legend: {
-            show: true,
-            floating: true,
-            position: 'right',
-            offsetX: 10000,
-            offsetY: 230
-          },
-        }
-        
-        var chartCircle4 = new ApexCharts(document.querySelector('#radialBarBottom'), optionsCircle4);
-        chartCircle4.render();
-        
-        
-        var optionsBar = {
-          chart: {
-            height: 380,
-            type: 'bar',
-            stacked: true,
-          },
-          plotOptions: {
-            bar: {
-              columnWidth: '30%',
-              horizontal: false,
-            },
-          },
-          series: [{
-            name: 'PRODUCT A',
-            data: [14, 25, 21, 17, 12, 13, 11, 19]
-          }, {
-            name: 'PRODUCT B',
-            data: [13, 23, 20, 8, 13, 27, 33, 12]
-          }, {
-            name: 'PRODUCT C',
-            data: [11, 17, 15, 15, 21, 14, 15, 13]
-          }],
-          xaxis: {
-            categories: ['2011 Q1', '2011 Q2', '2011 Q3', '2011 Q4', '2012 Q1', '2012 Q2', '2012 Q3', '2012 Q4'],
-          },
-          fill: {
-            opacity: 1
-          },
-        
-        }
-        
-        var chartBar = new ApexCharts(
-          document.querySelector("#barchart"),
-          optionsBar
-        );
-        
-        chartBar.render();
-        
-        var optionsArea = {
-          chart: {
-            height: 380,
-            type: 'area',
-            stacked: false,
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          series: [{
-              name: "Music",
-              data: [11, 15, 26, 20, 33, 27]
-            },
-            {
-              name: "Photos",
-              data: [32, 33, 21, 42, 19, 32]
-            },
-            {
-              name: "Files",
-              data: [20, 39, 52, 11, 29, 43]
-            }
-          ],
-          xaxis: {
-            categories: ['2011 Q1', '2011 Q2', '2011 Q3', '2011 Q4', '2012 Q1', '2012 Q2'],
-          },
-          tooltip: {
-            followCursor: true
-          },
-          fill: {
-            opacity: 1,
-          },
-        
-        }
-        
-        var chartArea = new ApexCharts(
-          document.querySelector("#areachart"),
-          optionsArea
-        );
-        
-        chartArea.render();
+        <td class="px-4 py-1 editable-cell" data-id="" data-field="date_fin" id="date_fin_td">
+          ${parcelle.planting}
+        </td>
+        <td class="px-4 py-1 editable-cell" id="fiche_td" data-id="${parcelle.id}"><a href=#><p style="text-decoration : underline">ici</p></a></td>
+      `;
+      tableBody.appendChild(row);
+    });
+
 
       } catch (error) {
           console.error('Erreur lors de la récupération des parcelles:', error);
         }
       });
       //--------------------------------------------------------------------------------
-      document.addEventListener('DOMContentLoaded', async () => {
-        try {
-          const response = await fetch('/get/parcelles/mise_en_place/<%=foret%>');
-          const travail = await response.json();
-          const liste_travaux = [];
-          const taux_total = [];
-          console.log(typeof(taux_total));
-          travail.forEach(trv => {
-            const t = {travail:trv.travail, objectif:trv.objectif, realise:trv.realise, taux:trv.realise/trv.objectif*100, reliquat:trv.objectif-trv.realise};
-            taux_total.push(t.taux);
-            console.log(t.taux); 
-            liste_travaux.push(t.objectif);
-          });
-          console.log(taux_total);
-          console.log(liste_travaux);
-          document.getElementById(`p1`).textContent = `Objectif : ${(Math.round(liste_travaux[6] * 100)/100).toFixed(2)} ha`;
-          document.getElementById(`p2`).textContent = `Taux : ${(Math.round((taux_total[0]+taux_total[1]+taux_total[2]+taux_total[3]+taux_total[4]
-          +taux_total[5]+taux_total[6])/7 * 100)/100).toFixed(2)} %`;
-          console.log(liste_travaux);
-          console.log(taux_total);
-        } catch (error) {
-          console.error('Erreur lors de la récupération des parcelles:', error);
-        }
-      });
-      document.addEventListener('DOMContentLoaded', async () => {
-        try {
-          const response = await fetch('/get/parcelles/entretien/<%=foret%>');
-          const entretien = await response.json();
-          entretien.forEach(trv => {
-            const t = {objectif:trv.objectif, realise:trv.realise, taux:trv.realise/trv.objectif*100, reliquat:trv.objectif-trv.realise};
-            document.getElementById(`p3`).textContent = `Objectif : ${(Math.round(t.objectif * 100)/100).toFixed(2)} ha`;
-            document.getElementById(`p4`).textContent = `Taux : ${(Math.round((t.realise/t.objectif)*100 * 100)/100).toFixed(2)} %`;
-          });  
-          
-        } catch (error) {
-          console.error('Erreur lors de la récupération des parcelles:', error);
-        }
-      });
+      const closeDialog = document.querySelector('#closeDialog');
+  closeDialog.addEventListener('click', () => {
+        dialogOverlay.style.display = 'none'; // Masquer la boîte de dialogue
+    }); 
+
+
+      document.addEventListener('click',async(event)=>{
+  let cout_reviens=0;
+  const cell = event.target.closest('td');
+  const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting',
+  'Entretien 1 ligne','Entretien 1 interligne','Remplacement plants morts','Entretien en puits','Entretien 2 ligne','Entretien 2 interligne'];
+  if (event.target.closest('#fiche_td')) {
+    const parcelleId = cell.getAttribute('data-id');   
+    console.log(parcelleId);
+  try {
+    // Récupérer les données des parcelles depuis le serveur
+    const response = await fetch(`/get/fiches/cu/graph1/${parcelleId}`);
+    
+    const parcelles = await response.json();
+    console.log(parcelles);
+    const tableBody = document.querySelector('#tbody2');
+    tableBody.innerHTML = '';
+    tableBody.style.fontSize='7px';
+    const row = document.createElement('tr');
+      row.setAttribute('class', 'text-xs ');
+      const fp_num = document.getElementById('fp_num');
+      const fp_sup = document.getElementById('fp_sup');
+      const fp_fin = document.getElementById('fp_fin');
+      const fp_ess = document.getElementById('fp_ess');
+    //tableBody.style.fontSize='8px';
+    let i=0;
+    parcelles.forEach(parcelle => {
+      const row = document.createElement('tr');
+      row.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
+      
+      row.innerHTML = `
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${parcelle.cout}</td>
+        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
+        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
+          ${parcelle.realise*parcelle.cout}
+        </td>
+        <td class="px-4 py-1 editable-cell" id="taux_td">Régie</td>
+   `;
+        cout_reviens+=(parcelle.realise*parcelle.cout);
+        i++
+      tableBody.appendChild(row);
+      fp_num.innerHTML=`<strong>Numéro<strong> : ${parcelle.numero}`;
+      fp_ess.innerHTML=`<strong>Essence<strong> : ${parcelle.essence}`;
+      fp_fin.innerHTML=`<strong>Financement<strong> : ${parcelle.financement}`;
+      fp_sup.innerHTML=`<strong>Superficie<strong> : ${parcelle.superficie} ha`;
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des parcelles:', error);
+  }
+  const cout_revient = document.getElementById('cout_reviens');
+  cout_revient.innerHTML=cout_reviens;
+  console.log(cout_reviens);
+  const dial = document.getElementById('dialogOverlay');
+    dial.style.display='flex';
+
+    // Sélection des éléments
+    const openDialogButton = document.querySelector('.open-dialog-button');
+    const closeDialogButton = document.querySelector('#closeDialogButton');
+    
+    const dialogOverlay = document.querySelector('#dialogOverlay');
+
+    // Fonction pour ouvrir la boîte de dialogue
+    
+    // Fonction pour fermer la boîte de dialogue lorsque l'utilisateur clique sur la croix
+       
+  };
+})
+      
+
     </script>
   </body>
 </html>

@@ -844,9 +844,10 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
     
     try {       
         const result = await client.query(`
-            select a.fk_cout_fixe as id_travail, TO_CHAR(a.date_init, 'dd/mm/yyyy') as date_debut, TO_CHAR(a.date_fin, 'dd/mm/yyyy') as date_fin,a.superficie_traitee as realise, b.montant as cout 
+            select c.numero as numero, c.essence as essence, c.superficie as superficie, c.partenaire as financement,
+            a.fk_cout_fixe as id_travail, TO_CHAR(a.date_init, 'dd/mm/yyyy') as date_debut, TO_CHAR(a.date_fin, 'dd/mm/yyyy') as date_fin,a.superficie_traitee as realise, b.montant as cout 
             from appliquer as a,cout_fixe as b , parcelles as c
-            where a.fk_cout_fixe=b.id and a.fk_parcelles=c.id and a.fk_parcelles = ${req.params.id} and a.fk_cout_fixe between 1 and 7
+            where a.fk_cout_fixe=b.id and a.fk_parcelles=c.id and a.fk_parcelles = ${req.params.id} and a.fk_cout_fixe between 1 and 13
             order by a.fk_cout_fixe asc
             `);
       res.json(result.rows);
@@ -875,10 +876,19 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
     res.render('interface_cugf',{foret:req.params.foret,id:tokenY});
 
   });
+  
 //-----------------------Dashboard supervision-----------------------------------------
-  app.get('/api/gest/:administrateur',(req, res) => {
+  app.get('/api/gest/:admin',authenticateToken,(req, res) => {
+    const {tokenY} = req.user;
+    res.render('dashboard_gest',{foret:req.params.foret,id:tokenY});
+
+  });
+
+ app.get('/api/get/gest/:annee/')
+
+  app.get('/api/gest/:admin/mise_en_place',(req, res) => {
     
-    res.render('dashboard_gest',{foret:req.params.foret});
+    res.render('dash_mise_en_place',{foret:req.params.foret});
 
   });
 
@@ -899,27 +909,26 @@ app.post('/api/donnees', async (req, res) => {
     try {
       // Construire la requête SQL pour récupérer les données des forêts et des années
       const query = `
-        SELECT (SELECT SUM(objectif) AS objectif_1
-        FROM resultats
-        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
-        AND annee IN (${anneesList})
-        AND fk_activite=1),
-        (SELECT SUM(objectif) AS objectif_2
-        FROM resultats
-        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
-        AND annee IN (${anneesList})
-        AND fk_activite BETWEEN 2 AND 5),
-        (SELECT SUM(realise) AS realise_1
-        FROM resultats
-        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
-        AND annee IN (${anneesList})
-        AND fk_activite=1),
-        (SELECT SUM(realise) AS realise_2
-        FROM resultats
-        WHERE fk_foret = ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
-        AND annee IN (${anneesList})
-        AND fk_activite BETWEEN 2 AND 5)
-        FROM resultats LIMIT 1;
+        SELECT
+            a.id,
+            a.superficie,
+            a.essence,
+            a.partenaire,
+            a.densite,
+            a.numero,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}]) AND b.fk_cout_fixe = 1 THEN b.superficie_traitee ELSE 0 END), 0) AS rabattage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 2 THEN b.superficie_traitee ELSE 0 END), 0) AS abattage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 3 THEN b.superficie_traitee ELSE 0 END), 0) AS brulage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 4 THEN b.superficie_traitee ELSE 0 END), 0) AS ouverture,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 5 THEN b.superficie_traitee ELSE 0 END), 0) AS piquetage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 6 THEN b.superficie_traitee ELSE 0 END), 0) AS trouaison,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  AND b.fk_cout_fixe = 7 THEN b.superficie_traitee ELSE 0 END), 0) AS planting,
+            COALESCE((((SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])  THEN b.superficie_traitee ELSE 0 END))/(a.superficie*7))*100), 0) AS taux
+        FROM parcelles a
+        LEFT JOIN appliquer b ON a.id = b.fk_parcelles
+        WHERE a.annee IN (${anneesList}) AND a.foret=ANY(ARRAY[${foret.map(f => `${f}`).join(',')}])
+        GROUP BY a.id
+        ORDER BY a.id ASC;
       `;
       // Prépare la requête GET à envoyer
     const url = `http://localhost:${port}/api/donnees?foret=${foret}&annees=${annees}`;
@@ -950,25 +959,40 @@ app.post('/api/donnees', async (req, res) => {
 
 app.get('/api/donnees', async(req, res) => {
     // Récupérer les paramètres de la requête GET
-    const forets = req.query.foret;  // Récupère le paramètre forêt
-    const annees = req.query.annees;  // Récupère le paramètre années
-    console.log(forets);
-    console.log(annees);
+    const foret = req.query.foret;  // Récupère le paramètre forêt
+    const anneesList = req.query.annees;  // Récupère le paramètre années
+    console.log(foret);
+    console.log(anneesList);
   
     // Vérifier si les paramètres existent
-    if (!forets || !annees) {
+    if (!foret || !anneesList) {
       return res.status(400).json({ message: 'Les paramètres forêts et années sont requis.' });
     }
     try{
-        const query = `
-        SELECT (SELECT SUM(realise) FROM resultats WHERE fk_activite=1) as mise_en_place,
-        (SELECT SUM(realise) FROM resultats WHERE fk_activite=2) as entretien_0,
-        (SELECT SUM(realise) FROM resultats WHERE fk_activite=3) as entretien_1,
-        (SELECT SUM(realise) FROM resultats WHERE fk_activite=4) as entretien_2,
-        (SELECT SUM(realise) FROM resultats WHERE fk_activite=5) as entretien_3 
-        FROM resultats WHERE annee IN (${annees}) AND fk_foret IN (${forets})
-        LIMIT 1
-        `;
+        const query =  `
+        SELECT
+            a.id,
+            a.superficie,
+            a.essence,
+            a.partenaire,
+            a.densite,
+            a.annee,
+            a.foret,
+            a.numero,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) AND b.fk_cout_fixe = 1 THEN b.superficie_traitee ELSE 0 END), 0) AS rabattage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) AND b.fk_cout_fixe = 2 THEN b.superficie_traitee ELSE 0 END), 0) AS abattage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) AND b.fk_cout_fixe = 3 THEN b.superficie_traitee ELSE 0 END), 0) AS brulage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 4 THEN b.superficie_traitee ELSE 0 END), 0) AS ouverture,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 5 THEN b.superficie_traitee ELSE 0 END), 0) AS piquetage,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 6 THEN b.superficie_traitee ELSE 0 END), 0) AS trouaison,
+            COALESCE(SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret})  AND b.fk_cout_fixe = 7 THEN b.superficie_traitee ELSE 0 END), 0) AS planting,
+            COALESCE((((SUM(CASE WHEN a.annee IN (${anneesList}) AND a.foret IN (${foret}) THEN b.superficie_traitee ELSE 0 END))/(a.superficie*7))*100), 0) AS taux
+        FROM parcelles a
+        LEFT JOIN appliquer b ON a.id = b.fk_parcelles
+        WHERE a.annee IN (${anneesList}) AND a.foret IN (${foret})
+        GROUP BY a.id
+        ORDER BY a.id ASC;
+      `;
         const response = await client.query(query);
 
         if (response.rows.length > 0) {
@@ -1034,14 +1058,16 @@ app.post("/rejet/:tokenGen",(req,res)=>{
                         }else{
                             //-----------------------------------------
                             var transporteur = nodemailer.createTransport({
-                                service : "gmail",
+                                host: 'mail.privateemail.com',
+                                port: 587,
+                                secure: false,
                                 auth:{
-                                    user :"alphacodant@gmail.com",
-                                    pass :"khwr jbvk vstt nyhe"
+                                    user :"admin@gestreb.net",
+                                    pass :"alphat_echno225"
                                 }
                             });
                             var mailOptions={
-                                from :"alphacodant@gmail.com",
+                                from :"admin@gestreb.net",
                                 to :results.rows[0].email ,
                                 subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
                                 text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive a été rejétée. Veuillez vous rapprocher de la Direction du Centre de Gestion pour plus d'informations.`
@@ -1118,17 +1144,19 @@ app.post("/validation/:tokenGen",(req,res)=>{
                         
                                             //-----------------------------------------
                                             var transporteur = nodemailer.createTransport({
-                                                service : "gmail",
+                                                host: 'mail.privateemail.com',
+                                                port: 587,
+                                                secure: false,
                                                 auth:{
-                                                    user :"alphacodant@gmail.com",
-                                                    pass :"khwr jbvk vstt nyhe"
+                                                    user :"admin@gestreb.net",
+                                                    pass :"alphat_echno225"
                                                 }
                                             });
                                             var mailOptions={
-                                                from :"alphacodant@gmail.com",
+                                                from :"admin@gestreb.net",
                                                 to :results.rows[0].email ,
                                                 subject : `Reponse à la demande d'autorisation d'accès à la l'Application WebSig`,
-                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : https://ci-sodefor-gagnoa-1.onrender.com/connexion`
+                                                text: `Bonjour M. (Mme) ${results.rows[0].prenom} ${results.rows[0].nom}, votre demande d'accès à la carte interactive vient d'être acceptée. Vous pouvez vous connecter avec votre addresse emeil et votre mot de pass.\n vous pouvez vous connecter ici : https://gestreb.net/connexion`
                                             };
                                             transporteur.sendMail(mailOptions,(err,response)=>{
                                                 if(err){
@@ -1240,17 +1268,19 @@ app.post("/inscription",(req,res)=>{
 
                     //-----------------------------------------
                         var transporteur = nodemailer.createTransport({
-                            service : "gmail",
+                            host: 'mail.privateemail.com',
+                            port: 587,
+                            secure: false,
                             auth:{
-                                user :"alphacodant@gmail.com",
-                                pass :"khwr jbvk vstt nyhe"
+                                user :"admin@gestreb.net",
+                                pass :"alpha_techno225"
                             }
                         });
                         var mailOptions={
-                            from :"alphacodant@gmail.com",
-                            to :"alphacodant@gmail.com" ,
+                            from :"admin@gestreb.net",
+                            to :"admin@gestreb.net" ,
                             subject : `Demande d'autorisation d'accès à la l'Application WebSig de ${nom} ${prenom}`,
-                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://ci-sodefor-gagnoa-1.onrender.com/valid/`+tokenGen
+                            text : `M.(Mme) ${nom} ${prenom} de matricule ${mat} en service à l'Unité de Gestion Forestière de ${ugf} joignable au ${contact} ou par email via ${email} souhaiterait avoir l'accès à la plateforme WebSig du centre de Gestion. Veillez cliquer sur ce lien pour valider sa demande.\n https://gestreb.net/valid/`+tokenGen
                         };
                         transporteur.sendMail(mailOptions,(err,response)=>{
                             if(err){
