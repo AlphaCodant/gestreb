@@ -50,7 +50,7 @@
         <div class="px-2 pb-4 bg-green  shadow-zinc-600">
           <ul class="space-y-2 font-medium">
             <li>
-              <a href="/api/cugf/<%=foret%>" class="flex items-center py-3 px-1 mt-16 text-black border-y border-black  hover:border-y hover:border-gray-500 group">
+              <a href="/api/cugf/<%=foret%>" class="flex items-center py-3 px-1 mt-16 text-black  hover:border-y hover:border-gray-500 group">
                 <span class="material-icons-outlined">dashboard</span>
                 <span class="ms-3">Tableau de bord</span>
               </a>
@@ -62,7 +62,7 @@
               </a>
             </li>  
             <li>
-              <a href="/api/cugf/mise_en_place/<%=foret%>" class="flex items-center mt-16 p-2 text-purple  hover:border-y hover:border-gray-500 group">
+              <a href="/api/cugf/mise_en_place/<%=foret%>" class="flex items-center mt-16 p-2 text-purple border-y border-black hover:border-y hover:border-gray-500 group">
                 <span class="material-icons-outlined" style="color:blueviolet">agriculture</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Mise en place</span>
               </a>
@@ -78,9 +78,7 @@
                 <span class="material-icons-outlined" style="color:palevioletred">carpenter</span>
                 <span class="flex-1 ms-3 whitespace-nowrap">Sylviculture</span>
               </a>
-            </li> 
-            
-                       
+            </li>       
           </ul>
         </div>
       </aside>
@@ -171,16 +169,14 @@
             <div style="background-image: linear-gradient(to right,rgb(165, 60, 246),rgb(0, 140, 255),rgb(0, 238, 255) );
              border-radius: 5%;"><h1 style="color: black;text-align: center;">FICHE PARCELLAIRE</h1></div>
             <div style="text-align: left; gap: 0px; margin-top: 0%;">
-              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Numero</p><p>Type de rbt</p></div>
-              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Superficie</p><p>Type de plants</p></div>
-              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Essence</p><p>Provenance</p></div>
-              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p>Financement</p><p>Densité</p></div>
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p id="fp_num">Numero</p><p id="fp_ess">Essence</p></div>
+              <div style="display: flex; flex-direction: row; justify-content: space-between;"><p id="fp_sup">Superficie</p><p id="fp_fin">Financement</p></div>
             </div>
             <div>
               <table class="w-full bottom-0 text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-auto">
-                  <thead class="relative text-xs text-white uppercas" 
-                   style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) ); 
-                  ">
+                <thead class="relative text-xs text-white uppercas" 
+                 style="background-image: linear-gradient(to right,rgb(0, 140, 255),rgb(0, 238, 255) ); 
+                ">
                       <tr>
                         <th scope="col" class="px-6 py-2 editable-cell2">
                           Date
@@ -205,7 +201,7 @@
                       </tr>
                   </thead>
                   <tbody id="tbody2" style="font-size: 7px;"
-                  class="bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">  
+                  class="bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">   
                   </tbody>
               </table>
             </div>
@@ -417,7 +413,8 @@ document.addEventListener('click', (event) => {
 document.addEventListener('click',async(event)=>{
   let cout_reviens=0;
   const cell = event.target.closest('td');
-  const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting']
+  const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting',
+  'Entretien 1 ligne','Entretien 1 interligne','Remplacement plants morts','Entretien en puits','Entretien 2 ligne','Entretien 2 interligne']
   if (event.target.closest('#fiche_td')) {
     const parcelleId = cell.getAttribute('data-id');   
     console.log(parcelleId);
@@ -431,22 +428,25 @@ document.addEventListener('click',async(event)=>{
     tableBody.innerHTML = '';
     tableBody.style.fontSize='7px';
     const row = document.createElement('tr');
+    const fp_num = document.getElementById('fp_num');
+      const fp_sup = document.getElementById('fp_sup');
+      const fp_fin = document.getElementById('fp_fin');
+      const fp_ess = document.getElementById('fp_ess');
       row.setAttribute('class', 'text-xs ');
     //tableBody.style.fontSize='8px';
     let i=0;
     parcelles.forEach(parcelle => {
       const row = document.createElement('tr');
-      row.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
+      row.setAttribute('class', 'bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
       
-      if(i==1){
+      if (i==1){
         row.innerHTML = `
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${parcelle.cout}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
         <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
-          
+          ${parcelle.realise*parcelle.cout}
         </td>
         <td class="px-4 py-1 editable-cell" id="taux_td">Sous-traitance</td>
    `;
@@ -454,11 +454,10 @@ document.addEventListener('click',async(event)=>{
         row.innerHTML = `
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_debut}-${parcelle.date_fin}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
+        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${parcelle.cout}</td>
         <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
         <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
-          
+          ${parcelle.realise*parcelle.cout}
         </td>
         <td class="px-4 py-1 editable-cell" id="taux_td">Régie</td>
    `;
@@ -466,7 +465,21 @@ document.addEventListener('click',async(event)=>{
         cout_reviens+=(parcelle.realise*parcelle.cout);
         i++
       tableBody.appendChild(row);
+      fp_num.innerHTML=`<strong>Numéro<strong> : ${parcelle.numero}`;
+      fp_ess.innerHTML=`<strong>Essence<strong> : ${parcelle.essence}`;
+      fp_fin.innerHTML=`<strong>Financement<strong> : ${parcelle.financement}`;
+      fp_sup.innerHTML=`<strong>Superficie<strong> : ${parcelle.superficie} ha`;
     });
+    //-------------------------------------------------------------
+
+  const montant = (Math.round(cout_reviens * 100)/100);
+  const options1 = { style: 'currency', currency: 'XOF' };
+  const numberFormat1 = new Intl.NumberFormat('XOF', options1);
+
+  const cout_revient = document.getElementById('cout_reviens_global');
+  cout_revient.innerHTML=numberFormat1.format(montant);
+
+  //-------------------------------------------------------------
   } catch (error) {
     console.error('Erreur lors de la récupération des parcelles:', error);
   }
