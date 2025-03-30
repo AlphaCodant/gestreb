@@ -1312,87 +1312,71 @@ app.post("/inscription",(req,res)=>{
 });
 let liste_token=[];
 
-app.post("/connexion",async (req,res)=>{
-    //donnee_connect.length=0;
 
-    const { email, mp } = req.body;
+// Clé secrète reCAPTCHA (remplace avec ta clé secrète)
+// Clé secrète reCAPTCHA (remplace avec ta clé secrète)
+const RECAPTCHA_SECRET_KEY = '6LenhAQrAAAAAILkCHeOjzoTZHy35gM_F7IP1aaO';  // Ta clé secrète reCAPTCHA
 
-    
+app.post("/connexion", async (req, res) => {
+    const { email, mp, 'g-recaptcha-response': recaptchaResponse } = req.body;  // Récupère la réponse CAPTCHA
 
-  try {
-    const result = await client.query('SELECT * FROM utilisateurs WHERE email = $1', [email]);
-    const user = result.rows[0];
-
-    if (!user) return res.status(404).send('Utilisateur non trouvé.');
-
-    // Vérifier le mot de passe
-    const isMatch = await bcrypt.compare(mp, user.mp);
-    if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
-
-    // Créer un JWT
-    const accessToken = jwt.sign({ tokenY: user.token, email: user.email,ugf: user.ugf,admin: user.administrateur }, process.env.SECRET_KEY, { expiresIn: '1h' });
-
-    // Stocker le token dans les cookies
-    res.cookie('token', accessToken, { httpOnly: true });
-    
-
-    client.query(`SELECT etat FROM utilisateurs WHERE email like '${user.email}'`,(error,response)=>{
-        if (error){
-            console.log(error+" Aucune données")
-        }else{
-            if(response.rows.length>0){
-                console.log("Données existentes");
-                client.query(`UPDATE utilisateurs SET etat = 'connecte' WHERE email like '${user.email}'`,(err)=>{
-                    if(!err){
-                        console.log("Etat mise à jour avec succès, connecté");
-                    }else{
-                        console.log(err+ " Impossible de mettre à jour");
-                    }
-                })
-            }else{
-                console.log("Données vides");
-                client.query(`INSERT INTO utilisateurs (etat) VALUES ('connecté')`,(err)=>{
-                    if(!err){
-                        console.log("Données insérées avec succès");
-                    }else{
-                        console.log(err+ " Impossible d'insérer les données");
-                    }
-                })
+    // Étape 1 : Vérification du reCAPTCHA
+    try {
+        // Effectuer la requête vers l'API reCAPTCHA de Google
+        const googleResponse = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
+            params: {
+                secret: RECAPTCHA_SECRET_KEY,  // Ta clé secrète reCAPTCHA
+                response: recaptchaResponse,  // La réponse CAPTCHA fournie par l'utilisateur
             }
-            
-        }
-    });
-    /*client.query(
-        `CREATE TABLE IF NOT EXISTS stock (email varchar(100) data varchar(100);)`,
-        (err, results) => {
-            if (err) {
-            console.log(err);
-            }else{
-            console.log('Base de données créés avec succès');
-            }
-        });*/
+        });
 
-    client.query(`CREATE TABLE IF NOT EXISTS parcelles_${user.token} as (select * from parcelles)`,(err,response)=>{
-        if(!err){
-            client.query(`CREATE TABLE IF NOT EXISTS foret_${user.token} as (select * from foret)`,(err,response)=>{
-                if(!err){
-                    res.redirect(`/page/${user.token}`); // Rediriger vers le tableau de bord
-                }else{
-                    console.log(err+" Erreur lors de la duplication de la base de données Foret")
-                }
-        
-            })
-        }else{
-            console.log(err+" Erreur lors de la duplication de la base de données Parcelles")
+        const { success, 'error-codes': errorCodes } = googleResponse.data;
+
+        // Si le CAPTCHA échoue, renvoyer une erreur avec le code d'erreur
+        if (!success) {
+            return res.status(400).send('Vérification CAPTCHA échouée. Veuillez réessayer.' + (errorCodes ? ` Erreurs : ${errorCodes.join(', ')}` : ''));
         }
 
-    })
+        // Étape 2 : Si le CAPTCHA est validé, continuer avec la logique de connexion
+        const result = await client.query('SELECT * FROM utilisateurs WHERE email = $1', [email]);
+        const user = result.rows[0];
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Erreur serveur.');
-  }
+        if (!user) return res.status(404).send('Utilisateur non trouvé.');
+
+        // Vérifier le mot de passe
+        const isMatch = await bcrypt.compare(mp, user.mp);
+        if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
+
+        // Créer un JWT
+        const accessToken = jwt.sign(
+            { tokenY: user.token, email: user.email, ugf: user.ugf, admin: user.administrateur },
+            process.env.SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+
+        // Stocker le token dans les cookies
+        res.cookie('token', accessToken, { httpOnly: true });
+
+        // Mettre à jour l'état de l'utilisateur (connecté ou non)
+        await client.query(
+            `INSERT INTO utilisateurs (etat) VALUES ('connecté') 
+            ON CONFLICT (email) 
+            DO UPDATE SET etat = 'connecté' WHERE email = $1`,
+            [user.email]
+        );
+
+        // Créer des tables spécifiques à l'utilisateur
+        await client.query(`CREATE TABLE IF NOT EXISTS parcelles_${user.token} AS (SELECT * FROM parcelles)`);
+        await client.query(`CREATE TABLE IF NOT EXISTS foret_${user.token} AS (SELECT * FROM foret)`);
+
+        // Rediriger vers le tableau de bord de l'utilisateur
+        res.redirect(`/page/${user.token}`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erreur serveur.');
+    }
 });
+
 
  app.get("/log/deconnecter",authenticateToken,(req,res)=>{
     const { tokenY } = req.user;

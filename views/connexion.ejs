@@ -13,6 +13,7 @@
         type="image/png" 
         href="/img/Logo_gestreb.jpg">
         <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="UTF-8">
     </head>
@@ -108,19 +109,16 @@
                   <label class="text-black text-sm mb-2 block">Mot de pass</label>
                   <div class="flex items-center relative">
                     <input name="mp" id="password" type="password" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green pl-10" placeholder="Entrer votre mot de pass" />
-                    <!-- Icône œil pour afficher/masquer le mot de passe -->
                     <i id="togglePassword" class="fas fa-eye absolute right-3 text-gray-500 cursor-pointer"></i>
                   </div>
                 </div>
             
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                  <!--<div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-white focus:ring-black border-gray-300 rounded" />
-                    <label for="remember-me" class="ml-3 block text-sm text-white">
-                      Se souvenir de moi
-                    </label>
-                  </div>-->
+                <!-- Ajout du reCAPTCHA -->
+                <div class="mt-4">
+                  <div class="g-recaptcha" data-sitekey="6LenhAQrAAAAAO4nxsrmTaJQqaEmOxccGg3LYUJF"></div>
+                </div>
             
+                <div class="flex flex-wrap items-center justify-between gap-4">
                   <div class="text-sm">
                     <a href="#" class="text-black hover:underline font-semibold">
                       Mot de pass oublié?
@@ -143,27 +141,27 @@
           </div>
         </div>
       </main> 
-        <script>
-          // Fonction pour basculer la visibilité du mot de passe
+  <script>
+  // Fonction pour basculer la visibilité du mot de passe
+
   const togglePassword = document.getElementById("togglePassword");
   const passwordField = document.getElementById("password");
-
   togglePassword.addEventListener("click", function () {
-    // Vérifie l'état actuel du champ et bascule entre "password" et "text"
+
     const type = passwordField.type === "password" ? "text" : "password";
     passwordField.type = type;
-
-    // Change l'icône en fonction de l'état du champ
     this.classList.toggle("fa-eye");
     this.classList.toggle("fa-eye-slash");
-  });
-          let sidebarOpen = false;
-const sidebar = document.getElementById('sidebar');
 
-function openSidebar() {
-  if (!sidebarOpen) {
-    sidebar.classList.add('sidebar-responsive');
-    sidebarOpen = true;
+  });
+
+  let sidebarOpen = false;
+  const sidebar = document.getElementById('sidebar');
+
+  function openSidebar() {
+    if (!sidebarOpen) {
+      sidebar.classList.add('sidebar-responsive');
+      sidebarOpen = true;
   }
 }
 
