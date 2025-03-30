@@ -112,12 +112,11 @@
                     <i id="togglePassword" class="fas fa-eye absolute right-3 text-gray-500 cursor-pointer"></i>
                   </div>
                 </div>
-            
-                <!-- Ajout du reCAPTCHA -->
-                <div class="mt-4">
-                  <div class="g-recaptcha" data-sitekey="6LenhAQrAAAAAO4nxsrmTaJQqaEmOxccGg3LYUJF"></div>
-                </div>
-            
+                <!-- reCAPTCHA 
+                <div>
+                  <div class="g-recaptcha" data-sitekey="6LenhAQrAAAAAO4nxsrmTaJQqaEmOxccGg3LYUJF" required></div>
+                </div>            
+                -->
                 <div class="flex flex-wrap items-center justify-between gap-4">
                   <div class="text-sm">
                     <a href="#" class="text-black hover:underline font-semibold">
@@ -143,7 +142,7 @@
       </main> 
   <script>
   // Fonction pour basculer la visibilité du mot de passe
-
+  
   const togglePassword = document.getElementById("togglePassword");
   const passwordField = document.getElementById("password");
   togglePassword.addEventListener("click", function () {
