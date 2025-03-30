@@ -598,6 +598,10 @@ video {
   left: 0px;
 }
 
+.right-3 {
+  right: 0.75rem;
+}
+
 .top-0 {
   top: 0px;
 }
@@ -863,6 +867,10 @@ video {
 
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .scroll-my-2 {
@@ -1213,6 +1221,10 @@ video {
 
 .pb-4 {
   padding-bottom: 1rem;
+}
+
+.pl-10 {
+  padding-left: 2.5rem;
 }
 
 .pl-8 {

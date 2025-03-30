@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">     
         <link href="/css/styles.css" rel="stylesheet"/>
         <link href="/css/tailStyle.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <link rel="icon" 
         type="image/png" 
         href="/img/Logo_gestreb.jpg">
@@ -23,7 +24,7 @@
         </div>
         <div class="header-left">
           <div class="main-title">
-            <span><h1>CONNEXION</h1></span>
+            <span><h1 style="color: white;">CONNEXION</h1></span>
           </div>
         </div>
         <!--<div class="header-right">
@@ -91,51 +92,51 @@
                 <%}%>
               <%}%>
             </div>
-                <div class="bg-white border border-green rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
-                  <form action="/connexion" method="POST" class="space-y-4">
-                    <div class="mb-8">
-                      <h3 class="text-green-800 items-center text-3xl font-extrabold"></h3>
-                      <p class="text-black text-lg mt-4 leading-relaxed">Connectez-vous afin d'avoir accès à un plus large éventail de données.</p>
-                    </div>
-                    <div>
-                      <label class="text-black text-sm mb-2 block">Email</label>
-                      <div class="flex items-center">
-                        <input name="email" type="text" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green" placeholder="Entrer votre email" />
-                        
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-black text-sm mb-2 block">Mot de pass</label>
-                      <div class="flex items-center">
-                        <input name="mp" type="password" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green" placeholder="Entrer votre mot de pass" />
-                        
-                      </div>
-                    </div>
-      
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                      <!--<div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-white focus:ring-black border-gray-300 rounded" />
-                        <label for="remember-me" class="ml-3 block text-sm text-white">
-                          Se souvenir de moi
-                        </label>
-                      </div>-->
-      
-                      <div class="text-sm">
-                        <a href="#" class="text-black hover:underline font-semibold">
-                          Mot de pass oublié?
-                        </a>
-                      </div>
-                    </div>
-      
-                    <div class="mt-8">
-                      <button type="submit" class="w-full shadow-xl py-3 px-4 text-sm tracking-wide border-green-800 rounded-lg text-black bg-green-700 hover:bg-green-600">
-                        Connexion
-                      </button>
-                    </div>
-      
-                    <p class="text-sm !mt-8 text-center text-black">Vous n'avez pas encore de compte ? <a href="/inscription" class="text-green-800 font-semibold hover:underline ml-1 whitespace-nowrap">Inscrivez vous ici</a></p>
-                  </form>
+            <div class="bg-white border border-green rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
+              <form action="/connexion" method="POST" class="space-y-4">
+                <div class="mb-8">
+                  <h3 class="text-green-800 items-center text-3xl font-extrabold"></h3>
+                  <p class="text-black text-lg mt-4 leading-relaxed">Connectez-vous afin d'avoir accès à un plus large éventail de données.</p>
                 </div>
+                <div>
+                  <label class="text-black text-sm mb-2 block">Email</label>
+                  <div class="flex items-center">
+                    <input name="email" type="text" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green" placeholder="Entrer votre email" />
+                  </div>
+                </div>
+                <div>
+                  <label class="text-black text-sm mb-2 block">Mot de pass</label>
+                  <div class="flex items-center relative">
+                    <input name="mp" id="password" type="password" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green pl-10" placeholder="Entrer votre mot de pass" />
+                    <!-- Icône œil pour afficher/masquer le mot de passe -->
+                    <i id="togglePassword" class="fas fa-eye absolute right-3 text-gray-500 cursor-pointer"></i>
+                  </div>
+                </div>
+            
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                  <!--<div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-white focus:ring-black border-gray-300 rounded" />
+                    <label for="remember-me" class="ml-3 block text-sm text-white">
+                      Se souvenir de moi
+                    </label>
+                  </div>-->
+            
+                  <div class="text-sm">
+                    <a href="#" class="text-black hover:underline font-semibold">
+                      Mot de pass oublié?
+                    </a>
+                  </div>
+                </div>
+            
+                <div class="mt-8">
+                  <button type="submit" class="w-full shadow-xl py-3 px-4 text-sm tracking-wide border-green-800 rounded-lg text-black bg-green-700 hover:bg-green-600">
+                    Connexion
+                  </button>
+                </div>
+            
+                <p class="text-sm !mt-8 text-center text-black">Vous n'avez pas encore de compte ? <a href="/inscription" class="text-green-800 font-semibold hover:underline ml-1 whitespace-nowrap">Inscrivez vous ici</a></p>
+              </form>
+            </div>
                 
               </div>
             </div>
@@ -143,6 +144,19 @@
         </div>
       </main> 
         <script>
+          // Fonction pour basculer la visibilité du mot de passe
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordField = document.getElementById("password");
+
+  togglePassword.addEventListener("click", function () {
+    // Vérifie l'état actuel du champ et bascule entre "password" et "text"
+    const type = passwordField.type === "password" ? "text" : "password";
+    passwordField.type = type;
+
+    // Change l'icône en fonction de l'état du champ
+    this.classList.toggle("fa-eye");
+    this.classList.toggle("fa-eye-slash");
+  });
           let sidebarOpen = false;
 const sidebar = document.getElementById('sidebar');
 
