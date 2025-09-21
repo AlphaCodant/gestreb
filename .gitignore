@@ -7,10 +7,8 @@
 Thumbs.db
 
 # Ignore les répertoires de dépendances (les modules installés par npm)
-node_modules/
 
 # Ignore le fichier .env contenant des variables d'environnement
-.env
 
 # Ignore les fichiers de logs
 *.log
