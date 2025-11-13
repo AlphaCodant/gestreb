@@ -2,7 +2,8 @@
 body {
     background: #343E59;
     color: #777;
-    font-family: Montserrat, Arial, sans-serif;
+    font-family: Montserrat, Arial, sans-serif; 
+    font-size: small;
   }
   
   .body-bg {

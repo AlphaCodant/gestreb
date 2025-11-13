@@ -876,7 +876,346 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
     res.render('interface_cugf',{foret:req.params.foret,id:tokenY});
 
   });
-  
+  app.get("/membres", (req, res) => {
+    client.query(`
+        SELECT a.id,b.foret as Foret,a.annee as Annee,a.numero,a.essence as Essence,
+        a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie FROM parcelles AS a,foret as b WHERE a.foret=b.id ORDER BY a.numero ASC`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                console.log(results.rows);
+               const membres =  results.rows
+               const totalMembres = membres.length;
+               const superficieTotale = membres.reduce((total, membre) => total + parseFloat(membre.superficie), 0);
+               const essencePredominante = {};
+               membres.forEach((membre) => {
+                   const essence = membre.essence;
+                     if (essencePredominante[essence]) {
+                            essencePredominante[essence] += 1;
+                        } else {
+                            essencePredominante[essence] = 1;
+                        }
+                });
+                let maxCount = 0;
+                let predominantEssence = '';    
+                for (const essence in essencePredominante) {
+                    if (essencePredominante[essence] > maxCount) {
+                        maxCount = essencePredominante[essence];
+                        predominantEssence = essence;
+                    }
+                }
+                partenairePredominant = {};
+                membres.forEach((membre) => {
+                    const partenaire = membre.partenaire;   
+                        if (partenairePredominant[partenaire]) {
+                                 partenairePredominant[partenaire] += 1;
+                                } else {
+                                    partenairePredominant[partenaire] = 1;
+                                }
+                        });
+                let maxPartenaireCount = 0;
+                
+                let predominantPartenaire = '';
+                for (const partenaire in partenairePredominant) {
+                    if (partenairePredominant[partenaire] > maxPartenaireCount) {
+                        maxPartenaireCount = partenairePredominant[partenaire];
+                        predominantPartenaire = partenaire;
+                    }
+                }
+               res.render("membre", { title: "Gestion des parcelles", membre: membres, 
+                totalMembres: totalMembres, superficieTotale: Math.round(superficieTotale),
+                predominantEssence: predominantEssence,occurance:maxCount,
+                predominantPartenaire: predominantPartenaire});
+            }
+        }
+        
+    );
+});
+//-------------------------------------------------------------------------------------
+
+
+//-------Mise en place modèle membre------------------------------------------------------------
+
+app.get("/mise_en_place/:id", (req, res) => {
+    
+    client.query(`
+        SELECT a.id,b.foret as Foret,a.annee as Annee,a.numero,a.essence as Essence,
+        a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        a.superficie as Superficie FROM parcelles AS a,foret as b WHERE a.foret=b.id ORDER BY a.numero ASC`,
+        (err, results) => {
+            if (err) {
+            console.log(err);
+            }else{
+                console.log(results.rows);
+               const membres =  results.rows
+               const totalMembres = membres.length;
+               const superficieTotale = membres.reduce((total, membre) => total + parseFloat(membre.superficie), 0);
+               const essencePredominante = {};
+               membres.forEach((membre) => {
+                   const essence = membre.essence;
+                     if (essencePredominante[essence]) {
+                            essencePredominante[essence] += 1;
+                        } else {
+                            essencePredominante[essence] = 1;
+                        }
+                });
+                let maxCount = 0;
+                let predominantEssence = '';    
+                for (const essence in essencePredominante) {
+                    if (essencePredominante[essence] > maxCount) {
+                        maxCount = essencePredominante[essence];
+                        predominantEssence = essence;
+                    }
+                }
+                partenairePredominant = {};
+                membres.forEach((membre) => {
+                    const partenaire = membre.partenaire;   
+                        if (partenairePredominant[partenaire]) {
+                                 partenairePredominant[partenaire] += 1;
+                                } else {
+                                    partenairePredominant[partenaire] = 1;
+                                }
+                        });
+                let maxPartenaireCount = 0;
+                
+                let predominantPartenaire = '';
+                for (const partenaire in partenairePredominant) {
+                    if (partenairePredominant[partenaire] > maxPartenaireCount) {
+                        maxPartenaireCount = partenairePredominant[partenaire];
+                        predominantPartenaire = partenaire;
+                    }
+                }
+               res.render("membre_mise", {id:req.params.id,title: "Gestion des parcelles", membre: membres, 
+                totalMembres: totalMembres, superficieTotale: Math.round(superficieTotale),
+                predominantEssence: predominantEssence,occurance:maxCount,
+                predominantPartenaire: predominantPartenaire});
+            }
+        }
+        
+    );
+});
+
+app.post('/mise_en_place', async (req, res) => {
+    // Récupérer les données envoyées par le client
+    const { foret, annees } = req.body; 
+    console.log("Forêts sélectionnées:", foret, " | Années sélectionnées:", annees);
+ 
+    // Vérifier si les données sont présentes et sont des tableaux non vides
+    if (!foret || !Array.isArray(foret) || foret.length === 0 || 
+        !annees || !Array.isArray(annees) || annees.length === 0) {
+      return res.status(400).json({ message: 'Les listes de forêts et d\'années sont requises et ne doivent pas être vides.' });
+    }
+ 
+    // Préparation des listes d'IDs et d'années pour la clause SQL IN.
+    // NOTE: On utilise .join(',') pour créer une chaîne de type: 1,2,3...
+    // Si 'a.annee' était de type TEXT/VARCHAR, il faudrait encadrer chaque élément par des guillemets simples (ex: '2023','2024').
+    const foretList = foret.map(f => Number(f)).join(',');
+    const anneesList = annees.map(a => Number(a)).join(',');
+ 
+    try {
+      // Construction de la requête SQL corrigée
+      const query = `
+        SELECT a.id, b.foret AS Foret, a.annee AS Annee, a.numero, a.essence AS Essence,
+        a.densite AS Densité, a.partenaire AS Partenaire, a.longitude AS X, a.latitude AS Y,
+        a.superficie AS Superficie 
+        FROM parcelles AS a
+        INNER JOIN foret AS b ON a.foret = b.id 
+        WHERE a.foret IN (${foretList}) 
+        AND a.annee IN (${anneesList})
+        ORDER BY a.numero ASC;`
+      ;
+      
+      console.log("Requête SQL exécutée:", query);
+ 
+      // Exécuter la requête SQL
+      const result = await client.query(query);
+ 
+      // Si des données sont trouvées, envoyer la réponse
+      if (result.rows.length > 0) {
+        return res.status(200).json(result.rows);
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée trouvée pour cette sélection.' });
+      }
+    } catch (error) {
+      // Si une erreur survient ici, c'est généralement une erreur de syntaxe SQL ou de connexion DB.
+      console.error('Erreur SQL ou de base de données:', error.message);
+      return res.status(500).json({ message: 'Erreur du serveur interne lors de l\'exécution de la requête.' });
+    }
+});
+
+app.post('/entretien_p', async (req, res) => {
+    // Récupérer les données envoyées par le client
+    const { foret, annees, entretien_annee } = req.body; 
+    console.log("Forêts sélectionnées:", foret, " | Années sélectionnées:", annees, "| Entr :",entretien_annee);
+ 
+    // Vérifier si les données sont présentes et sont des tableaux non vides
+    if (!entretien_annee || !foret || !Array.isArray(foret) || foret.length === 0 || 
+        !annees || !Array.isArray(annees) || annees.length === 0) {
+      return res.status(400).json({ message: 'Les listes de forêts et d\'années sont requises et ne doivent pas être vides.' });
+    }
+ 
+    // Préparation des listes d'IDs et d'années pour la clause SQL IN.
+    // NOTE: On utilise .join(',') pour créer une chaîne de type: 1,2,3...
+    // Si 'a.annee' était de type TEXT/VARCHAR, il faudrait encadrer chaque élément par des guillemets simples (ex: '2023','2024').
+    const foretList = foret.map(f => Number(f)).join(',');
+    const anneesList = annees.map(a => Number(a)).join(',');
+    const entr = entretien_annee.map(e => Number(e)).join(',');
+    let annee=[];
+    for (let i = 0; i < annees.length; i++) {
+        for(let j=0; j<entretien_annee.length; j++){
+            
+        annee.push(annees[i]-entretien_annee[j]);
+        }
+    }
+    //const anney=annee.map(a => Number(a)).join(',');
+ 
+    try {
+      // Construction de la requête SQL corrigée
+      const query = `
+        SELECT a.id, b.foret AS Foret, a.annee AS Annee, a.numero, a.essence AS Essence,
+        a.densite AS Densité, a.partenaire AS Partenaire, a.longitude AS X, a.latitude AS Y,
+        a.superficie AS Superficie 
+        FROM parcelles AS a
+        INNER JOIN foret AS b ON a.foret = b.id 
+        WHERE a.foret IN (${foretList}) 
+        AND a.annee IN (${annee})
+        ORDER BY a.numero ASC;`
+      ;
+      
+      console.log("Requête SQL exécutée:", query);
+ 
+      // Exécuter la requête SQL
+      const result = await client.query(query);
+ 
+      // Si des données sont trouvées, envoyer la réponse
+      if (result.rows.length > 0) {
+        return res.status(200).json(result.rows);
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée trouvée pour cette sélection.' });
+      }
+    } catch (error) {
+      // Si une erreur survient ici, c'est généralement une erreur de syntaxe SQL ou de connexion DB.
+      console.error('Erreur SQL ou de base de données:', error.message);
+      return res.status(500).json({ message: 'Erreur du serveur interne lors de l\'exécution de la requête.' });
+    }
+});
+
+app.post('/rapport_entretien', async (req, res) => {
+    // Récupérer les données envoyées par le client
+    const { parcelleId } = req.body; 
+  //  console.log("Forêts sélectionnées:", foret, " | Années sélectionnées:", annees, "| Entr :",entretien_annee);
+ 
+    // Vérifier si les données sont présentes et sont des tableaux non vides
+    if (!parcelleId) {
+      return res.status(400).json({ message: 'Les listes de forêts et d\'années sont requises et ne doivent pas être vides.' });
+    }
+ 
+    // Préparation des listes d'IDs et d'années pour la clause SQL IN.
+    // NOTE: On utilise .join(',') pour créer une chaîne de type: 1,2,3...
+    // Si 'a.annee' était de type TEXT/VARCHAR, il faudrait encadrer chaque élément par des guillemets simples (ex: '2023','2024').
+    // const foretList = foret.map(f => Number(f)).join(',');
+    // const anneesList = annees.map(a => Number(a)).join(',');
+    // const entr = entretien_annee.map(e => Number(e)).join(',');
+    
+    //const anney=annee.map(a => Number(a)).join(',');
+ 
+    try {
+      // Construction de la requête SQL corrigée
+      const query = `
+        SELECT a.montant AS Montant, a.travail AS Activite, b.superficie_traitee AS Realisé,b.fk_cout_fixe,
+        c.numero AS Numéro_Parcelle FROM cout_fixe AS a
+        INNER JOIN appliquer AS b ON a.id = b.fk_cout_fixe
+        INNER JOIN parcelles AS c ON b.fk_parcelles = c.id WHERE c.id = ${parcelleId};`
+      ;
+      
+      console.log("Requête SQL exécutée:", query);
+ 
+      // Exécuter la requête SQL
+      const result = await client.query(query);
+ 
+      // Si des données sont trouvées, envoyer la réponse
+      if (result.rows.length > 0) {
+        return res.status(200).json(result.rows);
+        console.log(result.rows);
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée trouvée pour cette sélection.' });
+      }
+    } catch (error) {
+      // Si une erreur survient ici, c'est généralement une erreur de syntaxe SQL ou de connexion DB.
+      console.error('Erreur SQL ou de base de données:', error.message);
+      return res.status(500).json({ message: 'Erreur du serveur interne lors de l\'exécution de la requête.' });
+    }
+});
+app.get('/entretien_p/:id', async (req, res) => {
+     
+    res.render('membre_entretien',{id:req.params.id});
+});
+app.post('/sylviculture', async (req, res) => {
+    // Récupérer les données envoyées par le client
+    const { foret, annees } = req.body; 
+    const entretien_annee = [4];
+    console.log("Forêts sélectionnées:", foret, " | Années sélectionnées:", annees, "| Entr :",entretien_annee);
+ 
+    // Vérifier si les données sont présentes et sont des tableaux non vides
+    if (!entretien_annee || !foret || !Array.isArray(foret) || foret.length === 0 || 
+        !annees || !Array.isArray(annees) || annees.length === 0) {
+      return res.status(400).json({ message: 'Les listes de forêts et d\'années sont requises et ne doivent pas être vides.' });
+    }
+ 
+    // Préparation des listes d'IDs et d'années pour la clause SQL IN.
+    // NOTE: On utilise .join(',') pour créer une chaîne de type: 1,2,3...
+    // Si 'a.annee' était de type TEXT/VARCHAR, il faudrait encadrer chaque élément par des guillemets simples (ex: '2023','2024').
+    const foretList = foret.map(f => Number(f)).join(',');
+    const anneesList = annees.map(a => Number(a)).join(',');
+    const entr = entretien_annee.map(e => Number(e)).join(',');
+    let annee=[];
+    for (let i = 0; i < annees.length; i++) {
+        for(let j=0; j<entretien_annee.length; j++){
+            
+        annee.push(annees[i]-entretien_annee[j]);
+        }
+    }
+    //const anney=annee.map(a => Number(a)).join(',');
+ 
+    try {
+      // Construction de la requête SQL corrigée
+      const query = `
+        SELECT a.id, b.foret AS Foret, a.annee AS Annee, a.numero, a.essence AS Essence,
+        a.densite AS Densité, a.partenaire AS Partenaire, a.longitude AS X, a.latitude AS Y,
+        a.superficie AS Superficie 
+        FROM parcelles AS a
+        INNER JOIN foret AS b ON a.foret = b.id 
+        WHERE a.foret IN (${foretList}) 
+        AND a.annee IN (${annee})
+        ORDER BY a.numero ASC;`
+      ;
+      
+      console.log("Requête SQL exécutée:", query);
+ 
+      // Exécuter la requête SQL
+      const result = await client.query(query);
+ 
+      // Si des données sont trouvées, envoyer la réponse
+      if (result.rows.length > 0) {
+        return res.status(200).json(result.rows);
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée trouvée pour cette sélection.' });
+      }
+    } catch (error) {
+      // Si une erreur survient ici, c'est généralement une erreur de syntaxe SQL ou de connexion DB.
+      console.error('Erreur SQL ou de base de données:', error.message);
+      return res.status(500).json({ message: 'Erreur du serveur interne lors de l\'exécution de la requête.' });
+    }
+});
+
+app.get('/sylviculture/:id',authenticateToken,(req, res) => {
+   
+    res.render('membre_sylviculture',{id:req.params.id});
+
+  });
+
 //-----------------------Dashboard supervision-----------------------------------------
   app.get('/api/gest/:admin',authenticateToken,(req, res) => {
     const {tokenY} = req.user;
@@ -1471,135 +1810,11 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
 
     let ddf = tab_ddf[0];
     console.log(ddf);
-    let {cocher,cocher2,cocher3,cocher4,cocher5,attributes,attributes2,attributes3,attributes4,attributes5,operator,operator2,operator3,operator4,operator5,
-        value,value2,value3,value4,value5
+    let {cocher,cocher2,cocher3,attributes,attributes2,attributes3,operator,operator2,operator3,
+        value,value2,value3
     }=req.body;
     console.log(attributes2);
-
-    if (cocher && cocher2 && cocher3 && cocher4 &&cocher5){
-        if(operator=='ilike' || operator=='not ilike'){
-            value=`'${value}%'`;
-        }else{
-            value=value;
-        }
-        if(operator2=='ilike' || operator2=='not ilike'){
-            value2=`'${value2}%'`;
-        }else{
-            value2=value2;
-        }
-        if(operator3=='ilike' || operator3=='not ilike'){
-            value3=`'${value3}%'`;
-        }else{
-            value3=value3;
-        }
-        if(operator4=='ilike' || operator4=='not ilike'){
-            value4=`'${value4}%'`;
-        }else{
-            value4=value4;
-        }
-        if(operator5=='ilike' || operator5=='not ilike'){
-            value5=`'${value5}%'`;
-        }else{
-            value5=value5;
-        }
-        let clause1 = 'AND';
-        if (attributes==attributes2){
-            clause1='OR';
-        }else{
-            clause1='AND';
-        }
-        let clause2 = 'AND';
-        if (attributes2==attributes3){
-            clause2='OR';
-        }else{
-            clause2='AND';
-        }
-        let clause3 = 'AND';
-        if (attributes3==attributes4){
-            clause3='OR';
-        }else{
-            clause3='AND';
-        }
-        let clause4 = 'AND';
-        if (attributes4==attributes5){
-            clause4='OR';
-        }else{
-            clause4='AND';
-        }
-        client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
-        a.superficie as Superficie,ST_Transform(geom, 4326)
-        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
-        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
-            ${clause3} ${attributes4} ${operator4} ${value4} ${clause4} ${attributes5} ${operator5} ${value5}) AS t`,
-                (err,results)=>{
-                if(!err){
-                    console.log(results.rows[0].donnee)
-                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
-                        console.log(err);               
-                        });
-                }else{
-                    console.log(err);
-                }
-                client.end;
-    });
-    }else if (cocher && cocher2 && cocher3 && cocher4){
-        if(operator=='ilike' || operator=='not ilike'){
-            value=`'${value}%'`;
-        }else{
-            value=value;
-        }
-        if(operator2=='ilike' || operator2=='not ilike'){
-            value2=`'${value2}%'`;
-        }else{
-            value2=value2;
-        }
-        if(operator3=='ilike' || operator3=='not ilike'){
-            value3=`'${value3}%'`;
-        }else{
-            value3=value3;
-        }
-        if(operator4=='ilike' || operator4=='not ilike'){
-            value4=`'${value4}%'`;
-        }else{
-            value4=value4;
-        }
-        let clause1 = 'AND';
-        if (attributes==attributes2){
-            clause1='OR';
-        }else{
-            clause1='AND';
-        }
-        let clause2 = 'AND';
-        if (attributes2==attributes3){
-            clause2='OR';
-        }else{
-            clause2='AND';
-        }
-        let clause3 = 'AND';
-        if (attributes3==attributes4){
-            clause3='OR';
-        }else{
-            clause3='AND';
-        }
-        client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
-        a.superficie as Superficie,ST_Transform(geom, 4326)
-        FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
-        and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3} 
-            ${clause3} ${attributes4} ${operator4} ${value4}) AS t`,
-                (err,results)=>{
-                if(!err){
-                    console.log(results.rows[0].donnee)
-                    fs.writeFile(`public/json/fichier-${tokenY}.geojson`,JSON.stringify(results.rows[0].donnee),'utf-8',(err)=>{
-                        console.log(err);               
-                        });
-                }else{
-                    console.log(err);
-                }
-                client.end;
-    });
-    }else if (cocher && cocher2 && cocher3){
+    if (cocher && cocher2 && cocher3){
         if(operator=='ilike' || operator=='not ilike'){
             value=`'${value}%'`;
         }else{
@@ -1628,7 +1843,7 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             clause2='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        FROM (SELECT a.id,b.foret as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
         a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2} ${clause2} ${attributes3} ${operator3} ${value3}) AS t`,
@@ -1662,7 +1877,7 @@ app.post('/requete/:id',authenticateToken,(req,res)=>{
             clause1='AND';
         }
         client.query(`SELECT json_build_object('type', 'FeatureCollection','features',json_agg(ST_AsGeoJSON(t.*)::json) ) as donnee 
-        FROM (SELECT a.id,b.nom as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
+        FROM (SELECT a.id,b.foret as Foret,a.annee as Annee,a.numero,a.essence as Essence,a.densite as Densité,a.partenaire as Partenaire,a.longitude as X,a.latitude as Y,
         a.superficie as Superficie,ST_Transform(geom, 4326)
         FROM public.parcelles_${tokenY} a  JOIN public.foret_${tokenY} b ON a.foret=b.id WHERE a.foret in ${ddf}
         and ${attributes} ${operator} ${value} ${clause1} ${attributes2} ${operator2} ${value2}) AS t`,

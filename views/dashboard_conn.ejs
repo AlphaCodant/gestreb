@@ -87,7 +87,7 @@
         <div id ="titres">
           <ul class="space-y-2 font-medium py-2 ">
               <li>
-                  <span class="flex items-center py-3 px-1 dark:text-black  border-y border-gray-300 group">
+                  <span class="flex items-center py-1 px-1 dark:text-black  border-y border-gray-300 group">
                   <svg class="w-5 h-5 text-green-500 transition duration-75  group-hover:text-green-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30">
                     <title/><g data-name="Layer 2" id="Layer_2"><g id="Interface-Solid"><g id="interface-solid-pin-location">
                       <circle cx="15" cy="9.57129" fill="none" r="3.42865"/>
@@ -98,7 +98,7 @@
                 </span>
               </li>   
               <li>
-                <a href="/statistiques" target="_blank" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-purple-500 group">
+                <a href="/statistiques" target="_blank" class="flex items-center mt-3 p-1 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-purple-500 group">
                   <svg class="w-5 h-5 text-purple-500 transition duration-75  group-hover:text-purple-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                     <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
                     <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
@@ -107,7 +107,7 @@
                 </a>
             </li>  
             <li id="bouton_ugf" class="hidden">
-              <a href="/api/cugf/<%=poste%>" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
+              <a href="/api/cugf/<%=poste%>" target="_self" class="flex items-center mt-3 p-1 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
                 <svg class="w-5 h-5 text-blue-500 transition duration-75  group-hover:text-blue-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                   <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
                   <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
@@ -116,16 +116,16 @@
               </a>
           </li> 
           <li id="bouton_cg" class="hidden">
-            <a href="/api/gest/<%=poste%>" target="_self" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
+            <a href="/mise_en_place/<%=id%>" target="_self" class="flex items-center mt-3 p-1 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-blue-500 group">
               <svg class="w-5 h-5 text-blue-500 transition duration-75  group-hover:text-blue-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                 <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
                 <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
             </svg>
-            <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Admin CG</span>
+            <span class="text-sm ms-3 md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">Admin</span>
             </a>
         </li> 
               <li>
-                <a href="/log/deconnecter" class="flex items-center mt-3 p-2 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-red-500 group">
+                <a href="/log/deconnecter" class="flex items-center mt-3 p-1 text-black  bg-white hover:bg-gray-300 hover:border-y hover:border-red-500 group">
                   <svg height="30" viewBox="0 0 24 24" width="30" class="w-5 h-5 text-red-500 transition duration-75  group-hover:text-orange-600 " fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <g>
                       <path fill="none" d="M0 0h24v24H0z"/>
@@ -136,36 +136,36 @@
                 </a>
             </li>    
               <li>
-                <div id="stats_stats" class="mt-16" style="background-color: white; display:none; width: 100%; height: 60%; border-width: 1px;border-color: black; border-radius: 5%; padding : 4%; margin:1%;">
+                <div id="stats_stats" class="mt-8" style="background-color: rgb(224, 224, 224); display:none; width: 100%; height: 50%; border-width: 1px; border-radius: 1%; padding : 4%; margin:1%;">
                   <div style="height: 5%;">
                       <div style="align-items: center;text-align: center;">
-                          <h2 style="font-weight: bold;color: black;">Superficie totale</h2>
+                          <h2 style="font-weight: light;color: black;">Superficie totale</h2>
                       </div>
                   </div>
                   <div style="height: 15%;">
                       <div style="align-items: center;text-align: center;">
-                          <h1 id ="sup_totale" style="font-weight: bold;font-size: 20px;color:#583cb3">Superficie totale</h1>
+                          <h1 id ="sup_totale" style="font-weight: light;font-size: 15px;color:#583cb3">Superficie totale</h1>
                       </div>
                   </div>
                   
                   <div style="height: 5%;">
                       <div style="align-items: center;text-align: center;">
-                          <h2 style="font-weight: bold;color: black;">Superficie min</h2>
+                          <h2 style="font-weight: light;color: black;">Superficie min</h2>
                       </div>
                   </div>
                   <div style="height: 15%;">
                       <div style="align-items: center;text-align: center;">
-                          <h1 id ="sup_min" style="font-weight: bold;font-size: 15px;color:#ff6d00">Superficie minimale</h1>
+                          <h1 id ="sup_min" style="font-weight: light;font-size: 10px;color:#ff6d00">Superficie minimale</h1>
                       </div>
                   </div>
                   <div style="height: 5%;">
                       <div style="align-items: center;text-align: center;">
-                          <h2 style="font-weight: bold;color: black;">Superficie max</h2>
+                          <h2 style="font-weight: light;color: black;">Superficie max</h2>
                       </div>
                   </div>
                   <div style="height: 15%;">
                       <div style="align-items: center;text-align: center;">
-                          <h1 id ="sup_max" style="font-weight: bold;font-size: 15px;color:#2e7d32">Superficie maximale</h1>
+                          <h1 id ="sup_max" style="font-weight: light;font-size: 10px;color:#2e7d32">Superficie maximale</h1>
                       </div>
                   </div>
                   
@@ -286,7 +286,7 @@
           <div id="postData" post="<%= id %>"></div>
           <div id="statut_admin" post="<%=admin %>"></div>
           <div id="statut_poste" post="<%=poste %>"></div>
-          <div id="fenetre_requete" title="Requete">
+          <div id="fenetre_requete" title="Requete" style="font-family: sans-serif; font-size: small;">
             <form action="/requete/<%= id %>" method="POST">
               <div id="form2">
                 <!--<label for="layer">Selection couche</label>
@@ -347,44 +347,6 @@
                 <br>
                 <label for="value3">Entrer valeur</label>
                 <input type="text" class="form-control" id="value3" name="value3">
-              </div>
-              <div id="form5" class="hidden lg:inline-block xl:inline-block 2xl:inline-block">
-                <br>
-                <label id="critere4" style="text-decoration: underline;color:green">Critere 4</label><input type="checkbox" name="cocher4" value="cocher4" id="crt4" style="width:25%;padding: 10%;">
-                <br><br>
-                <label for="attributes4">Selection attribut</label>
-                <select class="form-control" id="attributes4" name="attributes4">
-                  <option value="">Selection attribut</option>
-                  
-                </select>
-                <br>
-                <label for="operator4">Selection operateur</label>
-                <select class="form-control" id="operator4" name="operator4">
-                  <option value="">Selection operateur</option>
-                  
-                </select>
-                <br>
-                <label for="value4">Entrer valeur</label>
-                <input type="text" class="form-control" id="value4" name="value4">
-              </div>
-              <div id="form6" class="hidden lg:inline-block xl:inline-block 2xl:inline-block">
-                <br>
-                <label id="critere5" style="text-decoration: underline;color:green">Critere 5</label><input type="checkbox" name="cocher5" value="cocher5" id="crt5" style="width:25%;padding: 10%;">
-                <br><br>
-                <label for="attributes5">Selection attribut</label>
-                <select class="form-control" id="attributes5" name="attributes5">
-                  <option value="">Select Attributes</option>
-                  
-                </select>
-                  <br>
-                  <label for="operator5">Select operator</label>
-                  <select class="form-control" id="operator5" name="operator5">
-                  <option value="">Select operator</option>
-                 
-                </select>
-                <br>
-                <label for="value5">Enter Value</label>
-                <input type="text" class="form-control" id="value5" name="value5">
               </div>
               <br>
               <div >

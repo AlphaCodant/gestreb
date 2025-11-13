@@ -788,15 +788,15 @@ function fen_requete(){
   
     //$( "#fenetre_requete" ).show();
     $("#form2").css({display:"inline-block"});
-    $("#form2").css({left:"3%",width:"18%"});
+    //$("#form2").css({left:"3%",width:"18%"});
     $("#form3").css({display:"inline-block"});
-    $("#form3").css({left:"3%",width:"18%"});
+    //$("#form3").css({left:"3%",width:"18%"});
     $("#form4").css({display:"inline-block"});
-    $("#form4").css({left:"3%",width:"18%"});
-    $("#form5").css({display:"inline-block"});
+    //$("#form4").css({left:"3%",width:"18%"});
+    /*$("#form5").css({display:"inline-block"});
     $("#form5").css({left:"3%",width:"18%"});
     $("#form6").css({display:"inline-block"});
-    $("#form6").css({left:"3%",width:"18%"});
+    $("#form6").css({left:"3%",width:"18%"});*/
     $("#bouton_lancer_rqt").css({display: "inline-block",left:"78%",top:"5%"});
     $("#bouton_fermer_rqt").css({display: "inline-block",left:"3%",top:"5%"});
 
@@ -830,7 +830,7 @@ function fen_requete(){
         var value_layer = $(this).val();
         attributes3.options[0] = new Option('Select attributes', "");
 
-        //-----------------Attribut du quatrieme critère
+        /*-----------------Attribut du quatrieme critère
         var attributes4 = document.getElementById("attributes4");
         var length4 = attributes4.options.length;
         for (i = length4-1; i >= 0; i--) {
@@ -846,7 +846,7 @@ function fen_requete(){
             attributes5.options[i] = null;
         }
         var value_layer = $(this).val();
-        attributes5.options[0] = new Option('Select attributes', "");
+        attributes5.options[0] = new Option('Select attributes', "");*/
     let dert=[];
     $(document).ready(function(){
         $.ajax({
@@ -902,7 +902,7 @@ function fen_requete(){
             }
         });
     }); 
-      //---------------------------------------------------------------------------
+      /*---------------------------------------------------------------------------
 
       $(document).ready(function(){
         $.ajax({
@@ -939,7 +939,7 @@ function fen_requete(){
                 }
             }
         });
-    }); 
+    });*/ 
 })
 // operator combo
 $(function () {
@@ -1020,7 +1020,7 @@ $(function () {
     });
 });
 
-//-----------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------
 
 $(function () {
     $("#attributes4").change(function () {
@@ -1071,7 +1071,7 @@ $(function () {
             operator5.options[2] = new Option('Different', 'not ilike');
         }
     });
-});
+});*/
 $(function(){
 
     
@@ -1082,10 +1082,10 @@ $(function(){
    var value_attribute2 = attribute2.options[attribute2.selectedIndex].text;
    var attribute3 = document.getElementById("attributes3");
    var value_attribute3 = attribute3.options[attribute3.selectedIndex].text;
-   var attribute4 = document.getElementById("attributes4");
+   /*var attribute4 = document.getElementById("attributes4");
    var value_attribute4 = attribute4.options[attribute4.selectedIndex].text;
    var attribute5 = document.getElementById("attributes5");
-   var value_attribute5 = attribute5.options[attribute5.selectedIndex].text;
+   var value_attribute5 = attribute5.options[attribute5.selectedIndex].text;*/
 
    //Valeurs des opérateurs
    var operator = document.getElementById("operator");
@@ -1094,10 +1094,10 @@ $(function(){
    var value_operator2 = operator2.options[operator2.selectedIndex].value;
    var operator3 = document.getElementById("operator3");
    var value_operator3 = operator3.options[operator3.selectedIndex].value;
-   var operator4 = document.getElementById("operator4");
+   /*var operator4 = document.getElementById("operator4");
    var value_operator4 = operator4.options[operator4.selectedIndex].value;
    var operator5 = document.getElementById("operator5");
-   var value_operator5 = operator5.options[operator5.selectedIndex].value;
+   var value_operator5 = operator5.options[operator5.selectedIndex].value;*/
 
    //Valeurs
    var txt = document.getElementById("value");
@@ -1106,10 +1106,10 @@ $(function(){
    var value_txt2 = txt2.value;
    var txt3 = document.getElementById("value3");
    var value_txt3 = txt3.value;
-   var txt4 = document.getElementById("value4");
+   /*var txt4 = document.getElementById("value4");
    var value_txt4 = txt4.value;
    var txt5 = document.getElementById("value5");
-   var value_txt5 = txt5.value;
+   var value_txt5 = txt5.value;*/
     console.log(txt);
     console.log(txt.value);
 
