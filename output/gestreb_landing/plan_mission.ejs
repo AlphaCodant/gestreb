@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan de Missions | GESTREB</title>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="dashboard.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="img/Logo_gestreb.jpg">
+  
+  <style>
+    /* Additional styles for Plan Mission */
+    .mission-timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .mission-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--gray-200);
+    }
+    
+    .mission-item {
+      position: relative;
+      padding: 1.25rem;
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-100);
+      margin-bottom: 1rem;
+      transition: all var(--transition);
+    }
+    
+    .mission-item:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-200);
+    }
+    
+    .mission-item::before {
+      content: '';
+      position: absolute;
+      left: -1.75rem;
+      top: 1.5rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary-500);
+      border: 3px solid white;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .mission-item.completed::before {
+      background: var(--emerald-500);
+    }
+    
+    .mission-item.pending::before {
+      background: var(--amber-500);
+    }
+    
+    .mission-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    
+    .mission-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    
+    .mission-date {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      background: var(--gray-50);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+    }
+    
+    .mission-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+    }
+    
+    .mission-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    
+    .mission-detail-item .material-icons-outlined {
+      font-size: 1rem;
+      color: var(--gray-400);
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+    }
+    
+    .calendar-header {
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-transform: uppercase;
+    }
+    
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+    }
+    
+    .calendar-day:hover {
+      background: var(--gray-100);
+    }
+    
+    .calendar-day.today {
+      background: var(--primary-500);
+      color: white;
+      font-weight: 700;
+    }
+    
+    .calendar-day.has-mission {
+      background: var(--emerald-50);
+      color: var(--emerald-700);
+      font-weight: 600;
+    }
+    
+    .calendar-day.has-mission::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald-500);
+    }
+    
+    .calendar-day.other-month {
+      color: var(--gray-300);
+    }
+    
+    .add-mission-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-600), var(--sky-600));
+      color: white;
+      border: none;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+      cursor: pointer;
+      transition: all var(--transition);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .add-mission-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 28px rgba(79, 70, 229, 0.5);
+    }
+    
+    @media (max-width: 768px) {
+      .mission-timeline {
+        padding-left: 1.5rem;
+      }
+      
+      .mission-header {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <a href="/"><img src="img/Logo_gestreb.jpg" alt="Logo GestReb"></a>
+        </div>
+        <div class="sidebar-brand">
+          <h1>GestReb</h1>
+          <p>Gestion des reboisements</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu principal</span>
+        
+        <a href="#" class="nav-item">
+          <span class="material-icons-outlined">eco</span>
+          Prod. de plants
+        </a>
+        
+        <a href="/mise_en_place/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">grid_view</span>
+          Parcelles
+        </a>
+        
+        <a href="/entretien_p/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">grass</span>
+          Entretien
+        </a>
+        
+        <a href="/sylviculture/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">park</span>
+          Sylviculture
+        </a>
+        
+        <span class="nav-section-title">Planification</span>
+        
+        <a href="/plan_mission/<%= id %>" class="nav-item active">
+          <span class="material-icons-outlined">event_note</span>
+          Plan de missions
+        </a>
+        
+        <a href="/page/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">map</span>
+          Carte interactive
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <span class="material-icons-outlined">menu</span>
+        </button>
+        <div class="page-title">
+          <h1>Plan de Missions</h1>
+          <p>Planification et suivi des interventions</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="header-status">
+          <span class="dot"></span>
+          En ligne
+        </div>
+        
+        <div class="header-notifications">
+          <span class="material-icons-outlined">notifications</span>
+          <span class="badge"></span>
+        </div>
+        
+        <div class="header-user">
+          <div class="header-user-avatar">
+            <span class="material-icons-outlined">person</span>
+          </div>
+          <div class="header-user-info">
+            <p>Admin</p>
+            <span>Gestionnaire</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Stats Summary -->
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <span class="material-icons-outlined">event_available</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="missionsPlanifiees">12</h3>
+            <p>Missions planifiées</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon emerald">
+            <span class="material-icons-outlined">check_circle</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="missionsTerminees">8</h3>
+            <p>Missions terminées</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber">
+            <span class="material-icons-outlined">schedule</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="missionsEnCours">3</h3>
+            <p>En cours</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon sky">
+            <span class="material-icons-outlined">groups</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="equipesMobilisees">4</h3>
+            <p>Équipes mobilisées</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+        <!-- Missions Timeline -->
+        <div class="filters-card" style="margin-bottom: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.125rem; font-weight: 700; color: var(--gray-900);">Missions à venir</h2>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn-action primary" onclick="filterMissions('all')">Toutes</button>
+              <button class="btn-action emerald" onclick="filterMissions('entretien')">Entretien</button>
+              <button class="btn-action amber" onclick="filterMissions('sylviculture')">Sylviculture</button>
+            </div>
+          </div>
+          
+          <div class="mission-timeline" id="missionTimeline">
+            <!-- Mission Item 1 -->
+            <div class="mission-item pending" data-type="entretien">
+              <div class="mission-header">
+                <span class="mission-title">Entretien Ligne - Parcelle T24-015</span>
+                <span class="mission-date">16 Jan 2025</span>
+              </div>
+              <div class="mission-details">
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">location_on</span>
+                  Forêt de Téné
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">straighten</span>
+                  12 ha
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">groups</span>
+                  Équipe A
+                </div>
+              </div>
+            </div>
+
+            <!-- Mission Item 2 -->
+            <div class="mission-item pending" data-type="entretien">
+              <div class="mission-header">
+                <span class="mission-title">Remplacement Plants Morts - Parcelle S23-008</span>
+                <span class="mission-date">18 Jan 2025</span>
+              </div>
+              <div class="mission-details">
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">location_on</span>
+                  Forêt de Sangoué
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">straighten</span>
+                  8 ha
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">groups</span>
+                  Équipe B
+                </div>
+              </div>
+            </div>
+
+            <!-- Mission Item 3 -->
+            <div class="mission-item pending" data-type="sylviculture">
+              <div class="mission-header">
+                <span class="mission-title">Élagage 1er passage - Parcelle T20-003</span>
+                <span class="mission-date">22 Jan 2025</span>
+              </div>
+              <div class="mission-details">
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">location_on</span>
+                  Forêt de Téné
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">straighten</span>
+                  25 ha
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">groups</span>
+                  Équipe Sylvi
+                </div>
+              </div>
+            </div>
+
+            <!-- Mission Item 4 -->
+            <div class="mission-item completed" data-type="entretien">
+              <div class="mission-header">
+                <span class="mission-title">Entretien Interligne - Parcelle T24-012</span>
+                <span class="mission-date">10 Jan 2025</span>
+              </div>
+              <div class="mission-details">
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">location_on</span>
+                  Forêt de Téné
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">straighten</span>
+                  15 ha
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">check_circle</span>
+                  <span style="color: var(--emerald-600); font-weight: 600;">Terminée</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mission Item 5 -->
+            <div class="mission-item completed" data-type="sylviculture">
+              <div class="mission-header">
+                <span class="mission-title">Éclaircie - Parcelle S18-002</span>
+                <span class="mission-date">05 Jan 2025</span>
+              </div>
+              <div class="mission-details">
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">location_on</span>
+                  Forêt de Sangoué
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">straighten</span>
+                  20 ha
+                </div>
+                <div class="mission-detail-item">
+                  <span class="material-icons-outlined">check_circle</span>
+                  <span style="color: var(--emerald-600); font-weight: 600;">Terminée</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar Sidebar -->
+        <div class="filters-card" style="margin-bottom: 0; height: fit-content;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <button onclick="changeMonth(-1)" style="background: none; border: none; cursor: pointer; padding: 0.5rem;">
+              <span class="material-icons-outlined" style="color: var(--gray-500);">chevron_left</span>
+            </button>
+            <h3 id="currentMonth" style="font-size: 1rem; font-weight: 700; color: var(--gray-900);">Janvier 2025</h3>
+            <button onclick="changeMonth(1)" style="background: none; border: none; cursor: pointer; padding: 0.5rem;">
+              <span class="material-icons-outlined" style="color: var(--gray-500);">chevron_right</span>
+            </button>
+          </div>
+          
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- Headers -->
+            <div class="calendar-header">Lun</div>
+            <div class="calendar-header">Mar</div>
+            <div class="calendar-header">Mer</div>
+            <div class="calendar-header">Jeu</div>
+            <div class="calendar-header">Ven</div>
+            <div class="calendar-header">Sam</div>
+            <div class="calendar-header">Dim</div>
+            <!-- Days will be generated by JS -->
+          </div>
+
+          <!-- Légende -->
+          <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+            <p style="font-size: 0.75rem; font-weight: 600; color: var(--gray-500); margin-bottom: 0.75rem;">LÉGENDE</p>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8125rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary-500);"></div>
+                <span>Aujourd'hui</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--emerald-500);"></div>
+                <span>Mission planifiée</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Floating Add Button -->
+  <button class="add-mission-btn" onclick="openNewMissionModal()">
+    <span class="material-icons-outlined" style="font-size: 1.5rem;">add</span>
+  </button>
+
+  <!-- Modal Nouvelle Mission -->
+  <div class="modal-overlay" id="newMissionModal">
+    <div class="modal-container" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2>Nouvelle Mission</h2>
+        <button class="modal-close" onclick="closeModal()">
+          <span class="material-icons-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="newMissionForm">
+          <div class="filter-group" style="margin-bottom: 1.5rem;">
+            <label class="filter-label">Type de mission</label>
+            <select class="filter-button" style="width: 100%;" required>
+              <option value="">Sélectionner le type</option>
+              <option value="entretien_ligne">Entretien ligne</option>
+              <option value="entretien_interligne">Entretien interligne</option>
+              <option value="remplacement">Remplacement plants morts</option>
+              <option value="elagage">Élagage</option>
+              <option value="eclaircie">Éclaircie</option>
+            </select>
+          </div>
+          
+          <div class="filter-group" style="margin-bottom: 1.5rem;">
+            <label class="filter-label">Parcelle</label>
+            <select class="filter-button" style="width: 100%;" required>
+              <option value="">Sélectionner la parcelle</option>
+              <option value="T24-015">T24-015 - Téné (12 ha)</option>
+              <option value="T24-012">T24-012 - Téné (15 ha)</option>
+              <option value="S23-008">S23-008 - Sangoué (8 ha)</option>
+              <option value="T20-003">T20-003 - Téné (25 ha)</option>
+            </select>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="filter-group">
+              <label class="filter-label">Date de début</label>
+              <input type="date" class="filter-button" style="width: 100%;" required>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Date de fin prévue</label>
+              <input type="date" class="filter-button" style="width: 100%;" required>
+            </div>
+          </div>
+          
+          <div class="filter-group" style="margin-bottom: 1.5rem;">
+            <label class="filter-label">Équipe assignée</label>
+            <select class="filter-button" style="width: 100%;" required>
+              <option value="">Sélectionner l'équipe</option>
+              <option value="A">Équipe A - Téné</option>
+              <option value="B">Équipe B - Sangoué</option>
+              <option value="Sylvi">Équipe Sylviculture</option>
+            </select>
+          </div>
+          
+          <div class="filter-group" style="margin-bottom: 1.5rem;">
+            <label class="filter-label">Notes</label>
+            <textarea class="filter-button" style="width: 100%; min-height: 100px; resize: vertical;" placeholder="Instructions particulières..."></textarea>
+          </div>
+          
+          <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button type="button" class="btn-action" onclick="closeModal()" style="background: var(--gray-100); color: var(--gray-700);">
+              Annuler
+            </button>
+            <button type="submit" class="btn-submit">
+              <span class="material-icons-outlined">add</span>
+              Créer la mission
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // SIDEBAR MOBILE
+    // ==========================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      sidebarOverlay.classList.toggle('open');
+    });
+
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('open');
+    });
+
+    // ==========================================
+    // CALENDAR
+    // ==========================================
+    let currentDate = new Date();
+    const missionDates = [5, 10, 16, 18, 22]; // Days with missions
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      const monthDisplay = document.getElementById('currentMonth');
+      
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      monthDisplay.textContent = `${months[month]} ${year}`;
+      
+      // Clear existing days (keep headers)
+      const headers = grid.querySelectorAll('.calendar-header');
+      grid.innerHTML = '';
+      headers.forEach(h => grid.appendChild(h));
+      
+      // Get first day of month and total days
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+      
+      // Adjust for Monday start (0 = Monday)
+      const startDay = firstDay === 0 ? 6 : firstDay - 1;
+      
+      const today = new Date();
+      const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+      
+      // Previous month days
+      for (let i = startDay - 1; i >= 0; i--) {
+        const day = document.createElement('div');
+        day.className = 'calendar-day other-month';
+        day.textContent = daysInPrevMonth - i;
+        grid.appendChild(day);
+      }
+      
+      // Current month days
+      for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement('div');
+        day.className = 'calendar-day';
+        day.textContent = i;
+        
+        if (isCurrentMonth && i === today.getDate()) {
+          day.classList.add('today');
+        }
+        
+        if (missionDates.includes(i)) {
+          day.classList.add('has-mission');
+        }
+        
+        day.onclick = () => selectDate(year, month, i);
+        grid.appendChild(day);
+      }
+      
+      // Next month days
+      const totalCells = startDay + daysInMonth;
+      const remainingCells = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
+      
+      for (let i = 1; i <= remainingCells; i++) {
+        const day = document.createElement('div');
+        day.className = 'calendar-day other-month';
+        day.textContent = i;
+        grid.appendChild(day);
+      }
+    }
+
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function selectDate(year, month, day) {
+      console.log(`Date sélectionnée: ${day}/${month + 1}/${year}`);
+      // Could open a modal with missions for that day
+    }
+
+    // ==========================================
+    // MISSIONS FILTER
+    // ==========================================
+    function filterMissions(type) {
+      const missions = document.querySelectorAll('.mission-item');
+      
+      missions.forEach(mission => {
+        if (type === 'all') {
+          mission.style.display = 'block';
+        } else {
+          mission.style.display = mission.dataset.type === type ? 'block' : 'none';
+        }
+      });
+    }
+
+    // ==========================================
+    // MODAL
+    // ==========================================
+    function openNewMissionModal() {
+      document.getElementById('newMissionModal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('newMissionModal').classList.remove('open');
+    }
+
+    document.getElementById('newMissionForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Mission créée avec succès ! (Démo)');
+      closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    document.getElementById('newMissionModal').addEventListener('click', (e) => {
+      if (e.target.id === 'newMissionModal') closeModal();
+    });
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCalendar();
+    });
+  </script>
+</body>
+</html>
