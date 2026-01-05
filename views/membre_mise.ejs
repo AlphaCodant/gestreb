@@ -2,819 +2,610 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mise en place</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/membres.css">
-  <link rel="stylesheet" href="/css/tailStyle.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parcelles - Mise en place | GESTREB</title>
   
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link rel="icon" type="image/jpg" href="/img/Logo_gestreb.jpg">
 </head>
-<body class="bg-gray-100 min-h-screen">
-<div class="grid-container">
-    <header class="header">
-      <div id="tableau_bord">
-        <div style="font-size: larger; font-weight: bolder;"><p>Parcelles</p></div>
-        <div style="font-size: smaller; font-weight:lighter; font-style: italic;">
-          <p>Reboisement</p>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <a href="/"><img src="/img/Logo_gestreb.jpg" alt="Logo GestReb"></a>
+        </div>
+        <div class="sidebar-brand">
+          <h1>GestReb</h1>
+          <p>Gestion des reboisements</p>
         </div>
       </div>
-      <div class="alignement">
-        <div id="etat">
-          <span class="material-icons-outlined">wifi</span>
-          <p style="padding-left: 5px;">En ligne</p>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu principal</span>
+        
+        <a href="#" class="nav-item">
+          <span class="material-icons-outlined">eco</span>
+          Prod. de plants
+        </a>
+        
+        <a href="/mise_en_place/<%= id %>" class="nav-item active">
+          <span class="material-icons-outlined">grid_view</span>
+          Parcelles
+        </a>
+        
+        <a href="/entretien_p/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">grass</span>
+          Entretien
+        </a>
+        
+        <a href="/sylviculture/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">park</span>
+          Sylviculture
+        </a>
+
+        <span class="nav-section-title">Planification</span>
+        
+        <a href="/plan_mission/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">event_note</span>
+          Plan de missions
+        </a>
+        
+        <span class="nav-section-title">Outils</span>
+        
+        <a href="/page/<%= id %>" class="nav-item">
+          <span class="material-icons-outlined">map</span>
+          Carte interactive
+        </a>
+        <span class="nav-section-title">Authentification</span>
+        <a href="/log/deconnecter" class="nav-item">
+          <span class="material-icons-outlined">logout</span>
+          Se deconnecter
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <span class="material-icons-outlined">menu</span>
+        </button>
+        <div class="page-title">
+          <h1>Parcelles</h1>
+          <p>Gestion des mises en place</p>
         </div>
-        <div id="notification">
+      </div>
+
+      <div class="header-right">
+        <div class="header-status">
+          <span class="dot"></span>
+          En ligne
+        </div>
+        
+        <div class="header-notifications">
           <span class="material-icons-outlined">notifications</span>
-          <div style="width : 2px; height: 2px; padding-left: 1px;border: 5px solid red; border-radius: 100%; background-color: red;">  </div>
+          <span class="badge"></span>
         </div>
-        <div id="admin">
-          <span class="material-icons-outlined" style="color: rgb(2, 27, 95);">account_circle</span>
-          <p style="padding-left: 5px;">Admin</p>
+        
+        <div class="header-user">
+          <div class="header-user-avatar">
+            <span class="material-icons-outlined">person</span>
+          </div>
+          <div class="header-user-info">
+            <p>Admin</p>
+            <span>Gestionnaire</span>
+          </div>
         </div>
       </div>
     </header>
-    <aside class="sidebar">
-      <div id="entete" style="height: 11%; border-bottom: 0.1px solid rgb(126, 126, 126);">
-        <div style="display: flex; justify-content: center; align-items: center;
-          width: 20%; height: 65%; background-color: rgb(255, 255, 255); border-radius: 50%;">
-          <img src="/img/Logo_gestreb.jpg" alt="Logo GestReb" style="border-radius: 50%;" />
-        </div>
-        <a href="/">
-          <div id="entete_ecrit">
-            <p style="color:white; font-size: larger; font-weight: bolder;">GestReb</p>
-            <p style="font-size: smaller; font-weight:lighter; font-style: italic; color: rgb(251, 251, 251);">
-              Gestion des reboisements</p>
-          </div>
-        </a>
-      </div>
-      <div id="boutons">
-        
-        
-        <a href="#">
-          <div class="rubrique" id="membre" >
-            <span class="material-icons-outlined">group</span>
-            <p style="padding-left: 5px;">Prod. de plants</p>
-          </div>
-        </a>
-        <a href="/mise_en_place/<%=id%>">
-          <div class="rubrique" id="membre" style=" border : 1px solid rgb(26, 83, 206);border-radius: 2.5%;
-          background-color: rgb(26, 83, 206);" >
-            <span class="material-icons-outlined">group</span>
-            <p style="padding-left: 5px;">Parcelles</p>
-          </div>
-        </a>
-        <a href="/entretien_p/<%=id%>">
-        <div class="rubrique" id="recolte">
-          <span class="material-icons-outlined">grain</span>
-          <p style="padding-left: 5px;">Entretien</p>
-        </div>
-        </a>
-        <a href="/sylviculture/<%=id%>">
-        <div class="rubrique" id="vente">
-          <span class="material-icons-outlined">shopping_cart</span>
-          <p style="padding-left: 5px;">Sylviculture</p>
-        </div>
-        </a>
-        
-        <a href="/page/<%=id%>">
-        <div class="rubrique" id="document">
-          <span class="material-icons-outlined">area_chart</span>
-          <p style="padding-left: 5px;">Carte interactive</p>
-        </div>
-        </a>
-        
-      </div>
-      
-    </aside>
-    <main class="main-container">
-      <div class="alignement">
-        <div id="tableau_bord">
-          <!--<div style="display:flex;flex-direction: column;">
-            <div>
-              <div style="font-size: larger; font-weight: light;"><p> <%= totalMembres %> Parcelles (<%= superficieTotale %> Ha)</p></div>
-            </div>
-            <div>
-              <div style="font-size: larger; font-weight: light;"><p>Essence dominante : <%= predominantEssence %> (<%= occurance %> / <%= totalMembres %>) </p></div>
-              <div style="font-size: larger; font-weight: light;"><p>Opérateur principal : <%= predominantPartenaire %> </p></div>
-            </div>
-          </div>-->
-          
-          <div style="font-size: smaller; font-weight:lighter; font-style: italic;">
-          </div>
-        </div>
-        
-      </div>
-      <!-- Modal -->
 
-     <!-- Modale de Rapport (Structure fournie par l'utilisateur) -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            
-            <!-- HEADER : Titre et Boutons d'Action (Structure fournie par l'utilisateur) -->
-            <div class="flex justify-between items-center border-b pb-3 mb-4 no-print">
-                <h2 id="no_parcelle_rapport" class="text-2xl font-bold text-gray-800">FICHE PARCELLAIRE</h2>
-                <div class="flex space-x-2 items-center">
-                    <!-- Bouton Imprimer / PDF (Structure fournie par l'utilisateur) -->
-                    <button onclick="downloadReport()" 
-                            class="px-3 py-1 bg-green-500 text-white rounded-lg font-semibold shadow-md hover:bg-green-600 transition flex items-center text-sm">
-                        <!-- J'utilise une icône FA comme substitut visuel du print -->
-                        <i class="fas fa-print text-sm mr-1"></i>
-                        Imprimer / PDF
-                    </button>
-                    <!-- Bouton Fermer (Structure fournie par l'utilisateur) -->
-                    <span class="close text-3xl" id="closeModalBtn">&times;</span>
-                </div>
-            </div>
-            
-            <!-- CONTENU DU RAPPORT (Contenu de la Fiche Parcellaire stylisée inséré ici) -->
-            <div id="rapport-content" class="text-sm space-y-4">
-                
-                
-
-                <!-- Résumé des Données (Numéro, Essence, Superficie, Financement) -->
-                <div class="flex flex-col sm:flex-row justify-between border-b border-gray-200 p-2">
-                    <!-- Colonne 1 -->
-                    <div class="flex flex-col w-full sm:w-1/2 sm:pr-4">
-                        <div class="data-summary-row flex justify-between text-sm">
-                            <p class="font-medium text-gray-700">Numéro:</p>
-                            <p id="fp_num" class="font-extrabold text-gray-900">P-101</p>
-                        </div>
-                        <div class="data-summary-row flex justify-between text-sm">
-                            <p class="font-medium text-gray-700">Superficie:</p>
-                            <p id="fp_sup" class="font-extrabold text-gray-900">15.5 ha</p>
-                        </div>
-                    </div>
-                    <!-- Colonne 2 -->
-                    <div class="flex flex-col w-full sm:w-1/2 sm:pl-4 mt-2 sm:mt-0">
-                        <div class="data-summary-row flex justify-between text-sm">
-                            <p class="font-medium text-gray-700">Essence:</p>
-                            <p id="fp_ess" class="font-extrabold text-gray-900">Acacia</p>
-                        </div>
-                        <div class="data-summary-row flex justify-between text-sm">
-                            <p class="font-medium text-gray-700">Financement:</p>
-                            <p id="fp_fin" class="font-extrabold text-gray-900">Banque Mondiale</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <h4 class="text-md font-semibold text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100">Historique des Travaux</h4>
-                <!--Travaux de preparation de terain-->
-                <h4 class="text-md font-semibold text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100 underline">I-Préparation de terrain</h4>
-                <p>La préparation de terrain est l'ensemble des opérations 
-                  effectuées sur une parcelle avant la plantation. Les travaux 
-                  de préparation terrain effectués sont mentionnés dans le tableau ci-dessous :
-                </p>
-                <!-- Tableau des Activités -->
-                <div class="table-container">
-                    <table class="w-full text-xs text-left styled-table">
-                        <!-- En-tête -->
-                        <thead class="text-white uppercase" 
-                            style="background-image: linear-gradient(to right, rgb(0, 140, 255), rgb(0, 238, 255));">
-                            <tr>
-                                <th scope="col" class="px-3 py-2">Date</th>
-                                <th scope="col" class="px-3 py-2">Travail</th>
-                                <th scope="col" class="px-3 py-2" id="taux_td">Coût (F CFA)</th>
-                                <th scope="col" class="px-3 py-2">Réalisé (ha)</th>
-                                <th scope="col" class="px-3 py-2">Montant</th>
-                                
-                            </tr>
-                        </thead>
-                        <!-- Corps du tableau -->
-                        <tbody id="tbody2" class="bg-white text-gray-700 border-b"> 
-                            <!-- Données factices -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-between items-center mt-6 p-4 bg-blue-100">
-                    <div><h5 class="text-black text-base font-semibold">Coût des travaux de préparation de terrain </h5></div>
-                    <div><h5 class="text-black text-xl font-extrabold" id="cout_preparation">360 000 F CFA</h5></div>
-                </div>
-                <h4 class="text-md font-semibold text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100 underline">II-Planting</h4>
-                <p>Les travaux 
-                  de plantation effectués sont présentés dans le tableau ci-dessous :
-                </p>
-                <div class="table-container">
-                    <table class="w-full text-xs text-left styled-table">
-                        <!-- En-tête -->
-                        <thead class="text-white uppercase" 
-                            style="background-image: linear-gradient(to right, rgb(0, 140, 255), rgb(0, 238, 255));">
-                            <tr>
-                                <th scope="col" class="px-3 py-2">Date</th>
-                                <th scope="col" class="px-3 py-2">Travail</th>
-                                <th scope="col" class="px-3 py-2" id="taux_td">Coût (F CFA)</th>
-                                <th scope="col" class="px-3 py-2">Réalisé (ha)</th>
-                                <th scope="col" class="px-3 py-2">Montant</th>
-                                
-                            </tr>
-                        </thead>
-                        <!-- Corps du tableau -->
-                        <tbody id="tbody3" class="bg-white text-gray-700 border-b"> 
-                            <!-- Données factices -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-between items-center mt-6 p-4 bg-blue-100">
-                    <div><h5 class="text-black text-base font-semibold">Coût des travaux de planting </h5></div>
-                    <div><h5 class="text-black text-xl font-extrabold" id="cout_planting">360 000 F CFA</h5></div>
-                </div>
-                <h4 class="text-md font-semibold text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100 underline">III-Entretiens</h4>
-                <p>Les entretiens se realisent sur 4 années à partir de la plantation. 
-                  
-                  Les travaux 
-                  d'entretien effectués sont présentés dans le tableau ci-dessous :
-                </p>
-                <h3 class="text-md text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100 italic">    III-1-Entretien Année 0</h3>
-                <h2 class="text-md text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100 italic">        -Premier passage</h2>
-                <div class="table-container">
-                    <table class="w-full text-xs text-left styled-table">
-                        <!-- En-tête -->
-                        <thead class="text-white uppercase" 
-                            style="background-image: linear-gradient(to right, rgb(0, 140, 255), rgb(0, 238, 255));">
-                            <tr>
-                                <th scope="col" class="px-3 py-2">Date</th>
-                                <th scope="col" class="px-3 py-2">Travail</th>
-                                <th scope="col" class="px-3 py-2" id="taux_td">Coût (F CFA)</th>
-                                <th scope="col" class="px-3 py-2">Réalisé (ha)</th>
-                                <th scope="col" class="px-3 py-2">Montant</th>
-                               
-                            </tr>
-                        </thead>
-                        <!-- Corps du tableau -->
-                        <tbody id="tbody4" class="bg-white text-gray-700 border-b"> 
-                            <!-- Données factices -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-between items-center mt-6 p-4 bg-blue-100">
-                    <div><h5 class="text-black text-base font-semibold">Coût des travaux d'entretien Annee 0 (1er Passage) </h5></div>
-                    <div><h5 class="text-black text-xl font-extrabold" id="cout_entretien_0_1">360 000 F CFA</h5></div>
-                </div>
-                <h2 class="text-md text-gray-800 mt-6 mb-2 pt-2 border-t border-gray-100 italic">        -Deuxième passage</h2>
-                <div class="table-container">
-                    <table class="w-full text-xs text-left styled-table">
-                        <!-- En-tête -->
-                        <thead class="text-white uppercase" 
-                            style="background-image: linear-gradient(to right, rgb(0, 140, 255), rgb(0, 238, 255));">
-                            <tr>
-                                <th scope="col" class="px-3 py-2">Date</th>
-                                <th scope="col" class="px-3 py-2">Travail</th>
-                                <th scope="col" class="px-3 py-2" id="taux_td">Coût (F CFA)</th>
-                                <th scope="col" class="px-3 py-2">Réalisé (ha)</th>
-                                <th scope="col" class="px-3 py-2">Montant</th>
-                              
-                            </tr>
-                        </thead>
-                        <!-- Corps du tableau -->
-                        <tbody id="tbody5" class="bg-white text-gray-700 border-b"> 
-                            <!-- Données factices -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-between items-center mt-6 p-4 bg-blue-100">
-                    <div><h5 class="text-black text-base font-semibold">Coût des travaux d'entretien Annee 0 (2e Passage) </h5></div>
-                    <div><h5 class="text-black text-xl font-extrabold" id="cout_entretien_0_2">360 000 F CFA</h5></div>
-                </div>
-
-
-                <!-- Pied de Page (Coût de Reviens) -->
-                <div class="footer-gradient-style flex justify-between items-center mt-6 p-4 rounded-lg">
-                    <div><h5 class="text-white text-base font-bold">COÛT TOTAL</h5></div>
-                    <div><h5 class="text-yellow-300 text-xl font-extrabold" id="cout_reviens">360 000 F CFA</h5></div>
-                </div>
-
-            </div>
-            <!-- Fin #rapport-content -->
-            
-        </div>
-    </div>
-
-
-      <form class="alignement" style="padding-top: 1%; padding-bottom: 1%" method="POST" action="#">
-        
-        <div style="width: 30%; display: flex; flex-direction: row; align-items: flex-start;">
-          <div style="padding-left : 10px;"><label>Forêts :</label></div>
-            <div style="padding-left : 10px;"><label for="téné">Téné</label></div>
-            <div style="padding-left : 10px;"><input type="checkbox" id="téné" name="foret" value="1"> </div> 
-            <div style="padding-left : 10px;"><label for="sangoue">Sangoué</label>     </div>    
-            <div style="padding-left : 10px;"><input type="checkbox" id="sangoue" name="foret" value="2"></div>
-        </div>
-        <div style="width: 15%; display:flex; flex-direction:row; " >
-        
-          <button type="button" 
-            id="annee-button" 
-            class="w-full text-left bg-white border border-gray-300 rounded-lg p-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 flex justify-between items-center" 
-            onclick="toggleDropdown('annee-dropdown')">
-        <span id="annee-count">Toutes les années</span>
-        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-        </svg>
-    </button>
-
-    <div id="annee-dropdown" 
-         class="absolute z-10 w-1/5 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-48 overflow-y-auto" 
-         style="display: none;">
-        
-        <div class="p-2 space-y-1" data-group="annee">
-            <label class="flex items-center text-sm font-semibold text-gray-800 hover:bg-blue-100 p-1.5 rounded cursor-pointer border-b border-gray-100">
-                <input type="checkbox" id="check-all-annee" data-select-all="annee" 
-                       class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" 
-                       checked>
-                <span class="ml-2">Toutes les années</span>
-            </label>
-            
-            </div>
-    </div>
-        </div>
-        
-        <div style="width: 40%;">
-          <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 
-          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">Actualiser</button>
-        </div>
-      </form>
-      <div class="align_membres" id="caneva_parcelles">
-        
-          <!--<div class="alignement_col" id="div_membre" style=" width: 30%;border-radius: 5%;">
-            <div class="alignement" style="margin-top: 3%;">
-              <h2 style="font-weight: bold;" id="num_parcelle_mp"> </h2>
-              <p style="margin-left: 10px; background-color: rgb(215, 249, 215); border-radius: 15%;
-               padding-left: 10px; padding-right: 10px;">En cours</p>
-            </div>
-            <div class="alignement_col" style="font-weight: lighter; font-style: italic; margin-top: 1px;">
-              <p>Forêt : </p> 
-              <p>Superficie :  ha</p> 
-              <p>Essence : </p>
-              <p>Annee de création : </p>
-            </div>
-            <div class="alignement" style="margin-top: 2%;">
-              <div class="alignement" style="margin-left: 10px; background-color: rgb(193, 221, 248); 
-                border-radius: 10%; padding-left: 10px; padding-right: 10px;">
-                <span class="material-icons-outlined" style="color: blue;">visibility</span>
-                <button>Rapport</button>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Filters Card -->
+      <div class="filters-card">
+        <form id="filterForm">
+          <div class="filters-grid">
+            <!-- Forêts Filter -->
+            <div class="filter-group">
+              <label class="filter-label">Forêts</label>
+              <div class="filter-checkbox-group">
+                <label class="filter-checkbox">
+                  <input type="checkbox" id="tene" name="foret" value="1" checked>
+                  <span>Téné</span>
+                </label>
+                <label class="filter-checkbox">
+                  <input type="checkbox" id="sangoue" name="foret" value="2" checked>
+                  <span>Sangoué</span>
+                </label>
               </div>
-              <div class="alignement" style="margin-left: 10px; background-color: rgb(215, 249, 215); 
-                border-radius: 10%; padding-left: 10px; padding-right: 10px;">
-                <span class="material-icons-outlined" style="color:green ;">edit</span>
-                <button>Editer</button>
-              </div>
-              <button>
-                <div class="alignement" style="margin-left: 10px; background-color: rgb(250, 251, 201); 
-                  border-radius: 10%; padding-left: 10px; padding-right: 10px;">
-                  <span class="material-icons-outlined" style="color:rgb(0, 0, 0);">map</span>
+            </div>
+
+            <!-- Années Filter -->
+            <div class="filter-group">
+              <label class="filter-label">Exercice</label>
+              <div class="filter-dropdown">
+                <button type="button" class="filter-button" id="anneeBtn" onclick="toggleDropdown('anneeDropdown')">
+                  <span id="anneeCount">Toutes les années</span>
+                  <span class="material-icons-outlined">expand_more</span>
+                </button>
+                <div class="filter-dropdown-menu" id="anneeDropdown">
+                  <label class="filter-checkbox" style="border-bottom: 1px solid var(--gray-200); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                    <input type="checkbox" id="checkAllAnnee" checked>
+                    <span style="font-weight: 600;">Tout sélectionner</span>
+                  </label>
+                  <div id="anneeOptions"></div>
                 </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="filter-group" style="justify-content: flex-end;">
+              <button type="submit" class="btn-submit">
+                <span class="material-icons-outlined">refresh</span>
+                Actualiser
               </button>
             </div>
           </div>
-        
-        
-      </div>-->
-    </div>
-      
-
-</main>
-    <footer>
-    </footer>
-    <script src="/js/script.js"></script>
-    <script src="/js/membres.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/dashboard.js"></script>
-    <script>
-    const GROUP_NAME = 'annee';
-    const currentYear = new Date().getFullYear();
-    const startYear = 2020; 
-
-    /**
-     * Génère les options d'année et les insère dans le conteneur.
-     */
-    function generateYearOptions() {
-        const container = document.querySelector(`div[data-group="${GROUP_NAME}"]`);
-        
-        for (let year = currentYear; year >= startYear; year--) {
-            const label = document.createElement('label');
-            label.className = 'flex items-center text-sm font-medium text-gray-700 hover:bg-blue-50 p-1.5 rounded cursor-pointer';
-            label.innerHTML = `
-                <input type="checkbox" name="years[]" value="${year}" data-group-item="${GROUP_NAME}" 
-                       class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" checked>
-                <span class="ml-2">${year}</span>
-            `;
-            container.appendChild(label);
-        }
-    }
-
-    /**
-     * Gère l'affichage/masquage de la liste déroulante.
-     * @param {string} dropdownId - L'ID du conteneur de la liste déroulante.
-     */
-    function toggleDropdown(dropdownId) {
-        const dropdown = document.getElementById(dropdownId);
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    }
-
-    /**
-     * Met à jour le texte du bouton en fonction des sélections.
-     */
-    function updateSelectionDisplay() {
-        const items = document.querySelectorAll(`input[type="checkbox"][data-group-item="${GROUP_NAME}"]`);
-        const selectAll = document.querySelector(`input[data-select-all="${GROUP_NAME}"]`);
-        const displayElement = document.getElementById(`${GROUP_NAME}-count`);
-        
-        const selectedCount = Array.from(items).filter(item => item.checked).length;
-        const totalCount = items.length;
-
-        if (selectedCount === 0) {
-            displayElement.textContent = `Aucune année sélectionnée`;
-            if (selectAll) selectAll.checked = false;
-        } else if (selectedCount === totalCount) {
-            displayElement.textContent = `Toutes les années`;
-            if (selectAll) selectAll.checked = true;
-        } else {
-            displayElement.textContent = `${selectedCount} année(s) sélectionnée(s)`;
-            if (selectAll) selectAll.checked = false;
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        // 1. Générer les options
-        generateYearOptions();
-
-        // 2. Logique 'Tout sélectionner/désélectionner'
-        const selectAll = document.getElementById(`check-all-${GROUP_NAME}`);
-        selectAll.addEventListener('change', function() {
-            const isChecked = this.checked;
-            document.querySelectorAll(`input[data-group-item="${GROUP_NAME}"]`).forEach(checkbox => {
-                checkbox.checked = isChecked;
-            });
-            updateSelectionDisplay();
-        });
-
-        // 3. Logique de mise à jour du compteur pour les éléments individuels
-        document.querySelectorAll(`input[data-group-item="${GROUP_NAME}"]`).forEach(item => {
-            item.addEventListener('change', () => updateSelectionDisplay());
-        });
-
-        // 4. Fermer la liste si l'utilisateur clique en dehors
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('annee-dropdown');
-            const button = document.getElementById('annee-button');
-            
-            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.style.display = 'none';
-            }
-        });
-
-        // 5. Initialiser l'affichage
-        updateSelectionDisplay();
-    });
-
-    /**
- * Récupère les valeurs des années sélectionnées (cochées).
- * @returns {Array<string>} Un tableau contenant les valeurs des années (ex: ['2025', '2024']).
- */
-function getSelectedYears() {
-    // Le sélecteur cible toutes les cases à cocher qui :
-    // 1. Ont l'attribut data-group-item réglé sur 'annee'
-    // 2. Sont actuellement 'checked' (cochées)
-    const selectedCheckboxes = document.querySelectorAll('input[type="checkbox"][data-group-item="annee"]:checked');
-    
-    // Extrait la valeur (l'année) de chaque élément coché et la met dans un tableau
-    const selectedYears = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
-    
-    return selectedYears;
-}
-
-document.querySelector('form').addEventListener('submit', async (event) => {
-    event.preventDefault(); // Empêche le rechargement par défaut
-
-    // 1. Récupération des années sélectionnées (NOUVEAU)
-    const annees = getSelectedYears();
-    
-    if (annees.length === 0) {
-        alert("Veuillez sélectionner au moins une année.");
-        return;
-    }
-
-    // Préparation des autres données (forêts)
-    const foret = [];
-    if (document.getElementById('téné').checked) foret.push(1);
-    if (document.getElementById('sangoue').checked) foret.push(2);
-
-    // Vérification de la sélection des forêts
-    if (foret.length === 0) {
-        alert("Veuillez sélectionner au moins une forêt.");
-        return;
-    }
-    console.log('Années sélectionnées:', annees); // Pour vérification
-    console.log('Forêts sélectionnées:', foret); // Pour vérification
-
-    // 2. Envoi des données au serveur (Utilisation du tableau 'annees')
-    try {
-        const responsePost = await fetch('/mise_en_place', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ foret, annees }),
-        });
-        if (!responsePost.ok) {
-      alert('Erreur lors de l\'envoi des données');
-      return;
-    }
-
-    const data = await responsePost.json();
-    console.log('Réponse du serveur:', data);
-    let num_parcelle = document.getElementById('caneva_parcelles');
-    num_parcelle.innerHTML ="";
-    let tableau_bord = document.getElementById('tableau_bord');
-    tableau_bord.innerHTML ="";
-
-    const totalMembres = data.length;
-               const superficieTotale = data.reduce((total, data) => total + parseFloat(data.superficie), 0);
-               const essencePredominante = {};
-               data.forEach((data) => {
-                   const essence = data.essence;
-                     if (essencePredominante[essence]) {
-                            essencePredominante[essence] += 1;
-                        } else {
-                            essencePredominante[essence] = 1;
-                        }
-                });
-                let maxCount = 0;
-                let predominantEssence = '';    
-                for (const essence in essencePredominante) {
-                    if (essencePredominante[essence] > maxCount) {
-                        maxCount = essencePredominante[essence];
-                        predominantEssence = essence;
-                    }
-                }
-                partenairePredominant = {};
-                data.forEach((data) => {
-                    const partenaire = data.partenaire;   
-                        if (partenairePredominant[partenaire]) {
-                                 partenairePredominant[partenaire] += 1;
-                                } else {
-                                    partenairePredominant[partenaire] = 1;
-                                }
-                        });
-                let maxPartenaireCount = 0;
-                
-                let predominantPartenaire = '';
-                for (const partenaire in partenairePredominant) {
-                    if (partenairePredominant[partenaire] > maxPartenaireCount) {
-                        maxPartenaireCount = partenairePredominant[partenaire];
-                        predominantPartenaire = partenaire;
-                    }
-                }
-
-    data.forEach(m=>{
-      //---------
-
-      
-      //---------
-      tableau_bord.innerHTML =`
-      <div style="display:flex;flex-direction: column;">
-            <div>
-              <div style="font-size: larger; font-weight: light;"><p> ${totalMembres} Parcelles (${Math.round(superficieTotale,2)} Ha)</p></div>
-            </div>
-            <div>
-              <div style="font-size: larger; font-weight: light;"><p>Essence dominante : ${predominantEssence } (${maxCount } / ${totalMembres }) </p></div>
-              <div style="font-size: larger; font-weight: light;"><p>Opérateur principal : ${predominantPartenaire} </p></div>
-            </div>
-          </div>
-      `
-      num_parcelle.innerHTML += `
-      <div class="alignement_col" id="div_membre" style=" width: 30%;border-radius: 5%;">
-            <div class="alignement" style="margin-top: 3%;">
-              <h2 style="font-weight: bold;" id="num_parcelle_mp">Parcelle ${m.numero} </h2>
-              
-            </div>
-            <div class="alignement_col" style="font-weight: lighter; font-style: italic; margin-top: 1px;">
-              <p>Forêt :${m.foret}</p> 
-              <p>Superficie : ${m.superficie} ha</p> 
-              <p>Essence : ${m.essence} </p>
-              <p>Annee de création : ${m.annee}</p>
-            </div>
-            <div class="alignement" style="margin-top: 2%;" >
-              <div class="alignement" style="margin-left: 10px; background-color: rgb(193, 221, 248); 
-                border-radius: 10%; padding-left: 10px; padding-right: 10px;" id="fiche_td" data-id="${m.id}">
-                <span class="material-icons-outlined" style="color: blue;">visibility</span>
-                <button>Rapport</button>
-              </div>
-              
-          </div>
-        
-        
+        </form>
       </div>
-      `
-    });
-    
-        
-        // ... Reste de votre logique (traitement de la réponse, affichage des parcelles, etc.)
 
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi des données:', error);
-    }
-});
- 
-document.addEventListener('click',async(event)=>{
-  let cout_reviens=0;
-  let cout_preparation=0;
-  let cout_planting=0;
-  let cout_entretien_0_1=0;
-  let cout_entretien_0_2=0;
-  const cell = event.target.closest('div[id="fiche_td"]');
-  const liste_activites = ['Rabattage','Abattage et tronçonnage','Brûlage','Piquetage','Ouverture des lignes','Trouaison','Planting',
-  'Entretien 1 ligne','Entretien 1 interligne','Remplacement plants morts','Entretien en puits','Entretien 2 ligne','Entretien 2 interligne'];
-  if (event.target.closest('#fiche_td')) {
-    const parcelleId = cell.getAttribute('data-id');   
-    console.log(parcelleId);
-  try {
-    // Récupérer les données des parcelles depuis le serveur
-    const response = await fetch(`/get/fiches/cu/graph1/${parcelleId}`);
-    
-    const parcelles = await response.json();
-    console.log(parcelles);
-    const tableBody = document.querySelector('#tbody2');
-    tableBody.innerHTML = '';
-    tableBody.style.fontSize='7px';
-    const row = document.createElement('tr');
-      row.setAttribute('class', 'text-xs ');
-    const tableBody2 = document.querySelector('#tbody3');
-    tableBody2.innerHTML = '';
-    tableBody2.style.fontSize='7px';
-    const row2 = document.createElement('tr');
-      row2.setAttribute('class', 'text-xs ');
+      <!-- Stats Bar -->
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <span class="material-icons-outlined">grid_view</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="totalParcelles">--</h3>
+            <p>Parcelles</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon emerald">
+            <span class="material-icons-outlined">straighten</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="totalSuperficie">-- ha</h3>
+            <p>Superficie totale</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon sky">
+            <span class="material-icons-outlined">park</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="essenceDominante">--</h3>
+            <p>Essence dominante</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber">
+            <span class="material-icons-outlined">payments</span>
+          </div>
+          <div class="stat-content">
+            <h3 id="coutGlobal">-- XOF</h3>
+            <p>Coût</p>
+          </div>
+        </div>
+      </div>
 
-       const tableBody3 = document.querySelector('#tbody4');
-    tableBody3.innerHTML = '';
-    tableBody3.style.fontSize='7px';
-    const row3 = document.createElement('tr');
-      row2.setAttribute('class', 'text-xs ');
-      
-       const tableBody4 = document.querySelector('#tbody5');
-    tableBody4.innerHTML = '';
-    tableBody4.style.fontSize='7px';
-    const row4 = document.createElement('tr');
-      row2.setAttribute('class', 'text-xs ');
-
-      const fp_num = document.getElementById('fp_num');
-      const fp_sup = document.getElementById('fp_sup');
-      const fp_fin = document.getElementById('fp_fin');
-      const fp_ess = document.getElementById('fp_ess');
-    //tableBody.style.fontSize='8px';
-    
-    let i=0;
-    parcelles.forEach(parcelle => {
-      const row = document.createElement('tr');
-      row.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
-       
-      const row2 = document.createElement('tr');
-      row2.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
-       
-      const row3 = document.createElement('tr');
-      row3.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
-       
-      const row4 = document.createElement('tr');
-      row4.setAttribute('class', 'text-xs bg-white text-black border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600');
-       
-      //-------------------------------------------------------------
-
-      const montant2 = (Math.round(parcelle.cout * 100)/100);
-      const options2 = { style: 'currency' };
-      const numberFormat2 = new Intl.NumberFormat( options2);
-
-      //-------------------------------------------------------------
-      if(i<6){
-        row.innerHTML = `
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_fin}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
-        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
-          
-        </td>
-       
-   `;
-   cout_preparation+=(parcelle.realise*parcelle.cout);;
-      }else if(i==6){
-        row2.innerHTML = `
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_fin}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
-        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
-          
-        </td>
-    
-   `;
-   cout_planting+=(parcelle.realise*parcelle.cout);;
-      }
-      else if(i>6 && i<10){
-        row3.innerHTML = `
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_fin}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
-        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
-          
-        </td>
-       
-   `;
-   cout_entretien_0_1+=(parcelle.realise*parcelle.cout);;
-      }
-      else if(i>=10 && i<14){
-        row4.innerHTML = `
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.date_fin}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${liste_activites[i]}</td>
-        <td class="text-sm px-4 py-1 editable-cell" id="taux_td">${numberFormat2.format(montant2)}</td>
-        <td class="text-sm px-4 py-1 editable-cell" >${parcelle.realise}</td>
-        <td class="text-sm px-4 py-1 editable-cell" data-id="" data-field="date_debut">
-          ${numberFormat2.format(parcelle.realise*parcelle.cout)}
-          
-        </td>
-        
-   `;
-   cout_entretien_0_2+=(parcelle.realise*parcelle.cout);
-      }
-      
-        cout_reviens+=(parcelle.realise*parcelle.cout);
-        i++
-      tableBody.appendChild(row);
-      tableBody2.appendChild(row2);
-      tableBody3.appendChild(row3);
-      tableBody4.appendChild(row4);
-      fp_num.innerHTML=` ${parcelle.numero}`;
-      fp_ess.innerHTML=`${parcelle.essence}`;
-      fp_fin.innerHTML=` ${parcelle.financement}`;
-      fp_sup.innerHTML=` ${parcelle.superficie} ha`;
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des parcelles:', error);
-  }
-  
-  //-------------------------------------------------------------
-
-  const montant3 = (Math.round(cout_reviens * 100)/100);
-  const montant4 = (Math.round(cout_preparation * 100)/100);
-  const montant5 = (Math.round(cout_planting * 100)/100);
-  const montant6 = (Math.round(cout_entretien_0_1 * 100)/100);
-  const montant7 = (Math.round(cout_entretien_0_2 * 100)/100);
-  const options3 = { style: 'currency', currency: 'XOF' };
-  const numberFormat3 = new Intl.NumberFormat('XOF', options3);
-  const numberFormat4 = new Intl.NumberFormat('XOF', options3);
-  const numberFormat5 = new Intl.NumberFormat('XOF', options3);
-  const numberFormat6 = new Intl.NumberFormat('XOF', options3);
-  const numberFormat7 = new Intl.NumberFormat('XOF', options3);
-  const cout_revient = document.getElementById('cout_reviens');
-  const cout_prep = document.getElementById('cout_preparation');
-  const cout_plant = document.getElementById('cout_planting');
-  const cout_ent01 = document.getElementById('cout_entretien_0_1');
-  const cout_ent02 = document.getElementById('cout_entretien_0_2');
-  cout_revient.innerHTML=numberFormat3.format(montant3);
-  cout_prep.innerHTML=numberFormat4.format(montant4);
-  cout_plant.innerHTML=numberFormat5.format(montant5);
-  cout_ent01.innerHTML=numberFormat6.format(montant6);
-  cout_ent02.innerHTML=numberFormat7.format(montant7);
-
-  //-------------------------------------------------------------
-  console.log(cout_reviens);
-    // Afficher la boîte de dialogue
-  
-   const dial = document.getElementById('myModal');
-  dial.style.display = 'flex';
-  // Fonction pour fermer la modale
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-        window.closeModal = closeModal;
-
-        // Événements
-        //openBtn.onclick = openModal;
-
-        // Fermer la modale si l'utilisateur clique en dehors 
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-
-    // Fonction pour ouvrir la boîte de dialogue
-    
-    // Fonction pour fermer la boîte de dialogue lorsque l'utilisateur clique sur la croix
-       
-  };
- 
-})
-function downloadReport() {
-            // Logique de téléchargement du PDF ici
-            console.log("Préparation du rapport PDF...");
-            window.print(); // Utilisation standard pour l'impression/PDF
-        }
-</script>
+      <!-- Parcelles Grid -->
+      <div class="parcelles-grid" id="parcellesGrid">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <span class="material-icons-outlined" style="font-size: 2.5rem;">search</span>
+          </div>
+          <h3>Sélectionnez vos critères</h3>
+          <p>Choisissez une forêt et une année puis cliquez sur "Actualiser"</p>
+        </div>
+      </div>
+    </main>
   </div>
+
+  <!-- Modal Rapport -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="modalTitle">Fiche Parcellaire</h2>
+        <div class="modal-header-actions">
+          <button class="btn-print no-print" onclick="window.print()">
+            <span class="material-icons-outlined">print</span>
+            Imprimer
+          </button>
+          <button class="modal-close no-print" onclick="closeModal()">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Report content will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const currentYear = new Date().getFullYear();
+    const startYear = 2020;
+
+    // ==========================================
+    // SIDEBAR MOBILE
+    // ==========================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      sidebarOverlay.classList.toggle('open');
+    });
+
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('open');
+    });
+
+    // ==========================================
+    // DROPDOWN ANNÉES
+    // ==========================================
+    function generateYearOptions() {
+      const container = document.getElementById('anneeOptions');
+      for (let year = currentYear; year >= startYear; year--) {
+        const label = document.createElement('label');
+        label.className = 'filter-checkbox';
+        label.innerHTML = `
+          <input type="checkbox" name="years[]" value="${year}" data-year checked>
+          <span>${year}</span>
+        `;
+        container.appendChild(label);
+      }
+    }
+
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      dropdown.classList.toggle('open');
+    }
+
+    function updateYearDisplay() {
+      const checkboxes = document.querySelectorAll('input[data-year]');
+      const checked = Array.from(checkboxes).filter(c => c.checked);
+      const display = document.getElementById('anneeCount');
+      
+      if (checked.length === 0) {
+        display.textContent = 'Aucune année';
+      } else if (checked.length === checkboxes.length) {
+        display.textContent = 'Toutes les années';
+        document.getElementById('checkAllAnnee').checked = true;
+      } else {
+        display.textContent = `${checked.length} année(s)`;
+        document.getElementById('checkAllAnnee').checked = false;
+      }
+    }
+
+    document.getElementById('checkAllAnnee').addEventListener('change', function() {
+      document.querySelectorAll('input[data-year]').forEach(cb => cb.checked = this.checked);
+      updateYearDisplay();
+    });
+
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('anneeDropdown');
+      const btn = document.getElementById('anneeBtn');
+      if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // ==========================================
+    // FORMULAIRE ET DONNÉES
+    // ==========================================
+    document.getElementById('filterForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const forets = [];
+      if (document.getElementById('tene').checked) forets.push(1);
+      if (document.getElementById('sangoue').checked) forets.push(2);
+      
+      const annees = Array.from(document.querySelectorAll('input[data-year]:checked'))
+        .map(cb => cb.value);
+      
+      if (forets.length === 0) {
+        alert('Veuillez sélectionner au moins une forêt.');
+        return;
+      }
+      
+      if (annees.length === 0) {
+        alert('Veuillez sélectionner au moins une année.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/mise_en_place', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ foret: forets, annees })
+        });
+        
+        if (!response.ok) throw new Error('Erreur serveur');
+        
+        const data = await response.json();
+        renderData(data);
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la récupération des données.');
+      }
+    });
+
+    function renderData(data) {
+      const grid = document.getElementById('parcellesGrid');
+      
+      if (!data || data.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <span class="material-icons-outlined" style="font-size: 2.5rem;">inbox</span>
+            </div>
+            <h3>Aucune parcelle trouvée</h3>
+            <p>Essayez de modifier vos critères de recherche</p>
+          </div>
+        `;
+        updateStats(0, 0, '--', 0);
+        return;
+      }
+
+      // Calculs statistiques
+      const totalParcelles = data.length;
+      const totalSuperficie = data.reduce((sum, p) => sum + (parseFloat(p.superficie) || 0), 0);
+      
+      const essences = {};
+      data.forEach(p => essences[p.essence] = (essences[p.essence] || 0) + 1);
+      const essenceDominante = Object.keys(essences).reduce((a, b) => essences[a] > essences[b] ? a : b, '--');
+      
+      const coutEstime = totalSuperficie * 253000;
+      
+      updateStats(totalParcelles, totalSuperficie, essenceDominante, coutEstime);
+
+      // Rendu des cartes
+      grid.innerHTML = data.map(p => `
+        <div class="parcelle-card" data-id="${p.id}">
+          <div class="parcelle-header">
+            <div class="parcelle-title">
+              <h3>Parcelle ${p.numero}</h3>
+            </div>
+            
+          </div>
+          <div class="parcelle-body">
+            <div class="parcelle-info">
+              <div class="parcelle-info-item">
+                <span>Forêt</span>
+                <span>${p.foret === 1 ? 'Téné' : p.foret === 2 ? 'Sangoué' : p.foret}</span>
+              </div>
+              <div class="parcelle-info-item">
+                <span>Superficie</span>
+                <span>${p.superficie} ha</span>
+              </div>
+              <div class="parcelle-info-item">
+                <span>Essence</span>
+                <span>${p.essence}</span>
+              </div>
+              <div class="parcelle-info-item">
+                <span>Année</span>
+                <span>${p.annee}</span>
+              </div>
+            </div>
+          </div>
+          <div class="parcelle-footer">
+            <button class="btn-action primary" onclick="openReport('${p.id}')">
+              <span class="material-icons-outlined">description</span>
+              Rapport
+            </button>
+            <button class="btn-action amber" onclick="">
+              <span class="material-icons-outlined">map</span>
+              Carte
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateStats(parcelles, superficie, essence, cout) {
+      document.getElementById('totalParcelles').textContent = parcelles;
+      document.getElementById('totalSuperficie').textContent = `${superficie.toFixed(1)} ha`;
+      document.getElementById('essenceDominante').textContent = essence;
+      document.getElementById('coutGlobal').textContent = new Intl.NumberFormat('fr-FR').format(cout) + ' XOF';
+    }
+
+    // ==========================================
+    // MODAL RAPPORT
+    // ==========================================
+    async function openReport(parcelleId) {
+      const modal = document.getElementById('reportModal');
+      const modalBody = document.getElementById('modalBody');
+      const modalTitle = document.getElementById('modalTitle');
+      
+      modalTitle.textContent = `Fiche Parcellaire - ${parcelleId}`;
+      modalBody.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+          <span class="material-icons-outlined" style="font-size: 3rem; color: var(--primary-500); animation: spin 1s linear infinite;">autorenew</span>
+          <p style="margin-top: 1rem; color: var(--gray-500);">Chargement du rapport...</p>
+        </div>
+      `;
+      modal.classList.add('open');
+      
+      try {
+        const response = await fetch(`/get/fiches/cu/graph1/${parcelleId}`);
+        const data = await response.json();
+        renderReport(data, parcelleId);
+      } catch (error) {
+        modalBody.innerHTML = `
+          <div style="text-align: center; padding: 3rem; color: #ef4444;">
+            <span class="material-icons-outlined" style="font-size: 3rem;">error</span>
+            <p style="margin-top: 1rem;">Erreur lors du chargement du rapport</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderReport(data, parcelleId) {
+      const modalBody = document.getElementById('modalBody');
+      
+      if (!data || data.length === 0) {
+        modalBody.innerHTML = '<p style="text-align:center; padding: 2rem;">Aucune donnée disponible</p>';
+        return;
+      }
+
+      const activites = ['Rabattage', 'Abattage et tronçonnage', 'Brûlage', 'Piquetage', 
+                        'Ouverture des lignes', 'Trouaison', 'Planting',
+                        'Entretien 1 ligne', 'Entretien 1 interligne', 'Remplacement plants morts',
+                        'Entretien en puits', 'Entretien 2 ligne', 'Entretien 2 interligne'];
+      
+      const formatCurrency = (val) => new Intl.NumberFormat('fr-FR').format(Math.round(val)) + ' XOF';
+      
+      let coutPreparation = 0, coutPlanting = 0, coutEntretien1 = 0, coutEntretien2 = 0;
+      let prepRows = '', plantRows = '', ent1Rows = '', ent2Rows = '';
+      
+      data.forEach((p, i) => {
+        const montant = p.realise * p.cout;
+        const row = `
+          <tr>
+            <td>${p.date_fin || '--'}</td>
+            <td>${activites[i] || '--'}</td>
+            <td>${formatCurrency(p.cout)}</td>
+            <td>${p.realise} ha</td>
+            <td><strong>${formatCurrency(montant)}</strong></td>
+          </tr>
+        `;
+        
+        if (i < 6) { prepRows += row; coutPreparation += montant; }
+        else if (i === 6) { plantRows += row; coutPlanting += montant; }
+        else if (i < 10) { ent1Rows += row; coutEntretien1 += montant; }
+        else { ent2Rows += row; coutEntretien2 += montant; }
+      });
+      
+      const coutTotal = coutPreparation + coutPlanting + coutEntretien1 + coutEntretien2;
+
+      modalBody.innerHTML = `
+        <div class="report-summary">
+          <div class="report-summary-item">
+            <span>Numéro</span>
+            <span>${data[0]?.numero || parcelleId}</span>
+          </div>
+          <div class="report-summary-item">
+            <span>Superficie</span>
+            <span>${data[0]?.superficie || '--'} ha</span>
+          </div>
+          <div class="report-summary-item">
+            <span>Essence</span>
+            <span>${data[0]?.essence || '--'}</span>
+          </div>
+          <div class="report-summary-item">
+            <span>Financement</span>
+            <span>${data[0]?.financement || '--'}</span>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h3 class="report-section-title">I - Préparation de terrain</h3>
+          <div style="overflow-x: auto;">
+            <table class="report-table">
+              <thead><tr><th>Date</th><th>Travail</th><th>Coût/ha</th><th>Réalisé</th><th>Montant</th></tr></thead>
+              <tbody>${prepRows || '<tr><td colspan="5" style="text-align:center">Aucune donnée</td></tr>'}</tbody>
+            </table>
+          </div>
+          <p style="text-align:right; margin-top:0.75rem; font-weight:600; color: var(--primary-600);">
+            Sous-total: ${formatCurrency(coutPreparation)}
+          </p>
+        </div>
+
+        <div class="report-section">
+          <h3 class="report-section-title">II - Planting</h3>
+          <div style="overflow-x: auto;">
+            <table class="report-table">
+              <thead><tr><th>Date</th><th>Travail</th><th>Coût/ha</th><th>Réalisé</th><th>Montant</th></tr></thead>
+              <tbody>${plantRows || '<tr><td colspan="5" style="text-align:center">Aucune donnée</td></tr>'}</tbody>
+            </table>
+          </div>
+          <p style="text-align:right; margin-top:0.75rem; font-weight:600; color: var(--primary-600);">
+            Sous-total: ${formatCurrency(coutPlanting)}
+          </p>
+        </div>
+
+        <div class="report-section">
+          <h3 class="report-section-title">III.1 - Entretien Année 0 (1er passage)</h3>
+          <div style="overflow-x: auto;">
+            <table class="report-table">
+              <thead><tr><th>Date</th><th>Travail</th><th>Coût/ha</th><th>Réalisé</th><th>Montant</th></tr></thead>
+              <tbody>${ent1Rows || '<tr><td colspan="5" style="text-align:center">Aucune donnée</td></tr>'}</tbody>
+            </table>
+          </div>
+          <p style="text-align:right; margin-top:0.75rem; font-weight:600; color: var(--primary-600);">
+            Sous-total: ${formatCurrency(coutEntretien1)}
+          </p>
+        </div>
+
+        <div class="report-section">
+          <h3 class="report-section-title">III.2 - Entretien Année 0 (2e passage)</h3>
+          <div style="overflow-x: auto;">
+            <table class="report-table">
+              <thead><tr><th>Date</th><th>Travail</th><th>Coût/ha</th><th>Réalisé</th><th>Montant</th></tr></thead>
+              <tbody>${ent2Rows || '<tr><td colspan="5" style="text-align:center">Aucune donnée</td></tr>'}</tbody>
+            </table>
+          </div>
+          <p style="text-align:right; margin-top:0.75rem; font-weight:600; color: var(--primary-600);">
+            Sous-total: ${formatCurrency(coutEntretien2)}
+          </p>
+        </div>
+
+        <div class="report-total">
+          <span>COÛT TOTAL DE REVIENT</span>
+          <span>${formatCurrency(coutTotal)}</span>
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      document.getElementById('reportModal').classList.remove('open');
+    }
+
+    function openMap(parcelleId) {
+      window.location.href = `/page/<%= id %>?parcelle=${parcelleId}`;
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Close modal on overlay click
+    document.getElementById('reportModal').addEventListener('click', (e) => {
+      if (e.target.id === 'reportModal') closeModal();
+    });
+
+    // ==========================================
+    // INITIALISATION
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      generateYearOptions();
+      document.querySelectorAll('input[data-year]').forEach(cb => {
+        cb.addEventListener('change', updateYearDisplay);
+      });
+    });
+  </script>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </body>
 </html>

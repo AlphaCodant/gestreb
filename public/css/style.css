@@ -182,6 +182,18 @@ body {
   justify-content: flex-start;
   align-items: center;
 }
+.alignement_spe{
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid none;
+  box-shadow: #464545;
+  padding-bottom: 1.5%;
+  margin: 1%;
+}
 #ajouter{
   background-color: white;
 }
@@ -195,7 +207,7 @@ body {
   background-color: rgb(255, 255, 255);
   border: 1px solid none;
   box-shadow: #464545;
-  padding-bottom: 2%;
+  padding-bottom: 1.5%;
   margin: 1%;
 }
 
@@ -450,4 +462,26 @@ body {
             .modal-content > div.space-y-6 {
                 padding: 1.5rem !important;
             }
+        }
+
+/* Styles pour les missions */
+ /* Style des champs de type file (Ordre de mission) */
+        input[type="file"]::file-selector-button {
+            background-color: theme('colors.blue.500');
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: theme('colors.blue.600');
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        /* Assure que l'icône est rendue correctement par Lucide après le chargement */
+        [data-lucide] {
+            display: inline-block;
+            vertical-align: middle;
         }

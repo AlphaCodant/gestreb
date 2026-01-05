@@ -1,183 +1,61 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <!-- Montserrat Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-      <title>CONNEXION</title>
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">     
-        <link href="/css/styles_conx.css" rel="stylesheet"/>
-        <link href="/css/tailStyle.css" rel="stylesheet" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-        <link rel="icon" 
-        type="image/png" 
-        href="/img/Logo_gestreb.jpg">
-        <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="UTF-8">
-    </head>
-    <body>
-      <div class="grid-container">
-      <header class="header" style="background-color:white; font-weight:bolder; color:black;">
-        <div class="menu-icon" onclick="openSidebar()">
-          <span class="material-icons-outlined">menu</span>
-        </div>
-        <div class="header-left">
-          <div class="main-title">
-            <span><h1 style="color: green; font-weight: bolder;">CONNEXION</h1></span>
-          </div>
-        </div>
-        <!--<div class="header-right">
-          <span class="material-icons-outlined">notifications</span>
-          <span class="material-icons-outlined">email</span>
-          <span class="material-icons-outlined">account_circle</span>
-        </div>-->
-        
-      </header>
-      <!--<aside id="sidebar" >
-        <div class="sidebar-title">
-          <div class="sidebar-brand">
-            <a href="#" class="flex ml-8 ms-2 md:me-24">
-              <img src="/img/Logo_gestreb.jpg" class="ml-4" alt="GestReb" />
-              </a>
-          </div>
-          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
-        </div>
-        <div class="px-2 pb-4 bg-green  shadow-zinc-600">
-          <ul class="space-y-2 font-medium">
-            <!--<li>
-              <a href="/dashboard" class="flex items-center mt-16 p-2 text-black  hover:border-y hover:border-green-500 group">
-                <svg class="w-5 h-5 text-green-500 transition duration-75  group-hover:text-green-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30">
-                  <title/><g data-name="Layer 2" id="Layer_2"><g id="Interface-Solid"><g id="interface-solid-pin-location">
-                    <circle cx="15" cy="9.57129" fill="none" r="3.42865"/>
-                    <path d="M25.31152,20.40039a1,1,0,1,0-.623,1.90039C26.97607,23.05078,28,23.94629,28,24.5c0,1.39355-5.18506,3.5-13,3.5S2,25.89355,2,24.5c0-.55371,1.02393-1.44922,3.31152-2.19922a1,1,0,1,0-.623-1.90039C.81348,21.6709,0,23.33105,0,24.5,0,28.11035,7.5459,30,15,30s15-1.88965,15-5.5C30,23.33105,29.18652,21.6709,25.31152,20.40039Z"/>
-                    <path d="M14.37549,25.78125a1.00083,1.00083,0,0,0,1.249,0c.36572-.293,8.94678-7.26074,8.94678-16.21a9.57129,9.57129,0,0,0-19.14258,0C5.42871,18.52051,14.00977,25.48828,14.37549,25.78125Zm-2.80408-16.21A3.42859,3.42859,0,1,1,15,13,3.4287,3.4287,0,0,1,11.57141,9.57129Z"/></g></g></g>
-                </svg>
-              <span class="ms-3 text-xs">Carte interactive</span>
-              </a>
-          </li>
-          
-          <li>
-              <span class="flex items-center py-3 px-1  mt-16 p-2 dark:text-black  border-y  group">
-              <svg class="flex-shrink-0 w-5 h-5 text-purple-500 transition duration-75  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/>
-              </svg>
-              <span class="flex-1 ms-3 whitespace-nowrap text-xs">Connexion</span>
-            </span>
-          </li>
-          <li>
-              <a href="/inscription" class="flex items-center mt-16 p-2 text-black  hover:border-y hover:border-blue-500 group">
-              <svg class="flex-shrink-0 w-5 h-5 text-blue-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.96 2.96 0 0 0 .13 5H5Z"/>
-                  <path d="M6.737 11.061a2.961 2.961 0 0 1 .81-1.515l6.117-6.116A4.839 4.839 0 0 1 16 2.141V2a1.97 1.97 0 0 0-1.933-2H7v5a2 2 0 0 1-2 2H0v11a1.969 1.969 0 0 0 1.933 2h12.134A1.97 1.97 0 0 0 16 18v-3.093l-1.546 1.546c-.413.413-.94.695-1.513.81l-3.4.679a2.947 2.947 0 0 1-1.85-.227 2.96 2.96 0 0 1-1.635-3.257l.681-3.397Z"/>
-                  <path d="M8.961 16a.93.93 0 0 0 .189-.019l3.4-.679a.961.961 0 0 0 .49-.263l6.118-6.117a2.884 2.884 0 0 0-4.079-4.078l-6.117 6.117a.96.96 0 0 0-.263.491l-.679 3.4A.961.961 0 0 0 8.961 16Zm7.477-9.8a.958.958 0 0 1 .68-.281.961.961 0 0 1 .682 1.644l-.315.315-1.36-1.36.313-.318Zm-5.911 5.911 4.236-4.236 1.359 1.359-4.236 4.237-1.7.339.341-1.699Z"/>
-              </svg>
-              <span class="flex-1 ms-3 whitespace-nowrap text-xs">Inscription</span>
-              </a>
-          </li>   
-                    
-          </ul>
-        </div>
-      </aside> -->
-      <main class="main-container">
-        <div>
-          <a href="#" class="ml-2 ms-8 md:me-24">
-              <img src="/img/Logo_gestreb.jpg" class="ml-0" alt="Logo GestReb" />
-          </a>
-        </div>
-        <div>
-            <div class="mt-16 flex fle-col items-center justify-center px-4">
-            <div id ="erreur">
-              <% if(error&&error.length>0){ %>
-                <% for(let i=0;i<error.length;i++){ %>
-
-                  <div>
-                      <p class="text-[18px] text-red-500 mt-2"><%= i+1 + " - "+ error[i].message%></p>
-                  </div>
-
-                <%}%>
-              <%}%>
-            </div>
-            <div class="bg-white border border-green rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
-              <form action="/connexion" method="POST" class="space-y-4">
-                <div class="mb-8">
-                  <h3 class="text-green-800 items-center text-3xl font-extrabold"></h3>
-                  <p class="text-black text-lg mt-4 leading-relaxed">Connectez-vous afin d'avoir accès à un plus large éventail de données.</p>
-                </div>
-                <div>
-                  <label class="text-black text-sm mb-2 block">Email</label>
-                  <div class="flex items-center">
-                    <input name="email" type="text" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green" placeholder="Entrer votre email" />
-                  </div>
-                </div>
-                <div>
-                  <label class="text-black text-sm mb-2 block">Mot de pass</label>
-                  <div class="flex items-center relative">
-                    <input name="mp" id="password" type="password" class="w-full text-sm text-black border border-green-800 px-4 py-3 rounded-lg outline-green pl-10" placeholder="Entrer votre mot de pass" />
-                    <i id="togglePassword" class="fas fa-eye absolute right-3 text-gray-500 cursor-pointer"></i>
-                  </div>
-                </div>
-                <!-- reCAPTCHA 
-                <div>
-                  <div class="g-recaptcha" data-sitekey="6LenhAQrAAAAAO4nxsrmTaJQqaEmOxccGg3LYUJF" required></div>
-                </div>            
-                -->
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                  <div class="text-sm">
-                    <a href="#" class="text-black hover:underline font-semibold">
-                      Mot de pass oublié?
-                    </a>
-                  </div>
-                </div>
-            
-                <div class="mt-8">
-                  <button type="submit" class="w-full shadow-xl py-3 px-4 text-sm tracking-wide border-green-800 rounded-lg text-black bg-green-700 hover:bg-green-600">
-                    Connexion
-                  </button>
-                </div>
-            
-                <p class="text-sm !mt-8 text-center text-black">Vous n'avez pas encore de compte ? <a href="/inscription" class="text-green-800 font-semibold hover:underline ml-1 whitespace-nowrap">Inscrivez vous ici</a></p>
-              </form>
-            </div>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </main> 
-  <script>
-  // Fonction pour basculer la visibilité du mot de passe
-  
-  const togglePassword = document.getElementById("togglePassword");
-  const passwordField = document.getElementById("password");
-  togglePassword.addEventListener("click", function () {
-
-    const type = passwordField.type === "password" ? "text" : "password";
-    passwordField.type = type;
-    this.classList.toggle("fa-eye");
-    this.classList.toggle("fa-eye-slash");
-
-  });
-
-  let sidebarOpen = false;
-  const sidebar = document.getElementById('sidebar');
-
-  function openSidebar() {
-    if (!sidebarOpen) {
-      sidebar.classList.add('sidebar-responsive');
-      sidebarOpen = true;
-  }
-}
-
-function closeSidebar() {
-  if (sidebarOpen) {
-    sidebar.classList.remove('sidebar-responsive');
-    sidebarOpen = false;
-  }
-}
-        </script>
-    </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - GESTREB NEXT</title>
+  <link rel="icon" type="image/jpg" href="/img/Logo_gestreb.jpg">
+   <link href="css/tailStyle.css" rel="stylesheet" />
+  <link href="/css/ultimate-design-system.css" rel="stylesheet">
+  <style>
+    body { margin: 0; padding: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%); }
+    .auth-card { width: 100%; max-width: 450px; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="auth-card card-glass-ultimate animate-fade-in">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <img src="/img/Logo_gestreb.jpg" alt="GESTREB" style="width: 80px; height: 50px; border-radius: 1rem; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;" />
+      <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; background: linear-gradient(135deg, #0f4c3a 0%, #16a34a 50%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Connexion</h1>
+      <p style="color: #64748b; font-size: 0.9375rem;">Accédez à votre espace GESTREB</p>
+    </div>
+    
+    <% if (error && error.length > 0) { %>
+      <div style="margin-bottom: 1.5rem; padding: 1rem; background: #fef2f2; border: 2px solid #fca5a5; border-radius: 1rem; color: #b91c1c; font-weight: 500;">
+        <%= error %>
+      </div>
+    <% } %>
+    
+    <% if (success && success.length > 0) { %>
+      <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f0fdf4; border: 2px solid #86efac; border-radius: 1rem; color: #166534; font-weight: 500;">
+        <%= success %>
+      </div>
+    <% } %>
+    <form action="/connexion" method="POST">
+      <div style="margin-bottom: 1.5rem;">
+        <label class="label-modern">Email</label>
+        <input name="email" type="email" class="input-ultimate" placeholder="votre.email@exemple.com" required autofocus />
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <label class="label-modern">Mot de passe</label>
+        <input name="mp" type="password" class="input-ultimate" placeholder="••••••••" required />
+      </div>
+      
+      <button type="submit" class="btn-ultimate btn-primary-ultimate" style="width: 100%; margin-bottom: 1rem;">
+        <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z"/>
+        </svg>
+        Se connecter
+      </button>
+    </form>
+    
+    <div style="text-align: center; color: #64748b; font-size: 0.875rem;">
+      Pas encore de compte? <a href="/inscription" style="color: #16a34a; font-weight: 700; text-decoration: none;">S'inscrire</a>
+    </div>
+    <div style="text-align: center; color: #64748b; font-size: 0.875rem;">
+      Page d'accueil <a href="/accueil" style="color: #16a34a; font-weight: 700; text-decoration: none;">Accueil</a>
+    </div>
+  </div>
+</body>
 </html>
-
-

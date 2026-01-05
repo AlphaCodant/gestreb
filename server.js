@@ -98,7 +98,6 @@ passport.use('local', new LocalStrategy({passReqToCallBack: true},( email, mp, c
         }
     })
 }));
-
 passport.serializeUser(function(user, done){
     console.log("serialize user is executing")
     done(null, user.email);
@@ -113,10 +112,6 @@ passport.deserializeUser(function(email, done){
         done(null, results.rows[0])
       });
 });
-
-//ST_AsGeoJSON(ST_Transform(geom,4326)) as donnee
-
-// Middleware pour vérifier le token JWT
 function authenticateToken(req, res, next) {
     const token = req.cookies.token; // On récupère le token depuis les cookies
   
@@ -128,10 +123,6 @@ function authenticateToken(req, res, next) {
       next();
     });
   }
-
-
-
-//Diffusion donnees Kobo
 let control = [];
 setInterval(async()=>{
         const reponse = await fetch('https://kc.kobotoolbox.org/api/v1/data/2250270',{
@@ -149,7 +140,7 @@ app.set('view engine','ejs');
 
 
 app.get('/',(req,res)=>{
-    res.redirect('/connexion');
+    res.redirect('/accueil');
 });
 
 app.get('/data',authenticateToken,(req,res)=>{
@@ -158,9 +149,9 @@ app.get('/data',authenticateToken,(req,res)=>{
     console.log();
 });
 
-/*app.get('/dashboard',(req,res)=>{
-    res.render('page_accueil');
-});*/
+app.get('/accueil',(req,res)=>{
+    res.render('accueil');
+});
 app.get('/stats',authenticateToken,(req,res)=>{
     res.render('stats');
 });
@@ -845,7 +836,7 @@ app.get('/get/parcelles/entretien/:foret', async (req, res) => {
     try {       
         const result = await client.query(`
             select c.numero as numero, c.essence as essence,c.annee as annee,c.partenaire as partenaire,c.densite as densite,c.ugf as ugf, c.foret as foret, c.superficie as superficie, c.partenaire as financement,
-            a.fk_cout_fixe as id_travail, TO_CHAR(a.date_init, 'dd/mm/yyyy') as date_debut, TO_CHAR(a.date_fin, 'dd/mm/yyyy') as date_fin,a.superficie_traitee as realise, b.montant as cout 
+            a.fk_cout_fixe as id_travail, TO_CHAR(a.date_init, 'dd/mm/yyyy') as date_debut, TO_CHAR(a.date_fin, 'dd/mm/yyyy') as date_fin,a.superficie_traitee as realise, b.cout as cout 
             from appliquer as a,cout_fixe as b , parcelles as c
             where a.fk_cout_fixe=b.id and a.fk_parcelles=c.id and a.fk_parcelles = ${req.params.id} and a.fk_cout_fixe between 1 and 13
             order by a.fk_cout_fixe asc
@@ -1152,6 +1143,25 @@ app.get('/entretien_p/:id', async (req, res) => {
      
     res.render('membre_entretien',{id:req.params.id});
 });
+app.get('/mission', async (req, res) => {
+    
+    try {
+        const query = `SELECT * FROM cout_variable ORDER BY date_debut DESC`;
+        const result = await client.query(query);
+         if (result.rows.length > 0) {
+        return res.status(200).json(result.rows);
+        
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée trouvée pour cette sélection.' });
+      }
+    } catch (err) {
+        console.error('Erreur lors de la récupération des missions:', err);
+    }
+});
+app.get('/plan_mission/:id', async (req, res) => {
+     
+    res.render('plan_mission',{id:req.params.id});
+});
 app.post('/sylviculture', async (req, res) => {
     // Récupérer les données envoyées par le client
     const { foret, annees } = req.body; 
@@ -1215,6 +1225,237 @@ app.get('/sylviculture/:id',authenticateToken,(req, res) => {
     res.render('membre_sylviculture',{id:req.params.id});
 
   });
+app.get('/api/agents',(req,res)=>{
+    const query = `SELECT * FROM agent ORDER BY nom_prenoms ASC`;
+    client.query(query, (err, result) => {
+        if (err) {
+            console.error('Erreur lors de la récupération des agents:', err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            res.json(result.rows);
+        }
+    });
+})
+
+app.post('/api/planifier_mission', async (req, res) => {
+    
+    const { 
+        missionData, 
+        agentsSelectionnes, 
+        parcellesSelectionnees, 
+    } = req.body;
+
+    // Destruction de l'objet missionData pour l'insertion
+    const { 
+        libele, 
+        nb_jour, 
+        nb_agent, 
+        cout, 
+        date_debut, 
+        date_fin, 
+        document_mission // Note: Le document est juste le chemin/nom du fichier ici
+    } = missionData;
+    const id_agent_string = agentsSelectionnes.join(', ');
+    const parcelle_string = parcellesSelectionnees.join(', ');
+    try {
+      const query = `
+        INSERT INTO cout_variable 
+        (libele, Nb_jour, Nb_homme, cout, date_debut, date_fin, document, id_agent, parcelle,nb_agent,nb_parcelle,statut) 
+        VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10,$11,'false') RETURNING id;
+      `;
+      
+      const values = [
+        libele, 
+        nb_jour, 
+        nb_agent,
+        cout, 
+        date_debut, 
+        date_fin,
+        document_mission,
+        id_agent_string,
+        parcelle_string,
+        agentsSelectionnes.length,
+        parcellesSelectionnees.length
+      ];
+        console.log("Requête SQL exécutée:", query, "avec les valeurs:", values);
+        const result = await client.query(query, values);
+        const insertedId = result.rows[0].id;
+        return res.status(201).json({ message: 'Plan de mission créé avec succès.', id: insertedId });
+    } catch (error) {
+      console.error('Erreur lors de la création du plan de mission:', error.message);
+      return res.status(500).json({ message: 'Erreur du serveur interne lors de la création du plan de mission.' });
+    }
+});
+
+app.get('/confirm_mission',(req, res) => {
+    res.render('confirm_mission');
+
+  });
+  app.post('/api/valider_mission', async (req, res) => {
+    const { 
+        missionData, 
+        agentsSelectionnes, 
+        parcellesSelectionnees, 
+    } = req.body;
+    const nb_parcelle=parcellesSelectionnees.length;
+    const nb_agent=agentsSelectionnes.length;
+    console.log("Nombre de parcelles :",nb_parcelle);
+    console.log("Nombre d'agents :",nb_agent);
+    const document_mission = missionData.document_mission;
+    try {
+      // 1. Changement de la méthode POST à GET.
+      // 2. Optimisation de la requête SQL pour récupérer la dernière ligne.
+      const query = `
+        SELECT id,id_agent,cout,document FROM cout_variable 
+        ORDER BY id DESC 
+        LIMIT 1;
+      `;
+      
+      const result = await client.query(query);     
+        
+      if (result.rows.length > 0) {
+        // Renvoie la première (et unique) ligne trouvée.
+        const cout_parcelle = result.rows[0].cout / nb_parcelle;
+        console.log("Coût par parcelle :",cout_parcelle);
+        const resulId = result.rows[0].id;
+        const id_agent = result.rows[0].id_agent;
+        const document_mission_db = result.rows[0].document;
+        console.log("Document mission DB :",document_mission_db);
+        const id_mission = `
+            SELECT id FROM activite 
+            ORDER BY id DESC 
+            LIMIT 1;
+        
+        `
+        const result_id = await client.query(id_mission);
+        if (result_id.rows.length > 0) {
+            const missionId = result_id.rows[0].id;
+            console.log("ID de la mission insérée :", missionId);
+            const insertquery = `
+            DO $$
+            DECLARE
+                v_libele TEXT;
+                v_date_debut DATE;
+                v_date_fin DATE;
+                v_cout NUMERIC;
+                parc TEXT;
+                parc_id INTEGER;
+                doc TEXT;
+                r INTEGER := ${missionId+1};
+            BEGIN
+                -- Récupérer les valeurs une seule fois
+                SELECT libele, date_debut, date_fin, cout, document
+                INTO v_libele, v_date_debut, v_date_fin, v_cout, doc
+                FROM cout_variable
+                WHERE id = ${resulId};
+
+                -- Boucle sur chaque parcelle extraite
+                FOR parc IN
+                    SELECT TRIM(p) AS numero
+                    FROM unnest(string_to_array((SELECT parcelle FROM cout_variable WHERE id =${resulId}), ',')) AS p
+                LOOP
+                    -- Récupérer l'id de la parcelle correspondante
+                    SELECT id INTO parc_id FROM parcelles WHERE numero = parc LIMIT 1;
+
+                    -- Insertion dans la table activite
+                    INSERT INTO activite (
+                        id, libele, data_debut, date_fin, date_enreg,
+                        "date reception", sup_traitee, operateur, cout_fixe,
+                        cout_variable, parcelle, document, annee_exercice,id_mission
+                    )
+                    VALUES (
+                        r, v_libele, v_date_debut, v_date_fin, v_date_fin,
+                        v_date_fin, (SELECT superficie FROM parcelles WHERE id=parc_id),
+                        (SELECT nom_prenoms FROM agent WHERE id in(${id_agent}) LIMIT 1), 0,
+                        ${cout_parcelle}, parc_id, doc, 2025, ${resulId}
+                    );
+
+                    -- Incrémenter l'identifiant
+                    r := r + 1;
+                END LOOP;
+            END
+            $$ LANGUAGE plpgsql;
+
+            `
+           const reponse = await client.query(insertquery);
+            if (reponse.rows.length > 0) {
+                console.log("Insertion dans la table activite réussie pour la mission ID :", missionId);
+            }
+            else {
+                console.log("Aucune insertion effectuée dans la table activite pour la mission ID :", missionId);
+            }
+        }else{
+            const insertquery = `
+            DO $$
+            DECLARE
+                v_libele TEXT;
+                v_date_debut DATE;
+                v_date_fin DATE;
+                v_cout NUMERIC;
+                parc TEXT;
+                parc_id INTEGER;
+                r INTEGER := 1;
+            BEGIN
+                -- Récupérer les valeurs une seule fois
+                SELECT libele, date_debut, date_fin, cout
+                INTO v_libele, v_date_debut, v_date_fin, v_cout
+                FROM cout_variable
+                WHERE id = ${resulId};
+
+                -- Boucle sur chaque parcelle extraite
+                FOR parc IN
+                    SELECT TRIM(p) AS numero
+                    FROM unnest(string_to_array((SELECT parcelle FROM cout_variable WHERE id =${resulId}), ',')) AS p
+                LOOP
+                    -- Récupérer l'id de la parcelle correspondante
+                    SELECT id INTO parc_id FROM parcelles WHERE numero = parc LIMIT 1;
+
+                    -- Insertion dans la table activite
+                    INSERT INTO activite (
+                        id, libele, data_debut, date_fin, date_enreg,
+                        "date reception", sup_traitee, operateur, cout_fixe,
+                        cout_variable, parcelle, document, annee_exercice,id_mission
+                    )
+                    VALUES (
+                        r, v_libele, v_date_debut, v_date_fin, v_date_fin,
+                        v_date_fin, (SELECT superficie FROM parcelles WHERE id=parc_id),
+                        (SELECT nom_prenoms FROM agent WHERE id in(${id_agent}) LIMIT 1), 0,
+                        ${cout_parcelle}, parc_id, 'Document', 2025, ${resulId}
+                    );
+
+                    -- Incrémenter l'identifiant
+                    r := r + 1;
+                END LOOP;
+            END
+            $$ LANGUAGE plpgsql;
+
+            `
+           const reponse = await client.query(insertquery);
+            if (reponse.rows.length > 0) {
+                console.log("Insertion dans la table activite réussie pour la mission ID ");
+            }
+            else {
+                console.log("Aucune insertion effectuée dans la table activite pour la mission ID");
+            }
+        }
+        console.log(result.rows[0]);
+        return res.status(200).json(result.rows[0]);
+        
+            
+      } else {
+        return res.status(404).json({ message: 'Aucune donnée de coût variable trouvée.' });
+      }
+      
+    } catch (error) {
+      // Afficher l'erreur sur la console du serveur
+      console.error('Erreur lors de la récupération du dernier coût variable:', error.message);
+      
+      // Utiliser un message d'erreur plus général pour le client
+      return res.status(500).json({ message: 'Erreur du serveur interne lors de la récupération des données.' });
+    }
+});
+  
 
 //-----------------------Dashboard supervision-----------------------------------------
   app.get('/api/gest/:admin',authenticateToken,(req, res) => {
@@ -1350,7 +1591,9 @@ app.get('/api/donnees', async(req, res) => {
 
 app.get('/api/parcelles', async (req, res) => {
     try {
-      const result = await client.query('SELECT * FROM parcelles ORDER BY annee ASC');
+      const result = await client.query(`SELECT a.id, a.annee, a.numero, a.essence, a.superficie, b.foret
+         FROM parcelles AS a
+		 INNER JOIN foret AS b ON a.foret = b.id ORDER BY a.annee ASC, a.numero ASC`);
       res.json(result.rows);
     } catch (err) {
       console.error('Erreur lors de l\'exécution de la requête:', err);
@@ -1715,7 +1958,7 @@ app.post("/connexion",async (req,res)=>{
         if(!err){
             client.query(`CREATE TABLE IF NOT EXISTS foret_${user.token} as (select * from foret)`,(err,response)=>{
                 if(!err){
-                    res.redirect(`/page/${user.token}`); // Rediriger vers le tableau de bord
+                    res.redirect(`/mise_en_place/${user.token}`); // Rediriger vers le tableau de bord
                 }else{
                     console.log(err+" Erreur lors de la duplication de la base de données Foret")
                 }
@@ -1771,7 +2014,7 @@ app.post("/connexion",async (req,res)=>{
     });
     setTimeout(()=>{
         res.clearCookie('token');
-        res.redirect('/connexion');
+        res.redirect('/accueil');
     },3000)
 });
 let liste_element = [];
