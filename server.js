@@ -124,16 +124,6 @@ function authenticateToken(req, res, next) {
     });
   }
 let control = [];
-setInterval(async()=>{
-        const reponse = await fetch('https://kc.kobotoolbox.org/api/v1/data/2250270',{
-            method: 'GET',
-            headers: new Headers ({
-                'Authorization' : 'Token e4a7e61378822315f861035e55a0450e75f21a49'
-            })
-    });
-        const don = await reponse.json();
-        control.push(don);
-    },1000);
 
 app.use(express.static('public'));
 app.set('view engine','ejs');
